@@ -7,7 +7,8 @@ Monorepo contendo os projetos Labirinto.
 ```
 labirinto-monorepo/
 ├── apps/
-│   └── web/          # Aplicação Next.js com i18n
+│   ├── web/          # Aplicação Next.js com i18n
+│   └── blog/         # Blog em Astro (acessível via /blog)
 ├── packages/         # Pacotes compartilhados (futuro)
 └── pnpm-workspace.yaml
 ```
@@ -18,14 +19,30 @@ labirinto-monorepo/
 # Instalar dependências
 pnpm install
 
-# Rodar Next.js em modo dev
+# Rodar apenas Next.js (porta 3000)
 pnpm dev
 
-# Build
-pnpm build
+# Rodar apenas Astro blog (porta 4321)
+pnpm dev:blog
+
+# Rodar ambos simultaneamente
+pnpm dev:all
 ```
 
-## Próximos Passos
+## Build
 
-- Adicionar Astro para o blog em `apps/blog`
-- Criar pacotes compartilhados em `packages/` conforme necessário
+```bash
+# Build de tudo
+pnpm build
+
+# Build individual
+pnpm build:web
+pnpm build:blog
+```
+
+## Como funciona
+
+- Next.js roda na porta **3000**
+- Astro roda na porta **4321**
+- Requisições para `/blog` são automaticamente redirecionadas do Next.js para o Astro
+- Em produção, você pode usar Nginx ou CDN para rotear as requisições

@@ -4,7 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "pnpm --filter web dev",
-    "build": "pnpm --filter web build",
+    "dev:blog": "pnpm --filter blog dev",
+    "dev:all": "pnpm --parallel --filter web --filter blog dev",
+    "build": "pnpm --filter web build && pnpm --filter blog build",
+    "build:web": "pnpm --filter web build",
+    "build:blog": "pnpm --filter blog build",
     "start": "pnpm --filter web start",
     "lint": "pnpm --filter web lint"
   },
