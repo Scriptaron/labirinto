@@ -1,6 +1,16 @@
-import {useTranslations} from 'next-intl';
- 
-export default function HomePage() {
-  const t = useTranslations('HomePage');
-  return <h1>{t('title')}</h1>;
+import {setRequestLocale, getTranslations} from 'next-intl/server';
+
+type Props = {
+  params: Promise<{locale: string}>
+};
+
+export default async function HomePage({params}: Props) {
+  const {locale} = await params;
+
+  // Ativar renderização estática
+  setRequestLocale(locale);
+
+  // Obter traduções no servidor
+  const t = await getTranslations({locale, namespace: 'HomePage'});
+  return t('title');
 }

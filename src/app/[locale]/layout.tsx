@@ -1,6 +1,8 @@
 import {NextIntlClientProvider, hasLocale} from 'next-intl';
+import {setRequestLocale} from 'next-intl/server';
 import {notFound} from 'next/navigation';
 import {routing} from '@/src/i18n/routing';
+import './globals.css';
  
 type Props = {
   children: React.ReactNode;
@@ -8,11 +10,12 @@ type Props = {
 };
  
 export default async function LocaleLayout({children, params}: Props) {
-  // Garanta que o `locale` de entrada seja válido
   const {locale} = await params;
   if (!hasLocale(routing.locales, locale)){
     notFound();
   }
+  // Ativar renderização estática
+  setRequestLocale(locale);
 
   return (
     <html lang={locale}>
