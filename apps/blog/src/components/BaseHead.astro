@@ -19,6 +19,22 @@ const { title, description, image = FallbackImage } = Astro.props;
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link rel="icon" type="image/svg+xml" href="/blog/favicon.svg" />
+
+<!-- Theme initialization script - executa ANTES do HTML renderizar para evitar flash -->
+<script is:inline>
+	(function() {
+		function getTheme() {
+			const savedTheme = localStorage.getItem('theme');
+			if (savedTheme) {
+				return savedTheme;
+			}
+			return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+		}
+		
+		const theme = getTheme();
+		document.documentElement.setAttribute('data-theme', theme);
+	})();
+</script>
 <link rel="sitemap" href="/blog/sitemap-index.xml" />
 <link
 	rel="alternate"

@@ -1,15 +1,19 @@
 ---
 import { SITE_TITLE } from '../consts';
 import HeaderLink from './HeaderLink.astro';
+import ThemeToggle from './ThemeToggle.astro';
 ---
 
 <header class="m-0 px-4 bg-surface shadow-md">
 	<nav class="flex items-center justify-between">
 		<h2 class="m-0 text-base">
-			<a href="/" class="no-underline">{SITE_TITLE}</a>
+			<a href="/blog" class="no-underline">{SITE_TITLE}</a>
 		</h2>
-		<div class="internal-links">
-			<HeaderLink href="/blog">Blog</HeaderLink>
+		<div class="flex items-center gap-4">
+			<div class="internal-links">
+				<HeaderLink href="/blog">Blog</HeaderLink>
+			</div>
+			<ThemeToggle />
 		</div>
 		<div class="social-links flex max-[720px]:hidden">
 			<a href="https://m.webtoo.ls/@astro" target="_blank" class="flex py-4 px-2 text-text border-b-4 border-transparent no-underline hover:border-primary">
