@@ -1,0 +1,11 @@
+{
+  "name": "@labirinto/tailwind-config",
+  "version": "0.0.1",
+  "private": true,
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "postcss.config.js",
+    "globals.css"
+  ]
+}
