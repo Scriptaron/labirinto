@@ -7,10 +7,16 @@ import { defineConfig } from 'astro/config';
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://labirinto.tech',
-	base: '/blog',
+	i18n: {
+		defaultLocale: 'pt',
+		locales: ['pt', 'en', 'es'],
+		routing: {
+			prefixDefaultLocale: true
+		}
+	},
 	integrations: [mdx(), sitemap()],
 	server: {
 		port: 4321,
-		open: '/blog',
+		open: '/pt/blog',
 	}
 });

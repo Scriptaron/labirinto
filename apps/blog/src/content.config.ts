@@ -13,6 +13,12 @@ const blog = defineCollection({
 			pubDate: z.coerce.date(),
 			updatedDate: z.coerce.date().optional(),
 			heroImage: image().optional(),
+			// Idioma do post
+			lang: z.enum(['pt', 'en', 'es']),
+			// Slug descritivo no idioma do post
+			slug: z.string(),
+			// Referências para o mesmo post em outros idiomas
+			alternates: z.record(z.string()).optional(),
 		}),
 });
 

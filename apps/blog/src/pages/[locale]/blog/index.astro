@@ -1,0 +1,69 @@
+---
+import { Image } from 'astro:assets';
+import { type CollectionEntry, getCollection } from 'astro:content';
+import BaseHead from '@/components/BaseHead.astro';
+import Footer from '@/components/Footer.astro';
+import FormattedDate from '@/components/FormattedDate.astro';
+import Header from '@/components/Header.astro';
+import { useTranslations } from '@/i18n/utils';
+
+export async function getStaticPaths() {
+	const allPosts = await getCollection('blog');
+	const locales = ['pt', 'en', 'es'];
+	
+	return locales.map((locale) => {
+		const posts = allPosts
+			.filter(post => post.data.lang === locale)
+			.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+		
+		return {
+			params: { locale },
+			props: { posts }
+		};
+	});
+}
+
+type Props = { posts: CollectionEntry<'blog'>[] };
+
+const { posts } = Astro.props;
+const locale = Astro.params.locale as string;
+const t = useTranslations(locale as any);
+---
+
+<!doctype html>
+<html lang={locale}>
+	<head>
+		<BaseHead title={t('site.title')} description={t('site.description')} />
+	</head>
+	<body>
+		<Header />
+		<main class="w-[960px] max-w-[calc(100%-2rem)] mx-auto">
+			<section>
+				<ul class="flex flex-wrap gap-8 list-none m-0 p-0 max-md:gap-2">
+					{
+						posts.map((post, index) => (
+							<li class={index === 0 ? "w-full mb-4 text-center max-md:mb-0" : "w-[calc(50%-1rem)] max-md:w-full max-md:text-center"}>
+								<a href={`/${locale}/blog/${post.data.slug}`} class="block no-underline transition-all duration-200 group">
+									{post.data.heroImage && (
+										<Image 
+											width={720} 
+											height={360} 
+											src={post.data.heroImage} 
+											alt="" 
+											class={`mb-2 rounded-xl group-hover:shadow-[var(--box-shadow)] ${index === 0 ? 'w-full' : ''}`}
+										/>
+									)}
+									<h4 class={`m-0 text-text leading-none group-hover:text-primary ${index === 0 ? 'text-[2.369rem] max-md:text-[1.563rem]' : ''}`}>{post.data.title}</h4>
+									<p class="m-0 text-text-muted group-hover:text-primary">
+										<FormattedDate date={post.data.pubDate} />
+									</p>
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</section>
+		</main>
+		<Footer />
+	</body>
+</html>

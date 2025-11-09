@@ -1,51 +1,27 @@
 ---
-import { Image } from 'astro:assets';
-import { getCollection } from 'astro:content';
-import BaseHead from '@/components/BaseHead.astro';
-import Footer from '@/components/Footer.astro';
-import FormattedDate from '@/components/FormattedDate.astro';
-import Header from '@/components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '@/consts';
+export const prerender = false;
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+// Redireciona para a versão com locale
+const acceptLanguage = Astro.request.headers.get('accept-language');
+const cookieHeader = Astro.request.headers.get('cookie');
+
+// Parse cookie
+const cookies = cookieHeader?.split(';').reduce((acc, cookie) => {
+  const [key, value] = cookie.trim().split('=');
+  if (key && value) acc[key] = decodeURIComponent(value);
+  return acc;
+}, {} as Record<string, string>) || {};
+
+// Detecta locale
+let locale = 'pt';
+if (cookies['NEXT_LOCALE'] && ['pt', 'en', 'es'].includes(cookies['NEXT_LOCALE'])) {
+  locale = cookies['NEXT_LOCALE'];
+} else if (acceptLanguage) {
+  const browserLang = acceptLanguage.split(',')[0].split('-')[0].toLowerCase();
+  if (['pt', 'en', 'es'].includes(browserLang)) {
+    locale = browserLang;
+  }
+}
+
+return Astro.redirect(`/${locale}/blog`, 302);
 ---
-
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main class="w-[960px] max-w-[calc(100%-2rem)] mx-auto">
-			<section>
-				<ul class="flex flex-wrap gap-8 list-none m-0 p-0 max-md:gap-2">
-					{
-						posts.map((post, index) => (
-							<li class={index === 0 ? "w-full mb-4 text-center max-md:mb-0" : "w-[calc(50%-1rem)] max-md:w-full max-md:text-center"}>
-								<a href={`/blog/${post.id}/`} class="block no-underline transition-all duration-200 group">
-									{post.data.heroImage && (
-										<Image 
-											width={720} 
-											height={360} 
-											src={post.data.heroImage} 
-											alt="" 
-											class={`mb-2 rounded-xl group-hover:shadow-[var(--box-shadow)] ${index === 0 ? 'w-full' : ''}`}
-										/>
-									)}
-									<h4 class={`m-0 text-text leading-none group-hover:text-primary ${index === 0 ? 'text-[2.369rem] max-md:text-[1.563rem]' : ''}`}>{post.data.title}</h4>
-									<p class="m-0 text-text-muted group-hover:text-primary">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
-								</a>
-							</li>
-						))
-					}
-				</ul>
-			</section>
-		</main>
-		<Footer />
-	</body>
-</html>

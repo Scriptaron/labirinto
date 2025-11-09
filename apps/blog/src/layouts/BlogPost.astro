@@ -9,18 +9,23 @@ import TableOfContents from '@/components/TableOfContents.astro';
 
 type Props = CollectionEntry<'blog'>['data'] & {
 	headings?: { depth: number; slug: string; text: string }[];
+	alternateLinks?: { lang: string; url: string }[];
+	locale: string;
 };
 
-const { title, description, pubDate, updatedDate, heroImage, headings } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, headings, alternateLinks, locale, alternates } = Astro.props;
 ---
 
-<html lang="en">
+<html lang={locale}>
 	<head>
 		<BaseHead title={title} description={description} />
+		{alternateLinks && alternateLinks.map(({ lang, url }) => (
+			<link rel="alternate" hreflang={lang} href={url} />
+		))}
 	</head>
 
 	<body>
-		<Header />
+		<Header alternates={alternates} />
 		<main class="w-[calc(100%-2rem)] max-w-full m-0">
 			<style>
 				.blog-content {

@@ -1,9 +1,11 @@
 import {defineRouting} from 'next-intl/routing';
+import { locales, defaultLocale, LOCALE_COOKIE_NAME } from '@labirinto/i18n-config';
  
 export const routing = defineRouting({
-  // Uma lista de todas as localidades suportadas.
-  locales: ['pt'],
- 
-  // Usado quando nenhuma localidade corresponde
-  defaultLocale: 'pt'
+  locales: [...locales],
+  defaultLocale,
+  localePrefix: 'always',
+  localeCookie: {
+    name: LOCALE_COOKIE_NAME
+  }
 });

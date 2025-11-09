@@ -10,9 +10,15 @@
     "build:web": "pnpm --filter web build",
     "build:blog": "pnpm --filter blog build",
     "start": "pnpm --filter web start",
-    "lint": "pnpm --filter web lint"
+    "lint": "pnpm --filter web lint",
+    "test": "pnpm --recursive test",
+    "test:i18n": "pnpm --filter @labirinto/i18n-config test",
+    "test:blog": "pnpm --filter blog test",
+    "validate:i18n": "tsx scripts/validate-i18n.ts"
   },
   "devDependencies": {
-    "typescript": "^5"
+    "tsx": "^4.19.0",
+    "typescript": "^5",
+    "yaml": "^2.6.1"
   }
 }
