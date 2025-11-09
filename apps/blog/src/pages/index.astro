@@ -1,0 +1,27 @@
+---
+export const prerender = false;
+
+// Redireciona para a versão com locale
+const acceptLanguage = Astro.request.headers.get('accept-language');
+const cookieHeader = Astro.request.headers.get('cookie');
+
+// Parse cookie
+const cookies = cookieHeader?.split(';').reduce((acc, cookie) => {
+  const [key, value] = cookie.trim().split('=');
+  if (key && value) acc[key] = decodeURIComponent(value);
+  return acc;
+}, {} as Record<string, string>) || {};
+
+// Detecta locale
+let locale = 'pt';
+if (cookies['NEXT_LOCALE'] && ['pt', 'en', 'es'].includes(cookies['NEXT_LOCALE'])) {
+  locale = cookies['NEXT_LOCALE'];
+} else if (acceptLanguage) {
+  const browserLang = acceptLanguage.split(',')[0].split('-')[0].toLowerCase();
+  if (['pt', 'en', 'es'].includes(browserLang)) {
+    locale = browserLang;
+  }
+}
+
+return Astro.redirect(`/${locale}/blog`, 302);
+---

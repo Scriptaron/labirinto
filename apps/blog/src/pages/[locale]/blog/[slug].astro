@@ -1,0 +1,33 @@
+---
+import { type CollectionEntry, getCollection, render } from 'astro:content';
+import BlogPost from '@/layouts/BlogPost.astro';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('blog');
+	return posts.map((post) => ({
+		params: { 
+			locale: post.data.lang,
+			slug: post.data.slug 
+		},
+		props: { post },
+	}));
+}
+
+type Props = { post: CollectionEntry<'blog'> };
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+const locale = Astro.params.locale as string;
+
+// Gera links alternativos para outros idiomas
+const alternateLinks = post.data.alternates 
+	? Object.entries(post.data.alternates).map(([lang, slug]) => ({
+		lang,
+		url: `/${lang}/blog/${slug}`
+	}))
+	: [];
+---
+
+<BlogPost {...post.data} headings={headings} alternateLinks={alternateLinks} locale={locale}>
+	<Content />
+</BlogPost>
