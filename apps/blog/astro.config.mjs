@@ -10,6 +10,7 @@ export default defineConfig({
 	base: '/blog',
 	integrations: [mdx(), sitemap()],
 	server: {
-		port: 4321
+		port: 4321,
+		open: '/blog',
 	}
 });

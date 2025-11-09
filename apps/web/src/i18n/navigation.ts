@@ -1,5 +1,5 @@
 import {createNavigation} from 'next-intl/navigation';
-import {routing} from './routing';
+import {routing} from '@/i18n/routing';
  
 // Wrappers leves em torno da navegação do Next.js
 // APIs que consideram a configuração de roteamento
