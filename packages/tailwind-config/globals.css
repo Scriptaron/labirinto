@@ -1,0 +1,93 @@
+/* =================================
+ * DESIGN SYSTEM - LABIRINTO
+ * Variáveis CSS para Tailwind
+ * ================================= */
+
+:root {
+  /* =================================
+   * 1. CORES-BASE (RAW COLORS)
+   * ================================= */
+  
+  /* Roxo - Principal */
+  --primary-light: #8160e9;
+  --primary: #623CEA;
+  --primary-dark: #502EC8;
+
+  /* Ciano/Verde-Água - Destaque */
+  --accent-light: #87fefe;
+  --accent: #50fefe;
+  --accent-dark: #00B8D4;
+
+  /* Tons Neutros (Escala de "Cinza Frio") */
+  --neutral-50: #F8F9FA;    /* "Branco suave" */
+  --neutral-100: #F1F3F5;
+  --neutral-200: #E9ECEF;
+  --neutral-300: #DEE2E6;
+  --neutral-400: #CED4DA;
+  --neutral-500: #ADB5BD;   /* Cinza médio */
+  --neutral-600: #6C757D;
+  --neutral-700: #495057;
+  --neutral-800: #343A40;
+  --neutral-900: #212529;   /* "Preto suave" */
+
+  /* Sombras */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+  /* =================================
+   * 2. CORES SEMÂNTICAS (TEMA CLARO - PADRÃO)
+   * Define "onde" cada cor-base será usada.
+   * ================================= */
+  
+  /* Cores de Ação */
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-dark);
+
+  /* 
+   * NOTA: O ciano neon (--accent) é muito claro para o tema claro.
+   * Usamos o --accent-dark, que é mais seguro e acessível.
+   */
+  --color-accent: var(--accent-dark);
+  --color-accent-hover: var(--accent-dark); /* Pode ser ajustado */
+
+  /* Cores de Texto */
+  --color-text: var(--neutral-900);      /* Texto principal */
+  --color-text-muted: var(--neutral-600); /* Texto secundário, placeholders */
+  --color-text-on-primary: var(--neutral-50); /* Texto sobre botões roxos */
+
+  /* Cores de Fundo */
+  --color-background: var(--neutral-100); /* Fundo da página (branco "suave") */
+  --color-surface: var(--neutral-50);     /* Fundo de "cards", menus (mais claro) */
+
+  /* Cores de Bordas e Divisórias */
+  --color-border: var(--neutral-300);
+  --color-border-subtle: var(--neutral-200); /* Mais sutil */
+}
+
+/* =================================
+ * 3. CORES SEMÂNTICAS (TEMA ESCURO - OVERRIDE)
+ * ================================= */
+[data-theme="dark"] {
+  /* Cores de Ação */
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-light); /* REGRA: Hover fica mais claro no escuro */
+
+  /* Aqui o seu ciano NEON pode brilhar! */
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-light);
+
+  /* Cores de Texto */
+  --color-text: var(--neutral-100);      /* Texto principal (claro) */
+  --color-text-muted: var(--neutral-400); /* Texto secundário */
+  --color-text-on-primary: var(--neutral-50); /* Texto sobre botões roxos */
+
+  /* Cores de Fundo */
+  --color-background: var(--neutral-900); /* Fundo da página (preto "suave") */
+  --color-surface: var(--neutral-800);    /* Fundo de "cards" (um pouco mais claro) */
+
+  /* Cores de Bordas e Divisórias */
+  --color-border: var(--neutral-700);
+  --color-border-subtle: var(--neutral-800); /* Mais sutil */
+}

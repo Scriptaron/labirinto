@@ -1,36 +1,104 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Labirinto Monorepo
 
-## Getting Started
+Monorepo contendo os projetos Labirinto com suporte completo a internacionalização (i18n).
 
-First, run the development server:
+## Estrutura
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+labirinto-monorepo/
+├── apps/
+│   ├── web/          # Aplicação Next.js com i18n
+│   └── blog/         # Blog em Astro com i18n
+├── packages/
+│   └── i18n-config/  # Configuração compartilhada de i18n
+└── pnpm-workspace.yaml
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Funcionalidades i18n
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- ✅ Suporte a 3 idiomas: Português, English, Español
+- ✅ Detecção automática do idioma do navegador
+- ✅ Cookie compartilhado entre Next.js e Astro
+- ✅ URLs com prefixo de idioma (ex: `/pt/blog`, `/en/blog`)
+- ✅ Seletor de idioma com ícone
+- ✅ Slugs descritivos por idioma
+- ✅ Links alternativos entre traduções do mesmo post
+- ✅ Testes automatizados
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Desenvolvimento
 
-## Learn More
+```bash
+# Instalar dependências
+pnpm install
 
-To learn more about Next.js, take a look at the following resources:
+# Rodar apenas Next.js (porta 3000)
+pnpm dev
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Rodar apenas Astro blog (porta 4321)
+pnpm dev:blog
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Rodar ambos simultaneamente
+pnpm dev:all
+```
 
-## Deploy on Vercel
+## Testes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+# Rodar todos os testes
+pnpm test
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Testar apenas o pacote i18n
+pnpm test:i18n
+
+# Testar apenas o blog
+pnpm test:blog
+```
+
+## Build
+
+```bash
+# Build de tudo
+pnpm build
+
+# Build individual
+pnpm build:web
+pnpm build:blog
+```
+
+## Como funciona
+
+### Estrutura de URLs
+
+- Next.js: `http://localhost:3000/{locale}/` (ex: `/pt/`, `/en/`)
+- Blog: `http://localhost:4321/{locale}/blog` (ex: `/pt/blog`, `/en/blog`)
+
+### Detecção de Idioma
+
+1. Verifica o cookie `NEXT_LOCALE`
+2. Se não houver cookie, detecta do header `Accept-Language`
+3. Se não houver header, usa o idioma padrão (português)
+
+### Posts do Blog
+
+Os posts devem ser organizados por idioma:
+
+```
+src/content/blog/
+├── pt/
+│   └── primeiro-post.md
+├── en/
+│   └── first-post.md
+└── es/
+    └── primer-post.md
+```
+
+Cada post deve ter:
+- `lang`: idioma do post
+- `slug`: slug descritivo no idioma
+- `alternates`: referências para o mesmo post em outros idiomas
+
+### Produção
+
+Em produção, configure seu servidor/CDN para rotear:
+- `/{locale}/*` → Next.js
+- `/{locale}/blog/*` → Astro

@@ -1,0 +1,26 @@
+{
+  "folders": [
+    {
+      "name": "Blog",
+      "path": "./apps/blog"
+    },
+    {
+      "name": "Web",
+      "path": "./apps/web"
+    },
+    {
+      "name": "Packages",
+      "path": "./packages"
+    },
+    {
+      "name": "Root",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "kiroAgent.configureMCP": "Enabled"
+  },
+  "extensions": {
+    "recommendations": []
+  }
+}

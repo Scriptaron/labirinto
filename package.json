@@ -1,27 +1,24 @@
 {
-  "name": "labirinto",
+  "name": "labirinto-monorepo",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "next": "16.0.1",
-    "next-intl": "^4.4.0",
-    "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "dev": "pnpm --filter web dev",
+    "dev:blog": "pnpm --filter blog dev",
+    "dev:all": "pnpm --parallel --filter web --filter blog dev",
+    "build": "pnpm --filter web build && pnpm --filter blog build",
+    "build:web": "pnpm --filter web build",
+    "build:blog": "pnpm --filter blog build",
+    "start": "pnpm --filter web start",
+    "lint": "pnpm --filter web lint",
+    "test": "pnpm --recursive test",
+    "test:i18n": "pnpm --filter @labirinto/i18n-config test",
+    "test:blog": "pnpm --filter blog test",
+    "validate:i18n": "tsx scripts/validate-i18n.ts"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.0.1",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "tsx": "^4.19.0",
+    "typescript": "^5",
+    "yaml": "^2.6.1"
   }
 }

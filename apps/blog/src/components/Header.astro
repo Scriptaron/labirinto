@@ -1,0 +1,29 @@
+---
+import { getLangFromUrl, useTranslations } from '@/i18n/utils';
+import HeaderLink from '@/components/HeaderLink.astro';
+import ThemeToggle from '@/components/ThemeToggle.astro';
+import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
+
+interface Props {
+  alternates?: Record<string, string>;
+}
+
+const { alternates } = Astro.props;
+const locale = getLangFromUrl(Astro.url);
+const t = useTranslations(locale);
+---
+
+<header class="m-0 px-4 py-2 bg-surface shadow-md">
+	<nav class="flex items-center justify-between">
+		<h2 class="m-0 text-base">
+			<a href={`/${locale}/blog`} class="no-underline">{t('site.title')}</a>
+		</h2>
+		<div class="internal-links">
+			<HeaderLink href={`/${locale}/blog`}>{t('nav.blog')}</HeaderLink>
+		</div>
+		<div class="flex items-center gap-4">
+			<LanguageSwitcher alternates={alternates} />
+			<ThemeToggle />
+		</div>
+	</nav>
+</header>

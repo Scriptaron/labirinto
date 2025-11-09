@@ -1,0 +1,198 @@
+---
+import { getLangFromUrl, useTranslations } from '@/i18n/utils';
+
+const localeNames = {
+  pt: 'Português',
+  en: 'English',
+  es: 'Español',
+} as const;
+
+const LOCALE_COOKIE_NAME = 'NEXT_LOCALE';
+
+interface Props {
+  alternates?: Record<string, string>;
+}
+
+const { alternates } = Astro.props;
+const currentLocale = getLangFromUrl(Astro.url);
+const t = useTranslations(currentLocale);
+
+// Obtém o path atual sem o locale
+const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}\//, '/');
+---
+
+<div class="language-switcher relative" data-cookie-name={LOCALE_COOKIE_NAME}>
+  <button 
+    class="relative flex items-center justify-center w-11 h-11 rounded-lg border-2 border-border bg-surface text-text hover:border-primary hover:scale-105 transition-all duration-300 focus:outline-2 focus:outline-primary focus:outline-offset-2"
+    aria-label={t('language.label')}
+    type="button"
+  >
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width="20" 
+      height="20" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      stroke-width="2" 
+      stroke-linecap="round" 
+      stroke-linejoin="round"
+    >
+      <circle cx="12" cy="12" r="10"/>
+      <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+      <path d="M2 12h20"/>
+    </svg>
+  </button>
+
+  <div class="language-dropdown">
+    {Object.entries(localeNames).map(([locale, name]) => {
+      // Se temos alternates e existe um para este locale, usa o slug alternativo
+      let href = `/${locale}${currentPath}`;
+      
+      // Se estamos em um post (tem alternates) e existe tradução para este locale
+      if (alternates && alternates[locale]) {
+        href = `/${locale}/blog/${alternates[locale]}`;
+      } else if (alternates && locale === currentLocale) {
+        // Se é o locale atual, mantém o path atual
+        href = Astro.url.pathname;
+      } else if (currentPath.includes('/blog/')) {
+        // Se é um post mas não tem alternate, vai para a lista de posts
+        href = `/${locale}/blog`;
+      }
+      
+      return (
+        <a
+          href={href}
+          class={`language-option ${locale === currentLocale ? 'active' : ''}`}
+          data-locale={locale}
+        >
+          {name}
+        </a>
+      );
+    })}
+  </div>
+</div>
+
+<style>
+  .language-dropdown {
+    position: absolute;
+    right: 0;
+    margin-top: 0.5rem;
+    min-width: 10rem;
+    border-radius: 0.75rem;
+    padding: 0.5rem;
+    overflow: hidden;
+    z-index: 50;
+    display: none;
+    opacity: 0;
+    transform: translateY(-0.5rem);
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-lg);
+    background: #1a1a1a;
+    border: 1px solid var(--color-border);
+  }
+
+  :root:not([data-theme="dark"]) .language-dropdown {
+    background: var(--color-surface);
+  }
+
+  .language-switcher.open .language-dropdown {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .language-option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    font-size: 0.9375rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    color: #9ca3af;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid transparent;
+  }
+
+  :root:not([data-theme="dark"]) .language-option {
+    color: var(--color-text-muted);
+    background: var(--color-border-subtle);
+  }
+
+  .language-option:hover {
+    color: #d1d5db;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  :root:not([data-theme="dark"]) .language-option:hover {
+    color: var(--color-text);
+    background: var(--color-border);
+    border-color: var(--color-border);
+  }
+
+  .language-option.active {
+    color: var(--accent-dark);
+    background: color-mix(in srgb, var(--accent-dark) 15%, transparent);
+    border-color: color-mix(in srgb, var(--accent-dark) 35%, transparent);
+    font-weight: 600;
+  }
+
+  :root:not([data-theme="dark"]) .language-option.active {
+    color: var(--primary);
+    background: color-mix(in srgb, var(--primary) 12%, transparent);
+    border-color: color-mix(in srgb, var(--primary) 30%, transparent);
+  }
+</style>
+
+<script>
+  function initLanguageSwitcher() {
+    const switcher = document.querySelector('.language-switcher');
+    const button = switcher?.querySelector('button');
+    
+    if (!switcher || !button) return;
+
+    // Remove listeners antigos se existirem
+    const newButton = button.cloneNode(true) as HTMLElement;
+    button.replaceWith(newButton);
+
+    newButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      switcher.classList.toggle('open');
+    });
+
+    // Fecha ao clicar fora
+    const closeDropdown = (e: MouseEvent) => {
+      if (!switcher.contains(e.target as Node)) {
+        switcher.classList.remove('open');
+      }
+    };
+    document.addEventListener('click', closeDropdown);
+
+    // Salva o locale no cookie ao clicar
+    const options = switcher.querySelectorAll('.language-option');
+    const cookieName = switcher.getAttribute('data-cookie-name');
+    
+    options.forEach(option => {
+      option.addEventListener('click', (e) => {
+        const locale = (e.currentTarget as HTMLElement).getAttribute('data-locale');
+        if (locale && cookieName) {
+          // Cookie expira em 1 ano
+          const expires = new Date();
+          expires.setFullYear(expires.getFullYear() + 1);
+          document.cookie = `${cookieName}=${locale}; path=/; expires=${expires.toUTCString()}`;
+        }
+      });
+    });
+  }
+
+  // Inicializa na carga da página
+  document.addEventListener('DOMContentLoaded', initLanguageSwitcher);
+
+  // Re-inicializa após navegação (Astro View Transitions)
+  document.addEventListener('astro:after-swap', initLanguageSwitcher);
+</script>
