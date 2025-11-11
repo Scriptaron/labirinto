@@ -1,0 +1,105 @@
+x-common-env: &common-env
+  NODE_ENV: production
+
+services:
+  # Next.js Web App (sobe por padrão)
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: labirinto-web
+    ports:
+      - "3000:3000"
+    environment:
+      <<: *common-env
+      # URL interna do blog para rewrites do Next
+      BLOG_URL: ${BLOG_URL:-http://blog:4321}
+      # Por padrão, Cloud; em selfhosted sobrepor via .env
+      NEXT_PUBLIC_INFISICAL_URL: ${NEXT_PUBLIC_INFISICAL_URL:-https://app.infisical.com}
+    depends_on:
+      - blog
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Astro Blog (sobe por padrão)
+  blog:
+    build:
+      context: .
+      dockerfile: apps/blog/Dockerfile
+    container_name: labirinto-blog
+    ports:
+      - "4321:4321"
+    environment:
+      <<: *common-env
+      # Por padrão, Cloud; em selfhosted sobrepor via .env
+      PUBLIC_INFISICAL_URL: ${PUBLIC_INFISICAL_URL:-https://app.infisical.com}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4321"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Infisical (somente profile selfhosted)
+  infisical:
+    image: infisical/infisical:latest
+    container_name: labirinto-infisical
+    ports:
+      - "8080:8080"
+    environment:
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-your-encryption-key-here}
+      AUTH_SECRET: ${AUTH_SECRET:-your-auth-secret-here}
+      SITE_URL: ${INFISICAL_SITE_URL:-http://localhost:8080}
+      REDIS_URL: redis://redis:6379
+      DB_CONNECTION_URI: postgresql://infisical:infisical@postgres:5432/infisical
+    depends_on:
+      - postgres
+      - redis
+    profiles: ["selfhosted"]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # PostgreSQL (somente profile selfhosted)
+  postgres:
+    image: postgres:16-alpine
+    container_name: labirinto-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-infisical}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-infisical}
+      POSTGRES_DB: ${POSTGRES_DB:-infisical}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    profiles: ["selfhosted"]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-infisical}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis (somente profile selfhosted)
+  redis:
+    image: redis:7-alpine
+    container_name: labirinto-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    profiles: ["selfhosted"]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  redis_data:

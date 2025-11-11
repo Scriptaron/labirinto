@@ -36,3 +36,13 @@ pnpm-debug.log*
 # IDE
 .vscode/
 .idea/
+
+# Docker
+*.log
+docker-compose.override.yml
+.docker/
+
+# Backups
+*.sql
+*.tar.gz
+backup/

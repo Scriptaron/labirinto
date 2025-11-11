@@ -6,19 +6,16 @@
     "dev": "pnpm --filter web dev",
     "dev:blog": "pnpm --filter blog dev",
     "dev:all": "pnpm --parallel --filter web --filter blog dev",
-    "build": "pnpm --filter web build && pnpm --filter blog build",
-    "build:web": "pnpm --filter web build",
-    "build:blog": "pnpm --filter blog build",
-    "start": "pnpm --filter web start",
+    "build": "pnpm -r build",
     "lint": "pnpm --filter web lint",
-    "test": "pnpm --recursive test",
-    "test:i18n": "pnpm --filter @labirinto/i18n-config test",
-    "test:blog": "pnpm --filter blog test",
-    "validate:i18n": "tsx scripts/validate-i18n.ts"
+    "test": "pnpm -r test",
+    "test:coverage": "pnpm -r test:coverage"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "^4.0.8",
     "tsx": "^4.19.0",
     "typescript": "^5",
+    "vitest": "^4.0.8",
     "yaml": "^2.6.1"
   }
 }
