@@ -6,6 +6,8 @@ import Footer from '@/components/Footer.astro';
 import FormattedDate from '@/components/FormattedDate.astro';
 import Header from '@/components/Header.astro';
 import TableOfContents from '@/components/TableOfContents.astro';
+import SocialShare from '@/components/SocialShare.astro';
+import SocialShareMobile from '@/components/SocialShareMobile.astro';
 
 type Props = CollectionEntry<'blog'>['data'] & {
 	headings?: { depth: number; slug: string; text: string }[];
@@ -14,6 +16,9 @@ type Props = CollectionEntry<'blog'>['data'] & {
 };
 
 const { title, description, pubDate, updatedDate, heroImage, headings, alternateLinks, locale, alternates } = Astro.props;
+
+// URL completa para compartilhamento
+const currentUrl = new URL(Astro.url.pathname, Astro.site).toString();
 ---
 
 <html lang={locale}>
@@ -29,6 +34,21 @@ const { title, description, pubDate, updatedDate, heroImage, headings, alternate
 		<Header alternates={alternates} />
 		<main class="w-[calc(100%-2rem)] max-w-full m-0">
 			<style>
+				.toc-share-sidebar {
+					display: flex;
+					flex-direction: column;
+					gap: 1.5rem;
+					position: sticky;
+					top: 2rem;
+					align-self: flex-start;
+				}
+
+				@media (max-width: 1024px) {
+					.toc-share-sidebar {
+						display: none;
+					}
+				}
+
 				.blog-content {
 					font-size: 1.125rem;
 					line-height: 1.75;
@@ -193,9 +213,13 @@ const { title, description, pubDate, updatedDate, heroImage, headings, alternate
 							<hr class="w-[200px] mx-auto border-t-[3px]" />
 						</div>
 						<div class="flex gap-12 items-start">
-							<TableOfContents />
+							<div class="toc-share-sidebar">
+								<TableOfContents />
+								<SocialShare url={currentUrl} title={title} />
+							</div>
 							<div class="flex-1 max-w-[720px] min-w-0 blog-content">
 								<slot />
+								<SocialShareMobile url={currentUrl} title={title} />
 							</div>
 						</div>
 					</div>
