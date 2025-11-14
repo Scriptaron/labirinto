@@ -36,7 +36,7 @@ const t = useTranslations(locale as any);
 	<Header />
 	<main class="w-[960px] max-w-[calc(100%-2rem)] mx-auto">
 		<section>
-			<ul class="flex flex-wrap gap-8 list-none m-0 p-0 max-md:gap-2">
+			<ul class="flex flex-wrap gap-8 list-none m-0 p-0 max-md:gap-6">
 				{
 					posts.map((post, index) => (
 						<li class={index === 0 ? "w-full mb-4 text-center max-md:mb-0" : "w-[calc(50%-1rem)] max-md:w-full max-md:text-center"}>
@@ -50,8 +50,8 @@ const t = useTranslations(locale as any);
 										class={`mb-2 rounded-xl group-hover:shadow-[var(--box-shadow)] ${index === 0 ? 'w-full' : ''}`}
 									/>
 								)}
-								<h4 class={`m-0 text-text leading-none group-hover:text-primary ${index === 0 ? 'text-[2.369rem] max-md:text-[1.563rem]' : ''}`}>{post.data.title}</h4>
-								<p class="m-0 text-text-muted group-hover:text-primary">
+								<h4 class={`m-0 text-text leading-tight group-hover:text-primary font-semibold mb-2 ${index === 0 ? 'text-[2.369rem] max-md:text-[1.563rem]' : 'text-xl'}`}>{post.data.title}</h4>
+								<p class="m-0 text-text-muted group-hover:text-primary text-xs font-normal">
 									<FormattedDate date={post.data.pubDate} />
 								</p>
 							</a>
