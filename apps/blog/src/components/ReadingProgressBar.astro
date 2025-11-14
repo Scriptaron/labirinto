@@ -1,0 +1,105 @@
+---
+// Reading Progress Bar Component
+---
+
+<div id="reading-progress-container" class="reading-progress-container">
+	<div id="reading-progress-bar" class="reading-progress-bar"></div>
+</div>
+
+<style is:global>
+	.reading-progress-container {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 4px;
+		background: rgba(255, 255, 255, 0.1);
+		z-index: 1000;
+		transition: top 0.3s ease;
+	}
+
+	:root:not([data-theme="dark"]) .reading-progress-container {
+		background: rgba(0, 0, 0, 0.05);
+	}
+
+	.reading-progress-bar {
+		height: 100%;
+		background: linear-gradient(90deg, var(--accent-dark), var(--accent));
+		width: 0%;
+		transition: width 0.1s ease;
+	}
+
+	:root:not([data-theme="dark"]) .reading-progress-bar {
+		background: linear-gradient(90deg, var(--primary), var(--primary-light));
+	}
+
+	/* Mobile: move below TOC when TOC is fixed */
+	@media (max-width: 1024px) {
+		.reading-progress-container.below-toc {
+			top: var(--toc-height, 0px);
+		}
+	}
+</style>
+
+<script is:inline>
+	function initReadingProgress() {
+		const progressBar = document.getElementById('reading-progress-bar');
+		const progressContainer = document.getElementById('reading-progress-container');
+		const article = document.querySelector('article');
+		const tocMobile = document.getElementById('toc-mobile');
+		
+		if (!progressBar || !progressContainer || !article) return;
+
+		function updateProgress() {
+			// Calculate reading progress
+			const articleTop = article.offsetTop;
+			const articleHeight = article.offsetHeight;
+			const windowHeight = window.innerHeight;
+			const scrollTop = window.scrollY;
+			
+			// Calculate progress percentage
+			const scrollableHeight = articleHeight - windowHeight;
+			const scrolled = scrollTop - articleTop;
+			const progress = Math.min(Math.max((scrolled / scrollableHeight) * 100, 0), 100);
+			
+			progressBar.style.width = progress + '%';
+			
+			// On mobile, check if TOC is fixed and adjust position
+			if (window.innerWidth <= 1024 && tocMobile) {
+				const isTocFixed = tocMobile.classList.contains('toc-fixed');
+				
+				if (isTocFixed) {
+					const tocHeight = tocMobile.offsetHeight;
+					progressContainer.classList.add('below-toc');
+					progressContainer.style.setProperty('--toc-height', tocHeight + 'px');
+				} else {
+					progressContainer.classList.remove('below-toc');
+					progressContainer.style.setProperty('--toc-height', '0px');
+				}
+			} else {
+				progressContainer.classList.remove('below-toc');
+			}
+		}
+
+		// Throttle with requestAnimationFrame
+		let ticking = false;
+		function requestTick() {
+			if (!ticking) {
+				requestAnimationFrame(() => {
+					updateProgress();
+					ticking = false;
+				});
+				ticking = true;
+			}
+		}
+
+		window.addEventListener('scroll', requestTick);
+		window.addEventListener('resize', requestTick);
+		
+		// Initial update
+		setTimeout(updateProgress, 100);
+	}
+
+	document.addEventListener('DOMContentLoaded', initReadingProgress);
+	document.addEventListener('astro:page-load', initReadingProgress);
+</script>

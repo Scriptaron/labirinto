@@ -3,6 +3,7 @@ import { getLangFromUrl, useTranslations } from '@/i18n/utils';
 import HeaderLink from '@/components/HeaderLink.astro';
 import ThemeToggle from '@/components/ThemeToggle.astro';
 import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
+import MobileMenu from '@/components/MobileMenu.astro';
 
 interface Props {
   alternates?: Record<string, string>;
@@ -13,17 +14,50 @@ const locale = getLangFromUrl(Astro.url);
 const t = useTranslations(locale);
 ---
 
-<header class="m-0 px-4 py-2 bg-surface shadow-md">
+<MobileMenu alternates={alternates} />
+
+<header class="m-0 mb-6 max-lg:mb-0 px-4 py-2 bg-surface shadow-md">
 	<nav class="flex items-center justify-between">
-		<h2 class="m-0 text-base">
+		<button id="mobile-menu-button" class="lg:hidden flex items-center justify-center w-10 h-10 rounded-lg border-none cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95" aria-label="Abrir menu">
+			<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<line x1="3" y1="6" x2="21" y2="6"></line>
+				<line x1="3" y1="12" x2="21" y2="12"></line>
+				<line x1="3" y1="18" x2="21" y2="18"></line>
+			</svg>
+		</button>
+		<h2 class="m-0 text-base lg:block hidden">
 			<a href={`/${locale}/blog`} class="no-underline">{t('site.title')}</a>
 		</h2>
-		<div class="internal-links">
+		<h2 class="m-0 text-base lg:hidden flex-1 text-center">
+			<a href={`/${locale}/blog`} class="no-underline">{t('site.title')}</a>
+		</h2>
+		<div class="internal-links hidden lg:flex">
 			<HeaderLink href={`/${locale}/blog`}>{t('nav.blog')}</HeaderLink>
 		</div>
-		<div class="flex items-center gap-4">
+		<div class="hidden lg:flex items-center gap-4">
 			<LanguageSwitcher alternates={alternates} />
 			<ThemeToggle />
 		</div>
+		<div class="lg:hidden w-10"></div>
 	</nav>
 </header>
+
+<style>
+	#mobile-menu-button {
+		background: rgba(255, 255, 255, 0.1);
+		color: white;
+	}
+
+	#mobile-menu-button:hover {
+		background: rgba(255, 255, 255, 0.15);
+	}
+
+	:root:not([data-theme="dark"]) #mobile-menu-button {
+		background: var(--color-border-subtle);
+		color: var(--color-text);
+	}
+
+	:root:not([data-theme="dark"]) #mobile-menu-button:hover {
+		background: var(--color-border);
+	}
+</style>
