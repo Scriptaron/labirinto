@@ -9,25 +9,37 @@ const nextConfig: NextConfig = {
     const locales = ['pt', 'en', 'es'];
     const rewrites = [];
 
-    // URL do blog (usar variável de ambiente em produção)
-    const blogUrl = process.env.BLOG_URL || 'http://localhost:4321';
+    // PostHog rewrites (without locale prefix)
+    rewrites.push(
+      {
+        source: '/ingest/static/:path*',
+        destination: 'https://eu-assets.i.posthog.com/static/:path*',
+      },
+      {
+        source: '/ingest/:path*',
+        destination: 'https://eu.i.posthog.com/:path*',
+      }
+    );
 
-    // Rewrites para cada locale
+    // PostHog rewrites (with locale prefix)
     for (const locale of locales) {
       rewrites.push(
         {
-          source: `/${locale}/blog`,
-          destination: `${blogUrl}/${locale}/blog`,
+          source: `/${locale}/ingest/static/:path*`,
+          destination: 'https://eu-assets.i.posthog.com/static/:path*',
         },
         {
-          source: `/${locale}/blog/:path*`,
-          destination: `${blogUrl}/${locale}/blog/:path*`,
+          source: `/${locale}/ingest/:path*`,
+          destination: 'https://eu.i.posthog.com/:path*',
         }
       );
     }
 
     return rewrites;
   },
+
+  // This is required to support PostHog trailing slash API requests
+  skipTrailingSlashRedirect: true,
 };
 
 const withNextIntl = createNextIntlPlugin();

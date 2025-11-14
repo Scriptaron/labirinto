@@ -1,0 +1,15 @@
+---
+import PostHog from '@/components/posthog.astro';
+import { getLangFromUrl } from '@/i18n/utils';
+
+const locale = getLangFromUrl(Astro.url);
+---
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <PostHog />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

@@ -23,7 +23,6 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# env files
 .env*.local
 .env
 
@@ -33,8 +32,11 @@ pnpm-debug.log*
 # typescript
 *.tsbuildinfo
 
-# IDE
-.vscode/
+# IDE (keep .vscode/settings.json for workspace config)
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
 .idea/
 
 # Docker
