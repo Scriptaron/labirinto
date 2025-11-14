@@ -1,0 +1,540 @@
+---
+// Table of Contents Mobile Component
+---
+
+<div class="lg:hidden my-8 rounded-xl transition-all duration-300" id="toc-mobile">
+	<div class="flex items-center gap-3 p-6 transition-all duration-300">
+		<button class="border-0 rounded-lg w-10 h-10 flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-95 shrink-0" id="toc-menu-btn" aria-label="Menu de índices">
+			<svg class="w-5 h-5 toc-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<line x1="3" y1="6" x2="21" y2="6"></line>
+				<line x1="3" y1="12" x2="21" y2="12"></line>
+				<line x1="3" y1="18" x2="21" y2="18"></line>
+			</svg>
+		</button>
+		<div class="flex-1 flex items-center gap-3 min-w-0">
+			<span class="toc-header-number" id="toc-current-number">1</span>
+			<span class="toc-header-title" id="toc-current-title">Carregando...</span>
+		</div>
+		<button class="hidden border-0 rounded-lg w-10 h-10 items-center justify-center cursor-pointer transition-all duration-200 active:scale-95 shrink-0" id="toc-next-btn" aria-label="Próximo índice">
+			<svg class="w-5 h-5 toc-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<polyline points="9 18 15 12 9 6"></polyline>
+			</svg>
+		</button>
+	</div>
+	
+	<div class="max-h-0 overflow-hidden transition-all duration-300" id="toc-mobile-list">
+		<!-- TOC items will be populated by JavaScript -->
+	</div>
+</div>
+
+<style is:global>
+	/* Mobile TOC Container - Dark theme default */
+	#toc-mobile {
+		background: #1a1a1a;
+		box-shadow: var(--shadow-lg);
+	}
+	
+	:root:not([data-theme="dark"]) #toc-mobile {
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+	}
+	
+	/* Header Number - Default state (same as .toc-number) */
+	.toc-header-number {
+		font-size: 0.875rem;
+		font-weight: 700;
+		padding: 0.35rem 0.6rem;
+		border-radius: 0.375rem;
+		min-width: 1.85rem;
+		height: 1.85rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		transition: all 0.3s ease;
+		/* Dark theme - same as .toc-number */
+		color: #6b7280;
+		background: rgba(255, 255, 255, 0.1);
+		border: 1px solid rgba(255, 255, 255, 0.15);
+	}
+	
+	/* Light theme - same as .toc-number */
+	:root:not([data-theme="dark"]) .toc-header-number {
+		color: var(--color-text-muted);
+		background: var(--color-border);
+		border-color: var(--color-border);
+	}
+	
+	/* Header Number - Active state when fixed */
+	#toc-mobile.toc-fixed .toc-header-number {
+		color: white;
+		background: var(--accent-dark);
+		border-color: var(--accent-dark);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-dark) 25%, transparent);
+	}
+	
+	:root:not([data-theme="dark"]) #toc-mobile.toc-fixed .toc-header-number {
+		color: white;
+		background: var(--primary);
+		border-color: var(--primary);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
+	}
+	
+	/* Header Title - Default state (same as .toc-link) */
+	.toc-header-title {
+		font-size: 0.9375rem;
+		font-weight: 500;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		transition: all 0.3s ease;
+		/* Dark theme - same as .toc-link */
+		color: #9ca3af;
+	}
+	
+	/* Light theme - same as .toc-link */
+	:root:not([data-theme="dark"]) .toc-header-title {
+		color: var(--color-text-muted);
+	}
+	
+	/* Header Title - Active state when fixed */
+	#toc-mobile.toc-fixed .toc-header-title {
+		color: var(--accent-dark);
+	}
+	
+	:root:not([data-theme="dark"]) #toc-mobile.toc-fixed .toc-header-title {
+		color: var(--primary);
+	}
+	
+	/* Menu Button - Same background as container */
+	#toc-menu-btn {
+		background: transparent !important;
+	}
+	
+	#toc-menu-btn:hover {
+		background: rgba(255, 255, 255, 0.05) !important;
+	}
+	
+	:root:not([data-theme="dark"]) #toc-menu-btn {
+		background: transparent !important;
+	}
+	
+	:root:not([data-theme="dark"]) #toc-menu-btn:hover {
+		background: var(--color-border-subtle) !important;
+	}
+	
+	/* Next Button - Dark theme with accent-dark */
+	#toc-next-btn {
+		background: var(--accent-dark);
+	}
+	
+	#toc-next-btn:hover {
+		background: var(--accent);
+	}
+	
+	#toc-next-btn .toc-btn-icon {
+		color: white;
+	}
+	
+	/* Next Button - Light theme with primary-dark */
+	:root:not([data-theme="dark"]) #toc-next-btn {
+		background: var(--primary-dark);
+	}
+	
+	:root:not([data-theme="dark"]) #toc-next-btn:hover {
+		background: var(--primary);
+	}
+	
+	:root:not([data-theme="dark"]) #toc-next-btn .toc-btn-icon {
+		color: white;
+	}
+	
+	.toc-btn-icon {
+		color: white;
+	}
+	
+	:root:not([data-theme="dark"]) .toc-btn-icon {
+		color: var(--color-text);
+	}
+	
+	/* TOC List Background and Scroll */
+	#toc-mobile-list {
+		background: #1a1a1a;
+		overflow-y: auto;
+		scrollbar-width: thin;
+		scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+		border-radius: 0 0 0.75rem 0.75rem;
+	}
+	
+	#toc-mobile-list::-webkit-scrollbar {
+		width: 6px;
+	}
+	
+	#toc-mobile-list::-webkit-scrollbar-track {
+		background: transparent;
+	}
+	
+	#toc-mobile-list::-webkit-scrollbar-thumb {
+		background: rgba(255, 255, 255, 0.2);
+		border-radius: 3px;
+	}
+	
+	#toc-mobile-list::-webkit-scrollbar-thumb:hover {
+		background: rgba(255, 255, 255, 0.3);
+	}
+	
+	:root:not([data-theme="dark"]) #toc-mobile-list {
+		background: var(--color-surface);
+		scrollbar-color: var(--color-border) transparent;
+	}
+	
+	:root:not([data-theme="dark"]) #toc-mobile-list::-webkit-scrollbar-thumb {
+		background: var(--color-border);
+	}
+	
+	:root:not([data-theme="dark"]) #toc-mobile-list::-webkit-scrollbar-thumb:hover {
+		background: var(--color-text-muted);
+	}
+	
+	/* TOC Mobile Links - EXACT same as desktop .toc-link */
+	.toc-mobile-link {
+		color: #9ca3af;
+		background: rgba(255, 255, 255, 0.03);
+		border-color: transparent;
+	}
+	
+	:root:not([data-theme="dark"]) .toc-mobile-link {
+		color: var(--color-text-muted);
+		background: var(--color-border-subtle);
+	}
+	
+	/* Hover state - EXACT same as desktop .toc-link:hover */
+	.toc-mobile-link:hover {
+		color: #d1d5db;
+		background: rgba(255, 255, 255, 0.05);
+		border-color: rgba(255, 255, 255, 0.1);
+	}
+	
+	:root:not([data-theme="dark"]) .toc-mobile-link:hover {
+		color: var(--color-text);
+		background: var(--color-border);
+		border-color: var(--color-border);
+	}
+	
+	.toc-mobile-link:hover .toc-mobile-number {
+		color: white;
+		background: var(--accent-dark);
+		border-color: var(--accent-dark);
+		transform: scale(1.05);
+	}
+	
+	:root:not([data-theme="dark"]) .toc-mobile-link:hover .toc-mobile-number {
+		color: white;
+		background: var(--primary-light);
+		border-color: var(--primary-light);
+	}
+	
+	/* Active state - EXACT same as desktop .toc-link.active */
+	.toc-mobile-link.active {
+		color: var(--accent-dark);
+		background: color-mix(in srgb, var(--accent-dark) 15%, transparent);
+		border-color: color-mix(in srgb, var(--accent-dark) 35%, transparent);
+	}
+	
+	:root:not([data-theme="dark"]) .toc-mobile-link.active {
+		color: var(--primary);
+		background: color-mix(in srgb, var(--primary) 12%, transparent);
+		border-color: color-mix(in srgb, var(--primary) 30%, transparent);
+	}
+	
+	.toc-mobile-link.active .toc-mobile-number {
+		color: white;
+		background: var(--accent-dark);
+		border-color: var(--accent-dark);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-dark) 25%, transparent);
+	}
+	
+	:root:not([data-theme="dark"]) .toc-mobile-link.active .toc-mobile-number {
+		color: white;
+		background: var(--primary);
+		border-color: var(--primary);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
+	}
+	
+	/* TOC Mobile Number - EXACT same as desktop .toc-number */
+	.toc-mobile-number {
+		color: #6b7280;
+		background: rgba(255, 255, 255, 0.1);
+		border-color: rgba(255, 255, 255, 0.15);
+	}
+	
+	:root:not([data-theme="dark"]) .toc-mobile-number {
+		color: var(--color-text-muted);
+		background: var(--color-border);
+		border-color: var(--color-border);
+	}
+</style>
+
+<script is:inline>
+	function initMobileTOC() {
+		const tocMobile = document.getElementById('toc-mobile');
+		const tocList = document.getElementById('toc-mobile-list');
+		const menuBtn = document.getElementById('toc-menu-btn');
+		const nextBtn = document.getElementById('toc-next-btn');
+		const currentNumber = document.getElementById('toc-current-number');
+		const currentTitle = document.getElementById('toc-current-title');
+		const article = document.querySelector('article');
+		
+		if (!tocMobile || !tocList || !article) return;
+
+		// Find all h2 elements with IDs in the article
+		const headings = article.querySelectorAll('h2[id]');
+		
+		if (headings.length === 0) {
+			tocMobile.style.display = 'none';
+			return;
+		}
+
+		let currentIndex = 0;
+		let isExpanded = false;
+		let isCollapsed = false;
+		let tocOriginalTop = 0;
+
+		// Helper to check if dark theme
+		function isDarkTheme() {
+			return document.documentElement.getAttribute('data-theme') === 'dark';
+		}
+		
+		// Generate TOC items with Tailwind classes
+		headings.forEach((heading, index) => {
+			const item = document.createElement('div');
+			item.className = 'toc-mobile-item m-0';
+			item.dataset.index = index.toString();
+			
+			const link = document.createElement('a');
+			link.href = `#${heading.id}`;
+			link.className = 'toc-mobile-link no-underline flex justify-between items-center p-3 text-[0.9375rem] rounded-lg transition-all duration-200 gap-3 mx-3 my-2 border';
+			
+			const number = document.createElement('span');
+			number.className = 'toc-mobile-number text-sm font-bold px-2.5 py-1.5 rounded-md min-w-[1.85rem] h-[1.85rem] flex items-center justify-center text-center shrink-0 transition-all duration-200 border';
+			number.textContent = (index + 1).toString();
+			
+			const text = document.createElement('span');
+			text.className = 'toc-mobile-text flex-1 leading-[1.4] line-clamp-2 overflow-hidden text-ellipsis';
+			text.style.display = '-webkit-box';
+			text.style.webkitLineClamp = '2';
+			text.style.webkitBoxOrient = 'vertical';
+			text.style.maxHeight = 'calc(1.4em * 2)';
+			text.textContent = heading.textContent || '';
+			
+			link.appendChild(number);
+			link.appendChild(text);
+			item.appendChild(link);
+			tocList.appendChild(item);
+			
+			// Click handler
+			link.addEventListener('click', (e) => {
+				e.preventDefault();
+				const target = document.getElementById(heading.id);
+				if (target) {
+					target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+					toggleExpanded(false);
+				}
+			});
+		});
+
+		// Toggle expanded state
+		function toggleExpanded(forceState) {
+			isExpanded = forceState !== undefined ? forceState : !isExpanded;
+			
+			if (isExpanded) {
+				// Calculate height for 2.5 items (approximate)
+				const firstItem = tocList.querySelector('.toc-mobile-item');
+				if (firstItem) {
+					const itemHeight = firstItem.offsetHeight;
+					const maxHeight = itemHeight * 2.5;
+					tocList.style.maxHeight = maxHeight + 'px';
+				} else {
+					tocList.style.maxHeight = '200px'; // fallback
+				}
+				tocList.style.overflowY = 'auto';
+				menuBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+			} else {
+				tocList.style.maxHeight = '0';
+				tocList.style.overflowY = 'hidden';
+				menuBtn.style.background = 'rgba(255, 255, 255, 0.1)';
+			}
+		}
+
+		// Update current section
+		function updateCurrentSection() {
+			const scrollPosition = window.scrollY + 150;
+			let newIndex = 0;
+
+			headings.forEach((heading, index) => {
+				const headingTop = heading.offsetTop;
+				if (scrollPosition >= headingTop) {
+					newIndex = index;
+				}
+			});
+
+			if (newIndex !== currentIndex) {
+				currentIndex = newIndex;
+				currentNumber.textContent = (currentIndex + 1).toString();
+				currentTitle.textContent = headings[currentIndex].textContent || '';
+				
+				// Update active item - EXACT same colors as desktop TOC
+				const items = tocList.querySelectorAll('.toc-mobile-item');
+				
+				items.forEach((item, index) => {
+					const link = item.querySelector('.toc-mobile-link');
+					const number = item.querySelector('.toc-mobile-number');
+					
+					if (index === currentIndex) {
+						// Active state - EXACT same as desktop .toc-link.active
+						link.classList.add('active');
+					} else {
+						// Default state
+						link.classList.remove('active');
+					}
+				});
+				
+				// Update next button visibility
+				updateNextButton();
+			}
+		}
+		
+		// Update next button (hide if last, show arrow or restart icon)
+		function updateNextButton() {
+			const isLast = currentIndex === headings.length - 1;
+			
+			if (isLast) {
+				// Show restart icon
+				nextBtn.innerHTML = `
+					<svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<polyline points="1 4 1 10 7 10"></polyline>
+						<path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+					</svg>
+				`;
+				nextBtn.setAttribute('aria-label', 'Voltar ao topo');
+			} else {
+				// Show next arrow
+				nextBtn.innerHTML = `
+					<svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<polyline points="9 18 15 12 9 6"></polyline>
+					</svg>
+				`;
+				nextBtn.setAttribute('aria-label', 'Próximo índice');
+			}
+		}
+
+		// Handle scroll to collapse/expand TOC
+		function handleScroll() {
+			const scrollY = window.scrollY;
+			
+			// Store original position on first scroll
+			if (tocOriginalTop === 0 && !isCollapsed) {
+				tocOriginalTop = tocMobile.offsetTop;
+			}
+			
+			// Collapse when scrolled past the TOC original position
+			if (scrollY > tocOriginalTop && !isCollapsed) {
+				isCollapsed = true;
+				tocMobile.classList.add('!fixed', 'top-0', 'left-0', 'right-0', 'z-[100]', '!my-0', '!rounded-none', 'toc-fixed');
+				tocMobile.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.25)';
+				
+				// Show next button when collapsed
+				nextBtn.classList.remove('hidden');
+				nextBtn.classList.add('flex');
+				
+				// Adjust button and number sizes
+				const buttons = tocMobile.querySelectorAll('button');
+				buttons.forEach(btn => {
+					btn.classList.remove('w-10', 'h-10');
+					btn.classList.add('w-9', 'h-9');
+				});
+				
+				currentNumber.style.minWidth = '1.5rem';
+				currentNumber.style.height = '1.5rem';
+				currentNumber.style.fontSize = '0.75rem';
+				
+				currentTitle.classList.remove('text-[0.9375rem]');
+				currentTitle.classList.add('text-sm');
+				
+				// Adjust padding
+				tocMobile.querySelector('div').classList.remove('p-6');
+				tocMobile.querySelector('div').classList.add('p-3');
+				
+				// Close expanded menu when collapsing
+				if (isExpanded) {
+					toggleExpanded(false);
+				}
+			} else if (scrollY <= tocOriginalTop - 50 && isCollapsed) {
+				isCollapsed = false;
+				tocMobile.classList.remove('!fixed', 'top-0', 'left-0', 'right-0', 'z-[100]', '!my-0', '!rounded-none', 'toc-fixed');
+				tocMobile.style.boxShadow = 'var(--shadow-lg)';
+				
+				// Hide next button when not collapsed
+				nextBtn.classList.add('hidden');
+				nextBtn.classList.remove('flex');
+				
+				// Restore button and number sizes
+				const buttons = tocMobile.querySelectorAll('button');
+				buttons.forEach(btn => {
+					btn.classList.add('w-10', 'h-10');
+					btn.classList.remove('w-9', 'h-9');
+				});
+				
+				currentNumber.style.minWidth = '1.85rem';
+				currentNumber.style.height = '1.85rem';
+				currentNumber.style.fontSize = '0.875rem';
+				
+				currentTitle.classList.add('text-[0.9375rem]');
+				currentTitle.classList.remove('text-sm');
+				
+				// Restore padding
+				tocMobile.querySelector('div').classList.add('p-6');
+				tocMobile.querySelector('div').classList.remove('p-3');
+			}
+			
+			updateCurrentSection();
+		}
+
+		// Go to next section or go to top
+		function goToNext() {
+			const isLast = currentIndex === headings.length - 1;
+			
+			if (isLast) {
+				// Go to top of page
+				window.scrollTo({ top: 0, behavior: 'smooth' });
+			} else {
+				// Go to next section
+				const target = headings[currentIndex + 1];
+				target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			}
+		}
+
+		// Event listeners
+		menuBtn.addEventListener('click', () => toggleExpanded());
+		nextBtn.addEventListener('click', goToNext);
+		
+		let ticking = false;
+		window.addEventListener('scroll', () => {
+			if (!ticking) {
+				requestAnimationFrame(() => {
+					handleScroll();
+					ticking = false;
+				});
+				ticking = true;
+			}
+		});
+
+		// Initialize
+		updateCurrentSection();
+	}
+
+	document.addEventListener('DOMContentLoaded', initMobileTOC);
+	document.addEventListener('astro:page-load', initMobileTOC);
+</script>
+
+
