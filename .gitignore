@@ -38,3 +38,13 @@ pnpm-debug.log*
 !.vscode/extensions.json
 !.vscode/launch.json
 .idea/
+
+# Docker
+*.log
+docker-compose.override.yml
+.docker/
+
+# Backups
+*.sql
+*.tar.gz
+backup/

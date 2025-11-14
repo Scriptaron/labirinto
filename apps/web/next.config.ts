@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
 const nextConfig: NextConfig = {
+  // Habilitar output standalone para Docker
+  output: "standalone",
+
   async rewrites() {
     const locales = ['pt', 'en', 'es'];
     const rewrites = [];
@@ -31,7 +34,7 @@ const nextConfig: NextConfig = {
         }
       );
     }
-    
+
     return rewrites;
   },
 

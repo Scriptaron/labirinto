@@ -1,27 +1,42 @@
 ---
-export const prerender = false;
-
-// Redireciona para a versão com locale
-const acceptLanguage = Astro.request.headers.get('accept-language');
-const cookieHeader = Astro.request.headers.get('cookie');
-
-// Parse cookie
-const cookies = cookieHeader?.split(';').reduce((acc, cookie) => {
-  const [key, value] = cookie.trim().split('=');
-  if (key && value) acc[key] = decodeURIComponent(value);
-  return acc;
-}, {} as Record<string, string>) || {};
-
-// Detecta locale
-let locale = 'pt';
-if (cookies['NEXT_LOCALE'] && ['pt', 'en', 'es'].includes(cookies['NEXT_LOCALE'])) {
-  locale = cookies['NEXT_LOCALE'];
-} else if (acceptLanguage) {
-  const browserLang = acceptLanguage.split(',')[0].split('-')[0].toLowerCase();
-  if (['pt', 'en', 'es'].includes(browserLang)) {
-    locale = browserLang;
-  }
-}
-
-return Astro.redirect(`/${locale}/blog`, 302);
+// Redirect client-side (estático = máximo desempenho, sem SSR)
+import { defaultLang } from '../i18n/ui';
 ---
+
+<!DOCTYPE html>
+<html lang={defaultLang}>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Redirecting...</title>
+	<script>
+		// Lógica de redirect - veja i18n/redirect.ts para testes
+		const supportedLangs = ['pt', 'en', 'es'];
+		
+		const getCookie = (name) => {
+			const value = `; ${document.cookie}`;
+			const parts = value.split(`; ${name}=`);
+			if (parts.length === 2) return parts.pop().split(';').shift();
+			return null;
+		};
+
+		const getBrowserLang = () => {
+			const browserLangs = navigator.languages || [navigator.language];
+			for (const lang of browserLangs) {
+				const code = lang.split('-')[0];
+				if (supportedLangs.includes(code)) return code;
+			}
+			return 'pt';
+		};
+
+		const localeCookie = getCookie('NEXT_LOCALE');
+		const targetLang = localeCookie || getBrowserLang();
+		
+		// Redirect imediato
+		window.location.replace(`/${targetLang}/blog`);
+	</script>
+</head>
+<body>
+	<p style="text-align: center; margin-top: 50px;">Redirecting...</p>
+</body>
+</html>
