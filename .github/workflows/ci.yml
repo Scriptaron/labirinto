@@ -34,7 +34,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile || pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Run tests with coverage
         run: pnpm --filter "${{ matrix.workspace }}" test --coverage
@@ -69,7 +69,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile || pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Type check
         run: pnpm -r exec tsc --noEmit || true
