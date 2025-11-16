@@ -8,13 +8,27 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
+      include: [
+        'src/**/*.ts',
+        'src/**/*.tsx',
+        'src/**/*.astro',
+      ],
       exclude: [
         'node_modules/**',
         'dist/**',
         '**/*.config.*',
         '**/*.test.*',
         '**/*.spec.*',
+        'src/env.d.ts',
+        'src/content/**',
+        'src/pages/**',
+        'src/layouts/**',
       ],
+      all: true,
+      lines: 80,
+      functions: 80,
+      branches: 80,
+      statements: 80,
     },
   },
   resolve: {

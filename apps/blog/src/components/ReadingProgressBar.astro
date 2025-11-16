@@ -3,6 +3,7 @@
 ---
 
 <div id="reading-progress-container" class="reading-progress-container">
+	<div id="reading-progress-overlay" class="reading-progress-overlay"></div>
 	<div id="reading-progress-bar" class="reading-progress-bar"></div>
 </div>
 
@@ -16,6 +17,19 @@
 		background: rgba(255, 255, 255, 0.1);
 		z-index: 1000;
 		transition: top 0.3s ease;
+	}
+
+	.reading-progress-overlay {
+		position: absolute;
+		inset: 0;
+		background: rgba(0, 0, 0, 0.4);
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.3s ease;
+	}
+
+	.reading-progress-container.modal-open .reading-progress-overlay {
+		opacity: 1;
 	}
 
 	:root:not([data-theme="dark"]) .reading-progress-container {

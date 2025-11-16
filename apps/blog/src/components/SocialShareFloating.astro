@@ -18,7 +18,7 @@ const shareUrl = removeLocaleFromUrl(url);
 <div class="lg:hidden">
 	<button 
 		id="floating-share-btn"
-		class="floating-share-button fixed left-5 bottom-5 z-[999] w-12 h-12 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 flex items-center justify-center border-none cursor-pointer"
+		class="floating-share-button fixed left-4 bottom-5 z-[999] w-12 h-12 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 flex items-center justify-center border-none cursor-pointer"
 		aria-label="Compartilhar post"
 	>
 		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -62,12 +62,12 @@ const shareUrl = removeLocaleFromUrl(url);
 							id="floating-share-url" 
 							class="flex-1 px-4 py-3 rounded-lg text-sm font-mono" 
 							style="border: 2px solid var(--color-border); color: var(--color-text); background: var(--color-background);"
-							value={shareUrl}
+							value={shareUrl + '?utm_source=copy&utm_medium=share&utm_campaign=share'}
 						/>
 						<button 
 							id="floating-copy-btn"
 							class="floating-copy-button px-5 py-3 rounded-lg font-semibold text-sm transition-all border-none cursor-pointer whitespace-nowrap"
-							data-url={shareUrl}
+							data-url={shareUrl + '?utm_source=copy&utm_medium=share&utm_campaign=share'}
 							aria-label="Copiar link"
 						>
 							<span class="copy-text">Copiar</span>
@@ -155,7 +155,7 @@ const shareUrl = removeLocaleFromUrl(url);
 
 					<!-- Instagram -->
 					<a 
-						href={`https://www.instagram.com/`}
+						href={`https://www.instagram.com/?url=${encodeURIComponent(shareUrl + '?utm_source=instagram&utm_medium=social&utm_campaign=share')}`}
 						target="_blank"
 						rel="noopener noreferrer"
 						class="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-br from-[#f09433] via-[#dc2743] to-[#bc1888] hover:from-[#f5a142] hover:via-[#e63050] hover:to-[#c72595] text-white transition-all no-underline font-medium"
@@ -334,6 +334,13 @@ const shareUrl = removeLocaleFromUrl(url);
 			// Esconder o botão quando o menu estiver aberto
 			btn.style.opacity = '0';
 			btn.style.pointerEvents = 'none';
+			// Aplicar blur e overlay na barra de progresso
+			const progressBar = document.getElementById('reading-progress-container');
+			if (progressBar) {
+				progressBar.style.backdropFilter = 'blur(4px)';
+				progressBar.style.webkitBackdropFilter = 'blur(4px)';
+				progressBar.classList.add('modal-open');
+			}
 		};
 
 		const closeMenu = () => {
@@ -348,6 +355,13 @@ const shareUrl = removeLocaleFromUrl(url);
 			// Mostrar o botão novamente quando o menu fechar
 			btn.style.opacity = '1';
 			btn.style.pointerEvents = 'auto';
+			// Remover blur e overlay da barra de progresso
+			const progressBar = document.getElementById('reading-progress-container');
+			if (progressBar) {
+				progressBar.style.backdropFilter = '';
+				progressBar.style.webkitBackdropFilter = '';
+				progressBar.classList.remove('modal-open');
+			}
 		};
 
 		btn.addEventListener('click', openMenu);

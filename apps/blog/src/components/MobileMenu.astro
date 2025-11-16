@@ -19,11 +19,11 @@ const LOCALE_COOKIE_NAME = 'NEXT_LOCALE';
 const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}\//, '/');
 ---
 
-<div id="mobile-menu-overlay" class="mobile-menu-overlay">
-	<div id="mobile-menu" class="mobile-menu">
-		<div class="mobile-menu-header">
-			<h2 class="mobile-menu-logo">{t('site.title')}</h2>
-			<button id="mobile-menu-close" class="mobile-menu-close" aria-label="Fechar menu">
+<div id="mobile-menu-overlay" class="fixed inset-0 bg-black/50 z-[9998] opacity-0 pointer-events-none transition-opacity duration-300">
+	<div id="mobile-menu" class="fixed top-0 left-0 bottom-0 w-[85%] max-w-[320px] overflow-y-auto shadow-[4px_0_12px_rgba(0,0,0,0.3)] z-[9999]">
+		<div class="flex items-center justify-between p-6 border-b" style="border-color: var(--color-border);">
+			<h2 class="m-0 text-xl font-bold" style="color: var(--color-text);">{t('site.title')}</h2>
+			<button id="mobile-menu-close" class="w-10 h-10 flex items-center justify-center rounded-lg cursor-pointer transition-all duration-200 hover:scale-105" style="background: var(--color-border-subtle); color: var(--color-text);" aria-label="Fechar menu">
 				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 					<line x1="18" y1="6" x2="6" y2="18"></line>
 					<line x1="6" y1="6" x2="18" y2="18"></line>
@@ -31,19 +31,19 @@ const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}\//, '/');
 			</button>
 		</div>
 
-		<nav class="mobile-menu-nav">
-			<a href={`/${locale}/blog`} class="mobile-menu-link">
+		<nav class="p-4 flex flex-col gap-2">
+			<a href={`/${locale}/blog`} class="flex items-center gap-3 px-4 py-4 text-base font-medium rounded-xl no-underline transition-all duration-200" style="color: var(--color-text); background: var(--color-border-subtle);">
 				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 					<path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
 				</svg>
 				{t('nav.blog')}
 			</a>
 
-			<hr class="mobile-menu-divider" />
+			<hr class="border-0 border-t my-2" style="border-color: var(--color-border);" />
 
-			<div class="mobile-menu-section">
-				<span class="mobile-menu-section-title">{t('language.label')}</span>
-				<div class="mobile-menu-options" data-cookie-name={LOCALE_COOKIE_NAME}>
+			<div class="flex flex-col gap-3">
+				<span class="text-xs font-semibold uppercase tracking-wider px-4 pt-2" style="color: var(--color-text-muted);">{t('language.label')}</span>
+				<div class="mobile-menu-options flex flex-col gap-2" data-cookie-name={LOCALE_COOKIE_NAME}>
 					{Object.entries(localeNames).map(([loc, name]) => {
 						let href = `/${loc}${currentPath}`;
 						
@@ -58,7 +58,7 @@ const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}\//, '/');
 						return (
 							<a
 								href={href}
-								class={`mobile-menu-option ${loc === locale ? 'active' : ''}`}
+								class={`mobile-menu-option flex items-center gap-3 px-5 py-4 no-underline transition-all duration-200 rounded-lg border border-transparent text-base font-medium cursor-pointer min-h-[44px] ${loc === locale ? 'active' : ''}`}
 								data-locale={loc}
 							>
 								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -73,9 +73,9 @@ const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}\//, '/');
 				</div>
 			</div>
 
-			<div class="mobile-menu-section">
-				<span class="mobile-menu-section-title">Tema</span>
-				<button id="mobile-theme-toggle" class="mobile-menu-option" type="button">
+			<div class="flex flex-col gap-3">
+				<span class="text-xs font-semibold uppercase tracking-wider px-4 pt-2" style="color: var(--color-text-muted);">Tema</span>
+				<button id="mobile-theme-toggle" class="mobile-menu-option flex items-center gap-3 px-5 py-4 transition-all duration-200 rounded-lg border border-transparent text-base font-medium cursor-pointer min-h-[44px]" type="button" style="color: var(--color-text-muted); background: var(--color-border-subtle);">
 					<svg id="mobile-sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<circle cx="12" cy="12" r="5"></circle>
 						<line x1="12" y1="1" x2="12" y2="3"></line>
@@ -90,7 +90,7 @@ const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}\//, '/');
 					<svg id="mobile-moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
 					</svg>
-					<span id="mobile-theme-text">Claro</span>
+					<span id="mobile-theme-text" class="ml-6">Claro</span>
 				</button>
 			</div>
 		</nav>
@@ -98,208 +98,52 @@ const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}\//, '/');
 </div>
 
 <style is:global>
-	.mobile-menu-overlay {
-		position: fixed;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background: rgba(0, 0, 0, 0.5);
-		z-index: 1000;
-		opacity: 0;
-		pointer-events: none;
-		transition: opacity 0.3s ease;
+	:root {
+		--mobile-menu-active-color: var(--color-primary);
 	}
 
-	.mobile-menu-overlay.open {
+	[data-theme='dark'] {
+		--mobile-menu-active-color: var(--color-accent);
+	}
+
+	.mobile-menu-option {
+		color: var(--color-text-muted);
+		background: var(--color-border-subtle);
+	}
+
+	.mobile-menu-option.active {
+		color: var(--mobile-menu-active-color);
+		background: color-mix(in srgb, var(--mobile-menu-active-color) 18%, transparent);
+		font-weight: 600;
+	}
+
+	/* Background dinâmico e animação */
+	#mobile-menu {
+		background: #1a1a1a;
+		transform: translateX(-100%);
+		transition: transform 0.3s ease;
+	}
+
+	:root:not([data-theme="dark"]) #mobile-menu {
+		background: var(--color-surface);
+	}
+
+	#mobile-menu-overlay.open {
 		opacity: 1;
 		pointer-events: auto;
 	}
 
-	.mobile-menu {
-		position: fixed;
-		top: 0;
-		left: 0;
-		bottom: 0;
-		width: 85%;
-		max-width: 320px;
-		background: #1a1a1a;
-		transform: translateX(-100%);
-		transition: transform 0.3s ease;
-		overflow-y: auto;
-		box-shadow: 4px 0 12px rgba(0, 0, 0, 0.3);
-	}
-
-	:root:not([data-theme="dark"]) .mobile-menu {
-		background: var(--color-surface);
-	}
-
-	.mobile-menu-overlay.open .mobile-menu {
+	#mobile-menu-overlay.open #mobile-menu {
 		transform: translateX(0);
 	}
 
-	.mobile-menu-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 1.5rem;
-		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-	}
-
-	:root:not([data-theme="dark"]) .mobile-menu-header {
-		border-bottom-color: var(--color-border);
-	}
-
-	.mobile-menu-logo {
-		margin: 0;
-		font-size: 1.25rem;
-		font-weight: 700;
-		color: white;
-	}
-
-	:root:not([data-theme="dark"]) .mobile-menu-logo {
-		color: var(--color-text);
-	}
-
-	.mobile-menu-close {
-		width: 2.5rem;
-		height: 2.5rem;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background: rgba(255, 255, 255, 0.1);
-		border: none;
-		border-radius: 0.5rem;
-		color: white;
-		cursor: pointer;
-		transition: all 0.2s ease;
-	}
-
-	:root:not([data-theme="dark"]) .mobile-menu-close {
-		background: var(--color-border-subtle);
-		color: var(--color-text);
-	}
-
-	.mobile-menu-close:hover {
-		background: rgba(255, 255, 255, 0.15);
-		transform: scale(1.05);
-	}
-
-	:root:not([data-theme="dark"]) .mobile-menu-close:hover {
-		background: var(--color-border);
-	}
-
-	.mobile-menu-nav {
-		padding: 1rem;
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-
-	.mobile-menu-link {
-		display: flex;
-		align-items: center;
-		gap: 0.75rem;
-		padding: 1rem;
-		text-decoration: none;
-		font-size: 1rem;
-		font-weight: 500;
-		border-radius: 0.75rem;
-		transition: all 0.2s ease;
-		color: #d1d5db;
-		background: rgba(255, 255, 255, 0.03);
-	}
-
-	:root:not([data-theme="dark"]) .mobile-menu-link {
-		color: var(--color-text);
-		background: var(--color-border-subtle);
-	}
-
-	.mobile-menu-link:hover {
-		background: rgba(255, 255, 255, 0.08);
-		color: white;
-	}
-
-	:root:not([data-theme="dark"]) .mobile-menu-link:hover {
-		background: var(--color-border);
-	}
-
-	.mobile-menu-divider {
-		border: none;
-		border-top: 1px solid rgba(255, 255, 255, 0.1);
-		margin: 0.5rem 0;
-	}
-
-	:root:not([data-theme="dark"]) .mobile-menu-divider {
-		border-top-color: var(--color-border);
-	}
-
-	.mobile-menu-section {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-
-	.mobile-menu-section-title {
-		font-size: 0.75rem;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		color: #9ca3af;
-		padding: 0.5rem 1rem 0;
-	}
-
-	:root:not([data-theme="dark"]) .mobile-menu-section-title {
-		color: var(--color-text-muted);
-	}
-
-	.mobile-menu-options {
-		display: flex;
-		flex-direction: column;
-		gap: 0.25rem;
-	}
-
-	.mobile-menu-option {
-		display: flex;
-		align-items: center;
-		gap: 0.75rem;
-		padding: 0.875rem 1rem;
-		text-decoration: none;
-		font-size: 0.9375rem;
-		border-radius: 0.5rem;
-		transition: all 0.2s ease;
-		color: #9ca3af;
-		background: rgba(255, 255, 255, 0.03);
-		border: none;
-		width: 100%;
-		text-align: left;
-		cursor: pointer;
-	}
-
-	:root:not([data-theme="dark"]) .mobile-menu-option {
-		color: var(--color-text-muted);
-		background: var(--color-border-subtle);
+	#mobile-menu-close:hover {
+		filter: brightness(0.9);
 	}
 
 	.mobile-menu-option:hover {
-		color: #d1d5db;
-		background: rgba(255, 255, 255, 0.05);
-	}
-
-	:root:not([data-theme="dark"]) .mobile-menu-option:hover {
-		color: var(--color-text);
-		background: var(--color-border);
-	}
-
-	.mobile-menu-option.active {
-		color: var(--accent-dark);
-		background: color-mix(in srgb, var(--accent-dark) 15%, transparent);
-		font-weight: 600;
-	}
-
-	:root:not([data-theme="dark"]) .mobile-menu-option.active {
-		color: var(--primary);
-		background: color-mix(in srgb, var(--primary) 12%, transparent);
+		filter: brightness(0.95);
+		border-color: var(--color-border);
 	}
 
 	/* Theme toggle icons */
@@ -328,10 +172,6 @@ const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}\//, '/');
 		opacity: 1;
 		transform: rotate(0deg) scale(1);
 	}
-
-	#mobile-theme-text {
-		margin-left: 1.5rem;
-	}
 </style>
 
 <script is:inline>
@@ -348,12 +188,26 @@ const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}\//, '/');
 		menuButton.addEventListener('click', () => {
 			menuOverlay.classList.add('open');
 			document.body.style.overflow = 'hidden';
+			// Aplicar blur e overlay na barra de progresso
+			const progressBar = document.getElementById('reading-progress-container');
+			if (progressBar) {
+				progressBar.style.backdropFilter = 'blur(4px)';
+				progressBar.style.webkitBackdropFilter = 'blur(4px)';
+				progressBar.classList.add('modal-open');
+			}
 		});
 
 		// Close menu
 		const closeMenu = () => {
 			menuOverlay.classList.remove('open');
 			document.body.style.overflow = '';
+			// Remover blur e overlay da barra de progresso
+			const progressBar = document.getElementById('reading-progress-container');
+			if (progressBar) {
+				progressBar.style.backdropFilter = '';
+				progressBar.style.webkitBackdropFilter = '';
+				progressBar.classList.remove('modal-open');
+			}
 		};
 
 		menuClose.addEventListener('click', closeMenu);

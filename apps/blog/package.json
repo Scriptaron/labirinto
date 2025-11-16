@@ -24,6 +24,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@vitest/coverage-v8": "^4.0.8",
+    "jsdom": "^25.0.0",
     "tailwindcss": "^4",
     "typescript": "^5.9.3",
     "vitest": "^4.0.8"

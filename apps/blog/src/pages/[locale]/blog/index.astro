@@ -48,6 +48,7 @@ const t = useTranslations(locale as any);
 										src={post.data.heroImage} 
 										alt="" 
 										class={`mb-2 rounded-xl group-hover:shadow-[var(--box-shadow)] ${index === 0 ? 'w-full' : ''}`}
+										loading={index === 0 ? "eager" : "lazy"}
 									/>
 								)}
 								<h4 class={`m-0 text-text leading-tight group-hover:text-primary font-semibold mb-2 ${index === 0 ? 'text-[2.369rem] max-md:text-[1.563rem]' : 'text-xl'}`}>{post.data.title}</h4>

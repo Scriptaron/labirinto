@@ -14,7 +14,7 @@ const removeLocaleFromUrl = (fullUrl: string) => {
 const shareUrl = removeLocaleFromUrl(url);
 ---
 
-<div class="hidden lg:hidden mt-12 pt-8 border-t-2 border-gray-200 dark:border-gray-700">
+<div class="block lg:hidden mt-12 pt-8 border-t-2 border-gray-200 dark:border-gray-700">
 	<h4 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Compartilhe este post</h4>
 	<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
 		<a 
@@ -31,7 +31,7 @@ const shareUrl = removeLocaleFromUrl(url);
 		</a>
 
 		<a 
-			href={`https://www.instagram.com/`}
+			href={`https://www.instagram.com/?url=${encodeURIComponent(shareUrl + '?utm_source=instagram&utm_medium=social&utm_campaign=share')}`}
 			target="_blank"
 			rel="noopener noreferrer"
 			class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-none cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-lg no-underline text-white text-sm font-medium bg-gradient-to-br from-[#f09433] via-[#dc2743] to-[#bc1888]"
