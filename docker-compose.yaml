@@ -20,7 +20,7 @@ services:
       - blog
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -39,7 +39,7 @@ services:
       PUBLIC_INFISICAL_URL: ${PUBLIC_INFISICAL_URL:-https://app.infisical.com}
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4321"]
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:4321"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -62,7 +62,7 @@ services:
     profiles: ["selfhosted"]
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/api/status"]
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080/api/status"]
       interval: 30s
       timeout: 10s
       retries: 3
