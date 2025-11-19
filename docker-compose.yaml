@@ -9,7 +9,7 @@ services:
       dockerfile: apps/web/Dockerfile
     container_name: labirinto-web
     ports:
-      - "3002:3000"
+      - "3000"
     environment:
       <<: *common-env
       # URL interna do blog para rewrites do Next
@@ -32,7 +32,7 @@ services:
       dockerfile: apps/blog/Dockerfile
     container_name: labirinto-blog
     ports:
-      - "4321:4321"
+      - "4321"
     environment:
       <<: *common-env
       # Por padrão, Cloud; em selfhosted sobrepor via .env
