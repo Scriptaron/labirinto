@@ -51,6 +51,7 @@
 	@media (max-width: 1024px) {
 		.reading-progress-container.below-toc {
 			top: var(--toc-height, 0px);
+			transition: none;
 		}
 	}
 </style>
@@ -109,6 +110,14 @@
 
 		window.addEventListener('scroll', requestTick);
 		window.addEventListener('resize', requestTick);
+
+		// Observe TOC size changes to update position when menu expands/collapses
+		if (tocMobile) {
+			const resizeObserver = new ResizeObserver(() => {
+				requestTick();
+			});
+			resizeObserver.observe(tocMobile);
+		}
 		
 		// Initial update
 		setTimeout(updateProgress, 100);

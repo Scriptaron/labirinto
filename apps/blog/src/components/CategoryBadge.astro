@@ -1,0 +1,40 @@
+---
+import { categories } from '@/content.config';
+
+interface Props {
+	category: string;
+	locale: 'pt' | 'en' | 'es';
+}
+
+const { category, locale } = Astro.props;
+
+// Encontrar a categoria no schema
+const categoryKey = category.toLowerCase().replace(/\s+/g, '-');
+const categoryData = Object.values(categories).find(
+	cat => cat.slug === categoryKey || cat.id === categoryKey
+);
+
+// Nome traduzido ou fallback para o valor original
+const displayName = categoryData?.name[locale] || category;
+const categoryColor = categoryData?.color || 'var(--accent)';
+---
+
+<a 
+	href={`/${locale}/blog/category/${categoryKey}`}
+	class="inline-flex items-center gap-1 px-0 py-1 text-text text-xs font-medium no-underline transition-colors duration-300 category-badge"
+	style={`--category-color: ${categoryColor}`}
+>
+	<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+		<path d="M4 7V4h16v3M9 20h6M12 4v16"/>
+	</svg>
+	{displayName}
+</a>
+
+<style>
+	.category-badge {
+		color: var(--text-muted);
+	}
+	.category-badge:hover {
+		color: var(--category-color);
+	}
+</style>

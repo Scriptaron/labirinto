@@ -1,0 +1,86 @@
+---
+interface BreadcrumbItem {
+  name: string;
+  url?: string;
+}
+
+interface Props {
+  items: BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+
+// Gerar structured data para breadcrumbs
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": items.map((item, index) => ({
+    "@type": "ListItem",
+    "position": index + 1,
+    "name": item.name,
+    "item": item.url ? new URL(item.url, Astro.site).toString() : undefined
+  }))
+};
+---
+
+<!-- Structured Data -->
+<script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbSchema)} />
+
+<!-- Visual Breadcrumbs -->
+<nav aria-label="Breadcrumb" class="breadcrumbs">
+  <ol class="flex items-center gap-2 text-sm">
+    {items.map((item, index) => (
+      <li class="flex items-center gap-2">
+        {index > 0 && (
+          <span class="breadcrumb-separator" aria-hidden="true">/</span>
+        )}
+        {item.url ? (
+          <a 
+            href={item.url} 
+            class="breadcrumb-link"
+            {...(index === items.length - 1 ? { 'aria-current': 'page' } : {})}
+          >
+            {item.name}
+          </a>
+        ) : (
+          <span class="breadcrumb-current">{item.name}</span>
+        )}
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .breadcrumbs {
+    margin-bottom: 0;
+  }
+
+  .breadcrumb-link {
+    color: var(--color-text-muted);
+    transition: color 0.2s ease;
+  }
+
+  .breadcrumb-link:hover {
+    color: var(--primary);
+  }
+
+  :root[data-theme='dark'] .breadcrumb-link:hover,
+  [data-theme='dark'] .breadcrumb-link:hover {
+    color: var(--accent-dark);
+  }
+
+  .breadcrumb-separator {
+    color: var(--color-border);
+  }
+
+  .breadcrumb-current {
+    font-weight: 500;
+    color: var(--color-text);
+  }
+  
+  @media (max-width: 640px) {
+    .breadcrumbs {
+      font-size: 0.875rem;
+    }
+  }
+</style>
