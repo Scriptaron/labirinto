@@ -381,6 +381,11 @@
 				}
 			});
 
+			// Check if we are at the bottom of the page
+			if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50) {
+				newIndex = headings.length - 1;
+			}
+
 			if (newIndex !== currentIndex) {
 				currentIndex = newIndex;
 				currentNumber.textContent = (currentIndex + 1).toString();

@@ -83,6 +83,15 @@
 
 		headings.forEach(heading => observer.observe(heading));
 
+		// Handle bottom of page case
+		window.addEventListener('scroll', () => {
+			if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50) {
+				if (headings.length > 0) {
+					setActiveLink(headings[headings.length - 1].id);
+				}
+			}
+		});
+
 		let activeLink = null;
 
 		function setActiveLink(id) {
@@ -102,19 +111,15 @@
 			const listRect = tocList.getBoundingClientRect();
 			const linkRect = link.getBoundingClientRect();
 
-			// Check if link is out of view in the list
-			// Add a buffer to prevent unnecessary scrolling
-			if (linkRect.top < listRect.top + 20 || linkRect.bottom > listRect.bottom - 20) {
-				// Calculate center position
-				const scrollTop = tocList.scrollTop;
-				const linkTopRelative = linkRect.top - listRect.top;
-				const targetScroll = scrollTop + linkTopRelative - (listRect.height / 2) + (linkRect.height / 2);
-				
-				tocList.scrollTo({
-					top: targetScroll,
-					behavior: 'smooth'
-				});
-			}
+			// Always scroll to center the active link
+			const scrollTop = tocList.scrollTop;
+			const linkTopRelative = linkRect.top - listRect.top;
+			const targetScroll = scrollTop + linkTopRelative - (listRect.height / 2) + (linkRect.height / 2);
+			
+			tocList.scrollTo({
+				top: targetScroll,
+				behavior: 'smooth'
+			});
 		}
 	}
 
