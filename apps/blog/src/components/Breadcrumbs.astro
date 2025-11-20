@@ -24,26 +24,26 @@ const breadcrumbSchema = {
 ---
 
 <!-- Structured Data -->
-<script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+<script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbSchema)} />
 
 <!-- Visual Breadcrumbs -->
 <nav aria-label="Breadcrumb" class="breadcrumbs">
-  <ol class="flex items-center gap-2 text-sm text-text-muted">
+  <ol class="flex items-center gap-2 text-sm">
     {items.map((item, index) => (
       <li class="flex items-center gap-2">
         {index > 0 && (
-          <span class="text-text-muted" aria-hidden="true">/</span>
+          <span class="breadcrumb-separator" aria-hidden="true">/</span>
         )}
         {item.url ? (
           <a 
             href={item.url} 
-            class="hover:text-accent transition-colors"
+            class="breadcrumb-link"
             {...(index === items.length - 1 ? { 'aria-current': 'page' } : {})}
           >
             {item.name}
           </a>
         ) : (
-          <span class="font-medium text-text">{item.name}</span>
+          <span class="breadcrumb-current">{item.name}</span>
         )}
       </li>
     ))}
@@ -52,7 +52,30 @@ const breadcrumbSchema = {
 
 <style>
   .breadcrumbs {
-    margin-bottom: 1rem;
+    margin-bottom: 0;
+  }
+
+  .breadcrumb-link {
+    color: var(--color-text-muted);
+    transition: color 0.2s ease;
+  }
+
+  .breadcrumb-link:hover {
+    color: var(--primary);
+  }
+
+  :root[data-theme='dark'] .breadcrumb-link:hover,
+  [data-theme='dark'] .breadcrumb-link:hover {
+    color: var(--accent-dark);
+  }
+
+  .breadcrumb-separator {
+    color: var(--color-border);
+  }
+
+  .breadcrumb-current {
+    font-weight: 500;
+    color: var(--color-text);
   }
   
   @media (max-width: 640px) {

@@ -2,7 +2,8 @@
 // Table of Contents Mobile Component
 ---
 
-<div class="lg:hidden my-8 rounded-xl transition-all duration-300" id="toc-mobile">
+<div class="lg:hidden my-8 relative" id="toc-mobile-wrapper">
+	<div class="rounded-xl" id="toc-mobile">
 	<div class="flex items-center gap-3 p-6 transition-all duration-300">
 		<button class="border-0 rounded-lg w-10 h-10 flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-95 shrink-0" id="toc-menu-btn" aria-label="Menu de índices">
 			<svg class="w-5 h-5 toc-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -25,6 +26,7 @@
 	<div class="max-h-0 overflow-hidden transition-all duration-300" id="toc-mobile-list">
 		<!-- TOC items will be populated by JavaScript -->
 	</div>
+	</div>
 </div>
 
 <style is:global>
@@ -32,6 +34,7 @@
 	#toc-mobile {
 		background: #1a1a1a;
 		box-shadow: var(--shadow-lg);
+		transition: background-color 0.3s ease, box-shadow 0.3s ease, border-radius 0.3s ease;
 	}
 	
 	:root:not([data-theme="dark"]) #toc-mobile {
@@ -277,6 +280,7 @@
 
 <script is:inline>
 	function initMobileTOC() {
+		const wrapper = document.getElementById('toc-mobile-wrapper');
 		const tocMobile = document.getElementById('toc-mobile');
 		const tocList = document.getElementById('toc-mobile-list');
 		const menuBtn = document.getElementById('toc-menu-btn');
@@ -291,14 +295,13 @@
 		const headings = article.querySelectorAll('h2[id]');
 		
 		if (headings.length === 0) {
-			tocMobile.style.display = 'none';
+			wrapper.style.display = 'none';
 			return;
 		}
 
 		let currentIndex = 0;
 		let isExpanded = false;
 		let isCollapsed = false;
-		let tocOriginalTop = 0;
 
 		// Helper to check if dark theme
 		function isDarkTheme() {
@@ -431,21 +434,31 @@
 		// Handle scroll to collapse/expand TOC
 		function handleScroll() {
 			const scrollY = window.scrollY;
-			
-			// Store original position on first scroll
-			if (tocOriginalTop === 0 && !isCollapsed) {
-				tocOriginalTop = tocMobile.offsetTop;
-			}
+			const wrapperTop = wrapper.offsetTop;
 			
 			// Collapse when scrolled past the TOC original position
-			if (scrollY > tocOriginalTop && !isCollapsed) {
+			if (scrollY > wrapperTop && !isCollapsed) {
 				isCollapsed = true;
+				
+				// Close expanded menu when collapsing
+				if (isExpanded) {
+					toggleExpanded(false);
+				}
+
+				// Set wrapper height to prevent layout shift
+				// We use the header height because the list is collapsed
+				const header = tocMobile.firstElementChild;
+				if (header) {
+					wrapper.style.height = header.offsetHeight + 'px';
+				}
+
 				tocMobile.classList.add('!fixed', 'top-0', 'left-0', 'right-0', 'z-[100]', '!my-0', '!rounded-none', 'toc-fixed');
 				tocMobile.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.25)';
 				
 				// Show next button when collapsed
 				nextBtn.classList.remove('hidden');
 				nextBtn.classList.add('flex');
+				
 				
 				// Adjust button and number sizes
 				const buttons = tocMobile.querySelectorAll('button');
@@ -469,10 +482,11 @@
 				if (isExpanded) {
 					toggleExpanded(false);
 				}
-			} else if (scrollY <= tocOriginalTop - 50 && isCollapsed) {
+			} else if (scrollY <= wrapperTop - 20 && isCollapsed) {
 				isCollapsed = false;
 				tocMobile.classList.remove('!fixed', 'top-0', 'left-0', 'right-0', 'z-[100]', '!my-0', '!rounded-none', 'toc-fixed');
 				tocMobile.style.boxShadow = 'var(--shadow-lg)';
+				wrapper.style.height = '';
 				
 				// Hide next button when not collapsed
 				nextBtn.classList.add('hidden');

@@ -64,6 +64,10 @@
   /* Cores de Bordas e Divisórias */
   --color-border: var(--neutral-300);
   --color-border-subtle: var(--neutral-200); /* Mais sutil */
+
+  /* Cores específicas para conteúdo do blog */
+  --color-blog-highlight: var(--primary);        /* Roxo no tema claro */
+  --color-blog-highlight-hover: var(--primary-dark);
 }
 
 /* =================================
@@ -90,4 +94,8 @@
   /* Cores de Bordas e Divisórias */
   --color-border: var(--neutral-700);
   --color-border-subtle: var(--neutral-800); /* Mais sutil */
+
+  /* Cores específicas para conteúdo do blog */
+  --color-blog-highlight: var(--accent);         /* Ciano neon no tema escuro */
+  --color-blog-highlight-hover: var(--accent-light);
 }
