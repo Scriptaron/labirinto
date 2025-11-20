@@ -16,8 +16,18 @@ export default defineConfig({
 			prefixDefaultLocale: true
 		}
 	},
+	markdown: {
+		syntaxHighlight: 'shiki',
+		shikiConfig: {
+			themes: {
+				light: 'github-light',
+				dark: 'github-dark',
+			},
+			wrap: true,
+		},
+	},
 	integrations: [
-		mdx(), 
+		mdx(),
 		sitemap({
 			i18n: {
 				defaultLocale: 'pt',

@@ -8,27 +8,25 @@ import Header from '@/components/Header.astro';
 import TableOfContents from '@/components/TableOfContents.astro';
 import TableOfContentsMobile from '@/components/TableOfContentsMobile.astro';
 import SocialShare from '@/components/SocialShare.astro';
-import SocialShareMobile from '@/components/SocialShareMobile.astro';
 import SocialShareFloating from '@/components/SocialShareFloating.astro';
 import ReadingProgressBar from '@/components/ReadingProgressBar.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
-import { useTranslations } from '@/i18n/utils';
+import CategoryBadge from '@/components/CategoryBadge.astro';
+import TagsList from '@/components/TagsList.astro';
 
 type Props = CollectionEntry<'blog'>['data'] & {
 	headings?: { depth: number; slug: string; text: string }[];
 	alternateLinks?: { lang: string; url: string }[];
-	locale: string;
+	locale: 'pt' | 'en' | 'es';
 };
 
-const { title, description, pubDate, updatedDate, heroImage, headings, alternateLinks, locale, alternates } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, headings, alternateLinks, locale, alternates, category, tags } = Astro.props;
 
 // URL completa para compartilhamento
 const currentUrl = new URL(Astro.url.pathname, Astro.site).toString();
 
 // Breadcrumbs
-const t = useTranslations(locale as any);
 const breadcrumbItems = [
-  { name: t('site.home'), url: `/${locale}` },
   { name: 'Blog', url: `/${locale}/blog` },
   { name: title }
 ];
@@ -160,12 +158,14 @@ const breadcrumbItems = [
 
 				.blog-content :global(h1) {
 					font-size: 1.75rem;
+					font-weight: 700;
 					margin-top: 1.5rem;
 					margin-bottom: 0.75rem;
 				}
 
 				.blog-content :global(h2) {
 					font-size: 1.5rem;
+					font-weight: 700;
 					margin-top: 1.75rem;
 					margin-bottom: 0.75rem;
 				}
@@ -318,11 +318,10 @@ const breadcrumbItems = [
 					color: var(--color-text-muted);
 					opacity: 0.7;
 				}
-
 				/* ========================================
-				 * CÓDIGO INLINE
-				 * ======================================== */
-				.blog-content :global(code) {
+				* CÓDIGO INLINE (dentro de texto)
+				* ======================================== */
+				.blog-content :global(:not(pre) > code) {
 					background-color: var(--color-surface);
 					color: var(--color-blog-highlight);
 					padding: 0.2rem 0.4rem;
@@ -334,32 +333,99 @@ const breadcrumbItems = [
 				}
 
 				/* ========================================
-				 * BLOCOS DE CÓDIGO
-				 * ======================================== */
+				* BLOCOS DE CÓDIGO COM SHIKI
+				* ======================================== */
+
+				/* Container do bloco de código */
 				.blog-content :global(pre) {
-					background-color: var(--color-surface);
 					padding: 1.5rem;
 					border-radius: 0.5rem;
 					overflow-x: auto;
 					margin: 1.5rem 0;
-					border: 1px solid var(--color-border);
 					box-shadow: var(--shadow-sm);
+					border: 1px solid var(--color-border);
 				}
 
+				/* Código dentro do pre */
 				.blog-content :global(pre code) {
-					background-color: transparent;
-					color: var(--color-text);
-					padding: 0;
-					border-radius: 0;
-					font-size: 0.95rem;
-					border: none;
+					padding: 0 !important;
+					border-radius: 0 !important;
+					font-size: 0.95rem !important;
+					border: none !important;
+					background: none !important;
+					color: inherit !important;
+					font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+					line-height: 1.7;
 				}
 
+				/* Tema escuro do Shiki - prefers-color-scheme */
+				@media (prefers-color-scheme: dark) {
+					:global(:root:not([data-theme='light'])) .blog-content :global(pre.astro-code),
+					:global(:root:not([data-theme='light'])) .blog-content :global(pre.astro-code span) {
+						color: var(--shiki-dark) !important;
+						background-color: var(--shiki-dark-bg) !important;
+					}
+				}
+
+				/* Tema escuro do Shiki - data-theme */
+				:global([data-theme='dark']) .blog-content :global(pre.astro-code),
+				:global([data-theme='dark']) .blog-content :global(pre.astro-code span) {
+					color: var(--shiki-dark) !important;
+					background-color: var(--shiki-dark-bg) !important;
+				}
+
+				/* Ajustes para mobile */
 				@media (min-width: 768px) {
 					.blog-content :global(pre) {
 						padding: 2rem;
 						border-radius: 0.75rem;
 					}
+				}
+
+				/* Scrollbar customizada para blocos de código */
+				.blog-content :global(pre)::-webkit-scrollbar {
+					height: 8px;
+				}
+
+				.blog-content :global(pre)::-webkit-scrollbar-track {
+					background: rgba(0, 0, 0, 0.1);
+					border-radius: 4px;
+				}
+
+				.blog-content :global(pre)::-webkit-scrollbar-thumb {
+					background: rgba(0, 0, 0, 0.3);
+					border-radius: 4px;
+				}
+
+				.blog-content :global(pre)::-webkit-scrollbar-thumb:hover {
+					background: rgba(0, 0, 0, 0.5);
+				}
+
+				/* Scrollbar dark mode */
+				@media (prefers-color-scheme: dark) {
+					.blog-content :global(pre)::-webkit-scrollbar-track {
+						background: rgba(255, 255, 255, 0.1);
+					}
+					
+					.blog-content :global(pre)::-webkit-scrollbar-thumb {
+						background: rgba(255, 255, 255, 0.3);
+					}
+					
+					.blog-content :global(pre)::-webkit-scrollbar-thumb:hover {
+						background: rgba(255, 255, 255, 0.5);
+					}
+				}
+
+				:global([data-theme='dark']) .blog-content :global(pre)::-webkit-scrollbar-track {
+					background: rgba(255, 255, 255, 0.1);
+				}
+
+				:global([data-theme='dark']) .blog-content :global(pre)::-webkit-scrollbar-thumb {
+					background: rgba(255, 255, 255, 0.3);
+				}
+
+				:global([data-theme='dark']) .blog-content :global(pre)::-webkit-scrollbar-thumb:hover {
+					background: rgba(255, 255, 255, 0.5);
 				}
 
 				/* ========================================
@@ -534,9 +600,11 @@ const breadcrumbItems = [
 					box-shadow: var(--shadow-sm);
 				}
 
-				.blog-content :global(thead) {
-					background-color: var(--color-surface);
-					border-bottom: 2px solid var(--color-border);
+
+
+				.blog-content :global(th),
+				.blog-content :global(td) {
+					padding: 0.75rem;
 				}
 
 				.blog-content :global(th) {
@@ -623,35 +691,64 @@ const breadcrumbItems = [
 				}
 			</style>
 			<article>
-				<div class="w-full hero-image-container">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" class="hero-image" loading="eager" />}
-				</div>
 				<div class="max-w-[1200px] mx-auto relative">
-					<div class="w-full max-w-[calc(100%-1rem)] sm:max-w-[calc(100%-1.5rem)] md:max-w-[calc(100%-2rem)] mx-auto px-3 sm:px-4 py-3 sm:py-4 text-text">
+					<div class="w-full mx-auto px-4 sm:px-6 py-3 sm:py-4">
 						<Breadcrumbs items={breadcrumbItems} />
-						<div class="py-4 sm:py-5 md:py-6 text-center">
-							<div class="mb-3 sm:mb-3.5 md:mb-4 text-xs uppercase tracking-wider text-text-muted font-semibold">
-								<FormattedDate date={pubDate} />
+					</div>
+					<div class="w-full mx-auto px-4 sm:px-6 lg:px-0 lg:max-w-[1020px]">
+						<div class="py-4 sm:py-5 md:py-6">
+							<div class="mb-3 sm:mb-3.5 md:mb-4 text-xs uppercase tracking-wider text-text-muted font-semibold flex items-center gap-3 flex-wrap">
+								{category && (
+									<>
+										<CategoryBadge category={category} locale={locale} />
+										<span class="text-text-muted">•</span>
+									</>
+								)}
+								<div class="flex items-center gap-2">
+									<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+									</svg>
+									<FormattedDate date={pubDate} />
+								</div>
 								{
 									updatedDate && (
-										<div class="italic mt-1 normal-case text-[0.7rem] font-medium">
-											Atualizado em <FormattedDate date={updatedDate} />
+										<div class="italic normal-case text-[0.7rem] font-medium">
+											• Atualizado em <FormattedDate date={updatedDate} />
 										</div>
 									)
 								}
 							</div>
-							<h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-4 sm:mb-5 md:mb-6 px-2">{title}</h1>
-							<hr class="w-32 sm:w-40 md:w-48 lg:w-[200px] mx-auto border-t-2 md:border-t-[3px]" />
+							<h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-3 sm:mb-4">{title}</h1>
+							{description && (
+								<p class="text-base sm:text-lg text-text-muted leading-relaxed mb-4 sm:mb-5 md:mb-6">{description}</p>
+							)}
+							<hr class="w-16 sm:w-20 border-t" />
 						</div>
-						<TableOfContentsMobile />
-						<div class="flex gap-6 lg:gap-10 xl:gap-12 items-start">
-							<div class="toc-share-sidebar">
-								<TableOfContents />
-								<SocialShare url={currentUrl} title={title} />
-							</div>
-							<div class="flex-1 max-w-full lg:max-w-[720px] min-w-0 blog-content">
-								<slot />
-							</div>
+					</div>
+					{heroImage && (
+						<div class="hero-image-container mb-8 lg:mb-12">
+							<Image
+								class="hero-image"
+								width={1020}
+								height={510}
+								src={heroImage}
+								alt={title}
+							/>
+						</div>
+					)}
+					<TableOfContentsMobile />
+					<div class="flex gap-6 lg:gap-10 xl:gap-12 items-start">
+						<div class="toc-share-sidebar">
+							<TableOfContents />
+							<SocialShare url={currentUrl} title={title} />
+						</div>
+						<div class="flex-1 max-w-full lg:max-w-[720px] min-w-0 blog-content">
+							<slot />
+							{tags && tags.length > 0 && (
+								<div class="mt-12 pt-6 border-t border-border">
+									<TagsList tags={tags} locale={locale} />
+								</div>
+							)}
 						</div>
 					</div>
 				</div>
