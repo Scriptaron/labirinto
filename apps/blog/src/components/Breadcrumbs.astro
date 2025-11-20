@@ -1,0 +1,63 @@
+---
+interface BreadcrumbItem {
+  name: string;
+  url?: string;
+}
+
+interface Props {
+  items: BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+
+// Gerar structured data para breadcrumbs
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": items.map((item, index) => ({
+    "@type": "ListItem",
+    "position": index + 1,
+    "name": item.name,
+    "item": item.url ? new URL(item.url, Astro.site).toString() : undefined
+  }))
+};
+---
+
+<!-- Structured Data -->
+<script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+
+<!-- Visual Breadcrumbs -->
+<nav aria-label="Breadcrumb" class="breadcrumbs">
+  <ol class="flex items-center gap-2 text-sm text-text-muted">
+    {items.map((item, index) => (
+      <li class="flex items-center gap-2">
+        {index > 0 && (
+          <span class="text-text-muted" aria-hidden="true">/</span>
+        )}
+        {item.url ? (
+          <a 
+            href={item.url} 
+            class="hover:text-accent transition-colors"
+            {...(index === items.length - 1 ? { 'aria-current': 'page' } : {})}
+          >
+            {item.name}
+          </a>
+        ) : (
+          <span class="font-medium text-text">{item.name}</span>
+        )}
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .breadcrumbs {
+    margin-bottom: 1rem;
+  }
+  
+  @media (max-width: 640px) {
+    .breadcrumbs {
+      font-size: 0.875rem;
+    }
+  }
+</style>

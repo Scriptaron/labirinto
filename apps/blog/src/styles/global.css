@@ -1,9 +1,23 @@
 @import "tailwindcss";
 @import "../../../../packages/tailwind-config/globals.css";
 
+/* Critical CSS - carregado primeiro */
 body {
   background: var(--color-background);
   color: var(--color-text);
+  font-display: swap; /* Otimização de fontes */
+}
+
+/* Otimização de renderização */
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Prevenir layout shift */
+img[loading="lazy"] {
+  content-visibility: auto;
 }
 
 /* Focus visible para acessibilidade (navegação por teclado) */
@@ -17,4 +31,23 @@ button:focus-visible,
 a:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
+}
+
+/* Otimização de scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

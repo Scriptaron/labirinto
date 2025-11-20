@@ -11,6 +11,8 @@ import SocialShare from '@/components/SocialShare.astro';
 import SocialShareMobile from '@/components/SocialShareMobile.astro';
 import SocialShareFloating from '@/components/SocialShareFloating.astro';
 import ReadingProgressBar from '@/components/ReadingProgressBar.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import { useTranslations } from '@/i18n/utils';
 
 type Props = CollectionEntry<'blog'>['data'] & {
 	headings?: { depth: number; slug: string; text: string }[];
@@ -22,15 +24,49 @@ const { title, description, pubDate, updatedDate, heroImage, headings, alternate
 
 // URL completa para compartilhamento
 const currentUrl = new URL(Astro.url.pathname, Astro.site).toString();
+
+// Breadcrumbs
+const t = useTranslations(locale as any);
+const breadcrumbItems = [
+  { name: t('site.home'), url: `/${locale}` },
+  { name: 'Blog', url: `/${locale}/blog` },
+  { name: title }
+];
 ---
 
 <html lang={locale}>
 	<head>
-		<meta charset="utf-8" />
-		<BaseHead title={title} description={description} />
+		<BaseHead title={title} description={description} image={heroImage} />
 		{alternateLinks && alternateLinks.map(({ lang, url }) => (
 			<link rel="alternate" hreflang={lang} href={url} />
 		))}
+		<!-- Structured Data (JSON-LD) para SEO -->
+		<script type="application/ld+json" set:html={JSON.stringify({
+			"@context": "https://schema.org",
+			"@type": "BlogPosting",
+			"headline": title,
+			"description": description,
+			"datePublished": pubDate.toISOString(),
+			"dateModified": (updatedDate || pubDate).toISOString(),
+			"author": {
+				"@type": "Organization",
+				"name": "Labirinto"
+			},
+			"publisher": {
+				"@type": "Organization",
+				"name": "Labirinto",
+				"logo": {
+					"@type": "ImageObject",
+					"url": new URL('/favicon.svg', Astro.site).toString()
+				}
+			},
+			"image": heroImage ? new URL(heroImage.src, Astro.site).toString() : undefined,
+			"mainEntityOfPage": {
+				"@type": "WebPage",
+				"@id": new URL(Astro.url.pathname, Astro.site).toString()
+			},
+			"inLanguage": locale
+		})} />
 	</head>
 
 	<body>
@@ -383,6 +419,7 @@ const currentUrl = new URL(Astro.url.pathname, Astro.site).toString();
 				</div>
 				<div class="max-w-[1200px] mx-auto relative">
 					<div class="w-full max-w-[calc(100%-1rem)] sm:max-w-[calc(100%-1.5rem)] md:max-w-[calc(100%-2rem)] mx-auto px-3 sm:px-4 py-3 sm:py-4 text-text">
+						<Breadcrumbs items={breadcrumbItems} />
 						<div class="py-4 sm:py-5 md:py-6 text-center">
 							<div class="mb-3 sm:mb-3.5 md:mb-4 text-xs uppercase tracking-wider text-text-muted font-semibold">
 								<FormattedDate date={pubDate} />

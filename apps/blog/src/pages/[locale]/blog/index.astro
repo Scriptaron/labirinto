@@ -32,7 +32,28 @@ const t = useTranslations(locale as any);
 ---
 
 <PostHogLayout>
-	<BaseHead title={t('site.title')} description={t('site.description')} />
+	<html lang={locale}>
+	<head>
+		<BaseHead title={t('site.title')} description={t('site.description')} />
+		<!-- Structured Data para lista de blog posts -->
+		<script type="application/ld+json" set:html={JSON.stringify({
+			"@context": "https://schema.org",
+			"@type": "Blog",
+			"name": t('site.title'),
+			"description": t('site.description'),
+			"url": new URL(`/${locale}/blog`, Astro.site).toString(),
+			"inLanguage": locale,
+			"blogPost": posts.slice(0, 10).map(post => ({
+				"@type": "BlogPosting",
+				"headline": post.data.title,
+				"description": post.data.description,
+				"datePublished": post.data.pubDate.toISOString(),
+				"url": new URL(`/${locale}/blog/${post.data.slug}`, Astro.site).toString(),
+				"image": post.data.heroImage ? new URL(post.data.heroImage.src, Astro.site).toString() : undefined
+			}))
+		})} />
+	</head>
+	<body>
 	<Header />
 	<main class="w-[960px] max-w-[calc(100%-2rem)] mx-auto">
 		<section>
@@ -63,4 +84,6 @@ const t = useTranslations(locale as any);
 		</section>
 	</main>
 	<Footer />
+	</body>
+	</html>
 </PostHogLayout>
