@@ -20,6 +20,7 @@
     "@infisical/sdk": "^4.0.6",
     "@labirinto/i18n-config": "workspace:*",
     "astro": "^5.15.4",
+    "rehype-external-links": "^3.0.0",
     "sharp": "^0.34.3"
   },
   "devDependencies": {

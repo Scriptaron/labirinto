@@ -21,10 +21,11 @@ describe('FormattedDate Component', () => {
         });
 
         it('deve formatar diferentes meses corretamente', () => {
+            // Usando UTC para evitar problemas de timezone
             const dates = [
-                new Date('2024-01-01'),
-                new Date('2024-06-15'),
-                new Date('2024-12-31'),
+                new Date('2024-01-01T12:00:00Z'),
+                new Date('2024-06-15T12:00:00Z'),
+                new Date('2024-12-31T12:00:00Z'),
             ];
 
             const formatted = dates.map(date =>
@@ -32,6 +33,7 @@ describe('FormattedDate Component', () => {
                     year: 'numeric',
                     month: 'short',
                     day: 'numeric',
+                    timeZone: 'UTC' // Forçando UTC
                 })
             );
 
@@ -52,11 +54,12 @@ describe('FormattedDate Component', () => {
         });
 
         it('deve formatar dia corretamente', () => {
-            const date = new Date('2024-06-15');
+            const date = new Date('2024-06-15T12:00:00Z');
             const formatted = date.toLocaleDateString('en-us', {
                 year: 'numeric',
                 month: 'short',
                 day: 'numeric',
+                timeZone: 'UTC'
             });
 
             expect(formatted).toContain('15');
@@ -113,18 +116,18 @@ describe('FormattedDate Component', () => {
     describe('Formatação de Meses Abreviados', () => {
         it('deve usar mês abreviado (short)', () => {
             const months = [
-                { date: new Date('2024-01-01'), short: 'Jan' },
-                { date: new Date('2024-02-01'), short: 'Feb' },
-                { date: new Date('2024-03-01'), short: 'Mar' },
-                { date: new Date('2024-04-01'), short: 'Apr' },
-                { date: new Date('2024-05-01'), short: 'May' },
-                { date: new Date('2024-06-01'), short: 'Jun' },
-                { date: new Date('2024-07-01'), short: 'Jul' },
-                { date: new Date('2024-08-01'), short: 'Aug' },
-                { date: new Date('2024-09-01'), short: 'Sep' },
-                { date: new Date('2024-10-01'), short: 'Oct' },
-                { date: new Date('2024-11-01'), short: 'Nov' },
-                { date: new Date('2024-12-01'), short: 'Dec' },
+                { date: new Date('2024-01-01T12:00:00Z'), short: 'Jan' },
+                { date: new Date('2024-02-01T12:00:00Z'), short: 'Feb' },
+                { date: new Date('2024-03-01T12:00:00Z'), short: 'Mar' },
+                { date: new Date('2024-04-01T12:00:00Z'), short: 'Apr' },
+                { date: new Date('2024-05-01T12:00:00Z'), short: 'May' },
+                { date: new Date('2024-06-01T12:00:00Z'), short: 'Jun' },
+                { date: new Date('2024-07-01T12:00:00Z'), short: 'Jul' },
+                { date: new Date('2024-08-01T12:00:00Z'), short: 'Aug' },
+                { date: new Date('2024-09-01T12:00:00Z'), short: 'Sep' },
+                { date: new Date('2024-10-01T12:00:00Z'), short: 'Oct' },
+                { date: new Date('2024-11-01T12:00:00Z'), short: 'Nov' },
+                { date: new Date('2024-12-01T12:00:00Z'), short: 'Dec' },
             ];
 
             months.forEach(({ date, short }) => {
@@ -132,6 +135,7 @@ describe('FormattedDate Component', () => {
                     year: 'numeric',
                     month: 'short',
                     day: 'numeric',
+                    timeZone: 'UTC'
                 });
                 expect(formatted).toContain(short);
             });
@@ -141,22 +145,24 @@ describe('FormattedDate Component', () => {
     describe('Formatação de Dias', () => {
         it('deve formatar dias de 1 a 31', () => {
             for (let day = 1; day <= 31; day++) {
-                const date = new Date(`2024-01-${day.toString().padStart(2, '0')}`);
+                const date = new Date(`2024-01-${day.toString().padStart(2, '0')}T12:00:00Z`);
                 const formatted = date.toLocaleDateString('en-us', {
                     year: 'numeric',
                     month: 'short',
                     day: 'numeric',
+                    timeZone: 'UTC'
                 });
                 expect(formatted).toContain(day.toString());
             }
         });
 
         it('deve usar formato numérico para dia', () => {
-            const date = new Date('2024-01-05');
+            const date = new Date('2024-01-05T12:00:00Z');
             const formatted = date.toLocaleDateString('en-us', {
                 year: 'numeric',
                 month: 'short',
                 day: 'numeric',
+                timeZone: 'UTC'
             });
 
             // Deve conter 5, não 05
@@ -230,11 +236,12 @@ describe('FormattedDate Component', () => {
 
     describe('Casos Extremos', () => {
         it('deve formatar primeiro dia do ano', () => {
-            const date = new Date('2024-01-01');
+            const date = new Date('2024-01-01T12:00:00Z');
             const formatted = date.toLocaleDateString('en-us', {
                 year: 'numeric',
                 month: 'short',
                 day: 'numeric',
+                timeZone: 'UTC'
             });
 
             expect(formatted).toContain('Jan');
@@ -243,11 +250,12 @@ describe('FormattedDate Component', () => {
         });
 
         it('deve formatar último dia do ano', () => {
-            const date = new Date('2024-12-31');
+            const date = new Date('2024-12-31T12:00:00Z');
             const formatted = date.toLocaleDateString('en-us', {
                 year: 'numeric',
                 month: 'short',
                 day: 'numeric',
+                timeZone: 'UTC'
             });
 
             expect(formatted).toContain('Dec');
@@ -256,9 +264,9 @@ describe('FormattedDate Component', () => {
         });
 
         it('deve funcionar com anos bissextos', () => {
-            const date = new Date('2024-02-29');
-            expect(date.getDate()).toBe(29);
-            expect(date.getMonth()).toBe(1); // Fevereiro
+            const date = new Date('2024-02-29T12:00:00Z');
+            expect(date.getUTCDate()).toBe(29);
+            expect(date.getUTCMonth()).toBe(1); // Fevereiro
         });
 
         it('deve funcionar com diferentes timezones', () => {

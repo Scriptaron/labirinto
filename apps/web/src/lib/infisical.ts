@@ -3,15 +3,25 @@ import { InfisicalSDK } from "@infisical/sdk";
 let infisicalClient: InfisicalSDK | null = null;
 
 export async function getInfisicalClient() {
+  // Se não houver credenciais, retorna null (evita crash no build)
+  if (!process.env.INFISICAL_CLIENT_ID || !process.env.INFISICAL_CLIENT_SECRET) {
+    console.warn("Infisical credentials not found. Skipping SDK initialization.");
+    return null;
+  }
+
   if (!infisicalClient) {
     const client = new InfisicalSDK();
 
-    await client.auth().universalAuth.login({
-      clientId: process.env.INFISICAL_CLIENT_ID!,
-      clientSecret: process.env.INFISICAL_CLIENT_SECRET!,
-    });
-
-    infisicalClient = client;
+    try {
+      await client.auth().universalAuth.login({
+        clientId: process.env.INFISICAL_CLIENT_ID,
+        clientSecret: process.env.INFISICAL_CLIENT_SECRET,
+      });
+      infisicalClient = client;
+    } catch (error) {
+      console.error("Failed to authenticate with Infisical:", error);
+      return null;
+    }
   }
   return infisicalClient;
 }
@@ -24,13 +34,21 @@ export async function getSecret(secretName: string) {
 
   const client = await getInfisicalClient();
 
-  const secret = await client.secrets().getSecret({
-    environment: process.env.INFISICAL_ENVIRONMENT || "dev",
-    projectId: process.env.INFISICAL_PROJECT_ID!,
-    secretName,
-  });
+  if (!client) {
+    return undefined;
+  }
 
-  return secret.secretValue;
+  try {
+    const secret = await client.secrets().getSecret({
+      environment: process.env.INFISICAL_ENVIRONMENT || "dev",
+      projectId: process.env.INFISICAL_PROJECT_ID!,
+      secretName,
+    });
+    return secret.secretValue;
+  } catch (error) {
+    console.error(`Failed to fetch secret ${secretName}:`, error);
+    return undefined;
+  }
 }
 
 // Função helper para carregar as variáveis do PostHog

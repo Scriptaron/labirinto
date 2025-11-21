@@ -14,11 +14,12 @@ export function CSPostHogProvider({
     apiHost: string
 }) {
     useEffect(() => {
-        if (apiKey && apiHost) {
+        if (apiKey && apiHost && !posthog.__loaded) {
             posthog.init(apiKey, {
                 api_host: apiHost,
                 person_profiles: 'identified_only',
                 capture_pageview: false, // Handled by Next.js router usually, or manually
+                capture_pageleave: true,
             })
         }
     }, [apiKey, apiHost])

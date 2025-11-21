@@ -16,6 +16,11 @@ services:
       BLOG_URL: ${BLOG_URL:-http://blog:4321}
       # Por padrão, Cloud; em selfhosted sobrepor via .env
       NEXT_PUBLIC_INFISICAL_URL: ${NEXT_PUBLIC_INFISICAL_URL:-https://app.infisical.com}
+      # Credenciais Infisical (Runtime)
+      INFISICAL_CLIENT_ID: ${INFISICAL_CLIENT_ID}
+      INFISICAL_CLIENT_SECRET: ${INFISICAL_CLIENT_SECRET}
+      INFISICAL_PROJECT_ID: ${INFISICAL_PROJECT_ID}
+      INFISICAL_ENVIRONMENT: ${INFISICAL_ENVIRONMENT:-dev}
     depends_on:
       - blog
     restart: unless-stopped
@@ -30,6 +35,12 @@ services:
     build:
       context: .
       dockerfile: apps/blog/Dockerfile
+      args:
+        # Credenciais Infisical (Build time)
+        INFISICAL_CLIENT_ID: ${INFISICAL_CLIENT_ID}
+        INFISICAL_CLIENT_SECRET: ${INFISICAL_CLIENT_SECRET}
+        INFISICAL_PROJECT_ID: ${INFISICAL_PROJECT_ID}
+        INFISICAL_ENVIRONMENT: ${INFISICAL_ENVIRONMENT:-dev}
     container_name: labirinto-blog
     ports:
       - "4321"

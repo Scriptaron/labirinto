@@ -31,6 +31,19 @@ RUN cd packages/i18n-config && pnpm build || true
 
 # Build da aplicação blog
 WORKDIR /app/apps/blog
+
+# Argumentos de build para Infisical
+ARG INFISICAL_CLIENT_ID
+ARG INFISICAL_CLIENT_SECRET
+ARG INFISICAL_PROJECT_ID
+ARG INFISICAL_ENVIRONMENT="dev"
+
+# Disponibilizar variáveis de ambiente durante o build
+ENV INFISICAL_CLIENT_ID=$INFISICAL_CLIENT_ID
+ENV INFISICAL_CLIENT_SECRET=$INFISICAL_CLIENT_SECRET
+ENV INFISICAL_PROJECT_ID=$INFISICAL_PROJECT_ID
+ENV INFISICAL_ENVIRONMENT=$INFISICAL_ENVIRONMENT
+
 RUN pnpm build
 
 # Imagem de produção com servidor Node

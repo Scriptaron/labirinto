@@ -38,6 +38,10 @@ jobs:
 
       - name: Run tests with coverage
         run: pnpm --filter "${{ matrix.workspace }}" test --coverage
+        env:
+          INFISICAL_CLIENT_ID: ${{ secrets.INFISICAL_CLIENT_ID }}
+          INFISICAL_CLIENT_SECRET: ${{ secrets.INFISICAL_CLIENT_SECRET }}
+          INFISICAL_PROJECT_ID: ${{ secrets.INFISICAL_PROJECT_ID }}
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
