@@ -6,7 +6,8 @@ interface Props {
 
 const { url, title } = Astro.props;
 
-const shareUrl = url;
+// Remover o locale da URL para compartilhamento (canônico)
+const shareUrl = url.replace(/\/(pt|en|es)\//, '/');
 ---
 
 <div class="pt-4 border-t border-border">
