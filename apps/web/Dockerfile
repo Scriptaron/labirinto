@@ -56,4 +56,10 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
+# Variáveis de ambiente necessárias para o Infisical (runtime)
+ENV INFISICAL_CLIENT_ID=""
+ENV INFISICAL_CLIENT_SECRET=""
+ENV INFISICAL_PROJECT_ID=""
+ENV INFISICAL_ENVIRONMENT="dev"
+
 CMD ["node", "apps/web/server.js"]

@@ -13,10 +13,13 @@ jobs:
     
     strategy:
       matrix:
-        workspace:
-          - apps/blog
-          - apps/web
-          - packages/i18n-config
+        include:
+          - workspace: blog
+            path: apps/blog
+          - workspace: web
+            path: apps/web
+          - workspace: '@labirinto/i18n-config'
+            path: packages/i18n-config
 
     steps:
       - name: Checkout
@@ -37,12 +40,16 @@ jobs:
         run: pnpm install --frozen-lockfile || pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Run tests with coverage
-        run: pnpm --filter "${{ matrix.workspace }}" test --coverage
+        run: pnpm --filter "${{ matrix.workspace }}" test:coverage
+        env:
+          INFISICAL_CLIENT_ID: ${{ secrets.INFISICAL_CLIENT_ID }}
+          INFISICAL_CLIENT_SECRET: ${{ secrets.INFISICAL_CLIENT_SECRET }}
+          INFISICAL_PROJECT_ID: ${{ secrets.INFISICAL_PROJECT_ID }}
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
-          files: ./${{ matrix.workspace }}/coverage/coverage-final.json
+          files: ./${{ matrix.path }}/coverage/coverage-final.json
           flags: ${{ matrix.workspace }}
           name: ${{ matrix.workspace }}
           fail_ci_if_error: false

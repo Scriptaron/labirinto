@@ -6,12 +6,7 @@ interface Props {
 
 const { url, title } = Astro.props;
 
-// Remover prefixo de idioma da URL (/pt/, /en/, /es/)
-const removeLocaleFromUrl = (fullUrl: string) => {
-	return fullUrl.replace(/\/(pt|en|es)\//, '/');
-};
-
-const shareUrl = removeLocaleFromUrl(url);
+const shareUrl = url;
 ---
 
 <!-- Botão flutuante fixo (apenas mobile) -->

@@ -522,6 +522,18 @@ const breadcrumbItems = [
 				}
 
 				/* ========================================
+				 * LIST MARKERS (Bullets & Numbers)
+				 * ======================================== */
+				.blog-content :global(li::marker) {
+					color: var(--color-blog-highlight);
+					font-weight: 600;
+				}
+
+				.blog-content :global(li:hover::marker) {
+					color: var(--color-blog-highlight-hover);
+				}
+
+				/* ========================================
 				 * TASK LISTS (CHECKBOXES)
 				 * ======================================== */
 				.blog-content :global(ul.contains-task-list),
@@ -568,24 +580,7 @@ const breadcrumbItems = [
 				/* ========================================
 				 * LINHA HORIZONTAL
 				 * ======================================== */
-				.blog-content :global(hr) {
-					border: none;
-					border-top: 2px solid var(--color-border);
-					margin: 2rem 0;
-					opacity: 0.5;
-				}
-
-				@media (min-width: 640px) {
-					.blog-content :global(hr) {
-						margin: 2.5rem 0;
-					}
-				}
-
-				@media (min-width: 768px) {
-					.blog-content :global(hr) {
-						margin: 3rem 0;
-					}
-				}
+				/* HR Styles are now global */
 
 				/* ========================================
 				 * TABELAS
@@ -610,9 +605,18 @@ const breadcrumbItems = [
 				.blog-content :global(th) {
 					padding: 0.75rem 1rem;
 					text-align: left;
-					font-weight: 600;
+					font-weight: 800;
 					color: var(--color-text);
-					border-right: 1px solid var(--color-border-subtle);
+					background-color: rgba(0, 0, 0, 0.04);
+					border-bottom: 2px solid var(--color-border);
+					border-right: 1px solid var(--neutral-300);
+					text-transform: uppercase;
+					font-size: 0.85rem;
+					letter-spacing: 0.05em;
+				}
+
+				:global([data-theme='dark']) .blog-content :global(th) {
+					background-color: rgba(255, 255, 255, 0.04);
 				}
 
 				.blog-content :global(th:last-child) {
@@ -621,8 +625,8 @@ const breadcrumbItems = [
 
 				.blog-content :global(td) {
 					padding: 0.75rem 1rem;
-					border-top: 1px solid var(--color-border-subtle);
-					border-right: 1px solid var(--color-border-subtle);
+					border-top: 1px solid var(--neutral-300);
+					border-right: 1px solid var(--neutral-300);
 					color: var(--color-text);
 				}
 
@@ -630,8 +634,17 @@ const breadcrumbItems = [
 					border-right: none;
 				}
 
+				:global([data-theme='dark']) .blog-content :global(td),
+				:global([data-theme='dark']) .blog-content :global(th) {
+					border-color: var(--neutral-900);
+				}
+
 				.blog-content :global(tbody tr:hover) {
-					background-color: var(--color-background);
+					background-color: color-mix(in srgb, var(--color-blog-highlight) 8%, transparent);
+				}
+
+				:global([data-theme='dark']) .blog-content :global(tbody tr:hover) {
+					background-color: color-mix(in srgb, var(--color-blog-highlight) 10%, transparent);
 				}
 
 				@media (min-width: 768px) {
@@ -656,7 +669,7 @@ const breadcrumbItems = [
 				.blog-content :global(.footnotes) {
 					margin-top: 3rem;
 					padding-top: 2rem;
-					border-top: 2px solid var(--color-border);
+					border-top: 1px solid var(--color-border);
 					font-size: 0.875rem;
 					color: var(--color-text-muted);
 				}
@@ -688,6 +701,53 @@ const breadcrumbItems = [
 					display: block;
 					content: "";
 					margin-top: 0.5rem;
+				}
+
+				/* ========================================
+				 * HIGHLIGHT (MARK)
+				 * ======================================== */
+				.blog-content :global(mark) {
+					background-color: var(--accent-light);
+					color: var(--neutral-900);
+					padding: 0.1rem 0.3rem;
+					border-radius: 0.2rem;
+				}
+
+				:global([data-theme='dark']) .blog-content :global(mark) {
+					background-color: var(--accent);
+					color: var(--neutral-900);
+				}
+
+				/* ========================================
+				 * KBD
+				 * ======================================== */
+				.blog-content :global(kbd) {
+					background-color: var(--neutral-100);
+					border: 1px solid var(--neutral-300);
+					border-radius: 0.25rem;
+					padding: 0.1rem 0.3rem;
+					font-family: monospace;
+					font-size: 0.85em;
+					box-shadow: 0 1px 0 var(--neutral-300);
+					color: var(--color-text);
+				}
+
+				:global([data-theme='dark']) .blog-content :global(kbd) {
+					background-color: var(--neutral-800);
+					border-color: var(--neutral-600);
+					box-shadow: 0 1px 0 var(--neutral-600);
+					color: var(--neutral-100);
+				}
+
+				/* ========================================
+				 * TABLE ZEBRA STRIPING
+				 * ======================================== */
+				.blog-content :global(tr:nth-child(even)) {
+					background-color: rgba(0, 0, 0, 0.02);
+				}
+
+				:global([data-theme='dark']) .blog-content :global(tr:nth-child(even)) {
+					background-color: rgba(255, 255, 255, 0.06);
 				}
 			</style>
 			<article>
@@ -722,7 +782,7 @@ const breadcrumbItems = [
 							{description && (
 								<p class="text-base sm:text-lg text-text-muted leading-relaxed mb-4 sm:mb-5 md:mb-6">{description}</p>
 							)}
-							<hr class="w-16 sm:w-20 border-t" />
+							<hr class="w-16 sm:w-20 border-t border-border" />
 						</div>
 					</div>
 					{heroImage && (
@@ -756,4 +816,32 @@ const breadcrumbItems = [
 		</main>
 		<Footer />
 	</body>
+	<script>
+		function handleExternalLinks() {
+			const links = document.querySelectorAll('.blog-content a');
+			const currentHost = window.location.hostname;
+
+			links.forEach(link => {
+				try {
+					// Check if it's a valid URL
+					const url = new URL(link.href);
+					
+					// If hostname is different and not a mailto/tel link
+					if (url.hostname !== currentHost && !link.href.startsWith('mailto:') && !link.href.startsWith('tel:')) {
+						link.setAttribute('target', '_blank');
+						link.setAttribute('rel', 'noopener noreferrer');
+						
+						// Optional: Add an external link icon or indicator class
+						link.classList.add('external-link');
+					}
+				} catch (e) {
+					// Invalid URL, ignore
+				}
+			});
+		}
+
+		// Run on load and after Astro page transitions
+		document.addEventListener('DOMContentLoaded', handleExternalLinks);
+		document.addEventListener('astro:page-load', handleExternalLinks);
+	</script>
 </html>
