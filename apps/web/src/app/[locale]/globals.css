@@ -25,3 +25,25 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+::selection {
+  background-color: var(--primary-dark);
+  color: #000000;
+}
+
+@media (prefers-color-scheme: dark) {
+  ::selection {
+    background-color: var(--accent-dark);
+    color: #000000;
+  }
+}
+
+[data-theme="dark"] ::selection {
+  background-color: var(--accent-dark);
+  color: #000000;
+}
+
+[data-theme="light"] ::selection {
+  background-color: var(--primary-dark);
+  color: #ffffff;
+}

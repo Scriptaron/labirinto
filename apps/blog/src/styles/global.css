@@ -5,11 +5,16 @@
 body {
   background: var(--color-background);
   color: var(--color-text);
-  font-display: swap; /* Otimização de fontes */
+  font-display: swap;
+  /* Otimização de fontes */
 }
 
 /* Otimização de renderização */
-img, picture, video, canvas, svg {
+img,
+picture,
+video,
+canvas,
+svg {
   display: block;
   max-width: 100%;
   height: auto;
@@ -42,7 +47,7 @@ html {
   html {
     scroll-behavior: auto;
   }
-  
+
   *,
   *::before,
   *::after {
@@ -50,4 +55,26 @@ html {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+::selection {
+  background-color: var(--primary-dark);
+  color: #000000;
+}
+
+@media (prefers-color-scheme: dark) {
+  ::selection {
+    background-color: var(--accent-dark);
+    color: #000000;
+  }
+}
+
+[data-theme="dark"] ::selection {
+  background-color: var(--accent-dark);
+  color: #000000;
+}
+
+[data-theme="light"] ::selection {
+  background-color: var(--primary-dark);
+  color: #ffffff;
 }
