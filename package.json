@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "pnpm --filter web dev",
-    "dev:blog": "pnpm --filter blog dev",
-    "dev:all": "pnpm --parallel --filter web --filter blog dev",
+    "dev": "infisical run -- pnpm --filter web dev",
+    "dev:blog": "infisical run -- pnpm --filter blog dev",
+    "dev:all": "infisical run -- pnpm --parallel --filter web --filter blog dev",
     "build": "pnpm -r build",
     "lint": "pnpm --filter web lint",
     "test": "pnpm -r test",

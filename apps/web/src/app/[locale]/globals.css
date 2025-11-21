@@ -17,6 +17,7 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --color-border: var(--neutral-700);
   }
 }
 
@@ -24,6 +25,12 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--color-border);
+  margin: 2rem 0;
 }
 
 ::selection {
