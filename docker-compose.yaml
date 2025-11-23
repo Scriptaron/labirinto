@@ -2,25 +2,27 @@ x-common-env: &common-env
   NODE_ENV: production
 
 services:
-  # Next.js Web App (sobe por padrão)
+  # ==========================================
+  # 1. APPS PRINCIPAIS (Sempre rodam)
+  # ==========================================
+
   web:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
-    container_name: labirinto-web
+    # Use "3000:3000" para acesso local ou apenas "3000" se usar Proxy (Traefik)
     ports:
-      - "3000"
+      - "3000:3000"
     environment:
       <<: *common-env
-      # URL interna do blog para rewrites do Next
       BLOG_URL: ${BLOG_URL:-http://blog:4321}
-      # Por padrão, Cloud; em selfhosted sobrepor via .env
       NEXT_PUBLIC_INFISICAL_URL: ${NEXT_PUBLIC_INFISICAL_URL:-https://app.infisical.com}
-      # Credenciais Infisical (Runtime)
       INFISICAL_CLIENT_ID: ${INFISICAL_CLIENT_ID}
       INFISICAL_CLIENT_SECRET: ${INFISICAL_CLIENT_SECRET}
       INFISICAL_PROJECT_ID: ${INFISICAL_PROJECT_ID}
       INFISICAL_ENVIRONMENT: ${INFISICAL_ENVIRONMENT:-dev}
+      POSTHOG_KEY: ${POSTHOG_KEY}
+      POSTHOG_WEBSITE: ${POSTHOG_WEBSITE}
     depends_on:
       - blog
     restart: unless-stopped
@@ -30,23 +32,21 @@ services:
       timeout: 10s
       retries: 3
 
-  # Astro Blog (sobe por padrão)
   blog:
     build:
       context: .
       dockerfile: apps/blog/Dockerfile
       args:
-        # Credenciais Infisical (Build time)
         INFISICAL_CLIENT_ID: ${INFISICAL_CLIENT_ID}
         INFISICAL_CLIENT_SECRET: ${INFISICAL_CLIENT_SECRET}
         INFISICAL_PROJECT_ID: ${INFISICAL_PROJECT_ID}
         INFISICAL_ENVIRONMENT: ${INFISICAL_ENVIRONMENT:-dev}
-    container_name: labirinto-blog
+        POSTHOG_KEY: ${POSTHOG_KEY}
+        POSTHOG_WEBSITE: ${POSTHOG_WEBSITE}
     ports:
-      - "4321"
+      - "4321:4321"
     environment:
       <<: *common-env
-      # Por padrão, Cloud; em selfhosted sobrepor via .env
       PUBLIC_INFISICAL_URL: ${PUBLIC_INFISICAL_URL:-https://app.infisical.com}
     restart: unless-stopped
     healthcheck:
@@ -55,10 +55,13 @@ services:
       timeout: 10s
       retries: 3
 
-  # Infisical (somente profile selfhosted)
+  # ==========================================
+  # 2. STACK INFISICAL (Profile: selfhosted)
+  # ==========================================
+
   infisical:
     image: infisical/infisical:latest
-    container_name: labirinto-infisical
+    profiles: ["selfhosted"]
     ports:
       - "8080:8080"
     environment:
@@ -70,7 +73,6 @@ services:
     depends_on:
       - postgres
       - redis
-    profiles: ["selfhosted"]
     restart: unless-stopped
     healthcheck:
       test:
@@ -79,17 +81,15 @@ services:
       timeout: 10s
       retries: 3
 
-  # PostgreSQL (somente profile selfhosted)
   postgres:
     image: postgres:16-alpine
-    container_name: labirinto-postgres
+    profiles: ["selfhosted"]
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-infisical}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-infisical}
       POSTGRES_DB: ${POSTGRES_DB:-infisical}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    profiles: ["selfhosted"]
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-infisical}"]
@@ -97,14 +97,78 @@ services:
       timeout: 5s
       retries: 5
 
-  # Redis (somente profile selfhosted)
+  # ==========================================
+  # 3. STACK POSTHOG (Profile: posthog)
+  # ==========================================
+
+  posthog:
+    image: posthog/posthog:release-1.75.0
+    profiles: ["posthog"]
+    ports:
+      - "8000:8000"
+    environment:
+      SITE_URL: ${POSTHOG_SITE_URL:-http://localhost:8000}
+      SECRET_KEY: ${POSTHOG_SECRET_KEY:-supersecretkeyCHANGE_ME}
+      # Conecta no DB dedicado do PostHog (service: posthog-db)
+      DATABASE_URL: postgres://posthog:posthog@posthog-db:5432/posthog
+      # Usa o DB 1 do Redis para não misturar com Infisical
+      REDIS_URL: redis://redis:6379/1
+      CLICKHOUSE_HOST: clickhouse
+      SKIP_ASYNC_MIGRATIONS: "true"
+    depends_on:
+      - posthog-db
+      - redis
+      - clickhouse
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:8000/_health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  posthog-db:
+    image: postgres:16-alpine
+    profiles: ["posthog"]
+    environment:
+      POSTGRES_USER: posthog
+      POSTGRES_PASSWORD: posthog
+      POSTGRES_DB: posthog
+    volumes:
+      - posthog_postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U posthog"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.3-alpine
+    profiles: ["posthog"]
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:8123/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ==========================================
+  # 4. INFRAESTRUTURA COMPARTILHADA
+  # ==========================================
+
   redis:
     image: redis:7-alpine
-    container_name: labirinto-redis
+    # Ativa se QUALQUER um dos dois profiles for chamado
+    profiles: ["selfhosted", "posthog"]
     command: redis-server --appendonly yes
     volumes:
       - redis_data:/data
-    profiles: ["selfhosted"]
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -113,5 +177,10 @@ services:
       retries: 5
 
 volumes:
+  # Dados do Infisical
   postgres_data:
+  # Dados do PostHog
+  posthog_postgres_data:
+  clickhouse_data:
+  # Dados Compartilhados
   redis_data:

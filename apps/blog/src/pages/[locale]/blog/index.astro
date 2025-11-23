@@ -31,11 +31,9 @@ const locale = Astro.params.locale as string;
 const t = useTranslations(locale as any);
 ---
 
-<PostHogLayout>
-	<html lang={locale}>
-	<head>
+<PostHogLayout lang={locale}>
+	<Fragment slot="head">
 		<BaseHead title={t('site.title')} description={t('site.description')} />
-		<!-- Structured Data para lista de blog posts -->
 		<script type="application/ld+json" set:html={JSON.stringify({
 			"@context": "https://schema.org",
 			"@type": "Blog",
@@ -52,8 +50,7 @@ const t = useTranslations(locale as any);
 				"image": post.data.heroImage ? new URL(post.data.heroImage.src, Astro.site).toString() : undefined
 			}))
 		})} />
-	</head>
-	<body>
+	</Fragment>
 	<Header />
 	<main class="w-[960px] max-w-[calc(100%-2rem)] mx-auto">
 		<section>
@@ -84,6 +81,4 @@ const t = useTranslations(locale as any);
 		</section>
 	</main>
 	<Footer />
-	</body>
-	</html>
 </PostHogLayout>

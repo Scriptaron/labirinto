@@ -78,6 +78,19 @@
 			const progress = Math.min(Math.max((scrolled / scrollableHeight) * 100, 0), 100);
 			
 			progressBar.style.width = progress + '%';
+
+			if (window.posthog) {
+				const milestones = [25, 50, 75, 100];
+				milestones.forEach(milestone => {
+					if (progress >= milestone && !window[`scrolled_${milestone}`]) {
+						window[`scrolled_${milestone}`] = true;
+						window.posthog.capture('blog_reading_progress', {
+							percentage: milestone,
+							url: window.location.pathname
+						});
+					}
+				});
+			}
 			
 			// On mobile, check if TOC is fixed and adjust position
 			if (window.innerWidth <= 1024 && tocMobile) {

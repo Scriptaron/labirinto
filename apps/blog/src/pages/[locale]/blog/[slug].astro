@@ -1,7 +1,6 @@
 ---
 import { type CollectionEntry, getCollection, render } from 'astro:content';
 import BlogPost from '@/layouts/BlogPost.astro';
-import PostHogLayout from '@/layouts/PostHogLayout.astro';
 
 export async function getStaticPaths() {
 	const posts = await getCollection('blog');
@@ -29,8 +28,6 @@ const alternateLinks = post.data.alternates
 	: [];
 ---
 
-<PostHogLayout>
 	<BlogPost {...post.data} headings={headings} alternateLinks={alternateLinks} locale={locale}>
 		<Content />
 	</BlogPost>
-</PostHogLayout>

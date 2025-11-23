@@ -36,22 +36,23 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata
+      - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_WEB }}
+          images: ghcr.io/scriptaron/labirinto/web
           tags: |
+            # Gera tags para branches (ex: main, develop)
             type=ref,event=branch
+            # Gera tags para PRs (ex: pr-9)
             type=ref,event=pr
+            # Gera tags semânticas se houver git tag (ex: 1.0.0, 1.0)
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-            type=sha,prefix={{branch}}-
+            # CORREÇÃO: Usa prefixo padrão 'sha-' (ex: sha-bd8845e)
+            type=sha
+            # Opcional: Tag 'latest' apenas na branch default
             type=raw,value=latest,enable={{is_default_branch}}
-          flavor: |
-            latest=auto
-            prefix=
-            suffix=
 
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -87,23 +88,23 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata
+      - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BLOG }}
+          images: ghcr.io/scriptaron/labirinto/blog
           tags: |
+            # Gera tags para branches (ex: main, develop)
             type=ref,event=branch
+            # Gera tags para PRs (ex: pr-9)
             type=ref,event=pr
+            # Gera tags semânticas se houver git tag (ex: 1.0.0, 1.0)
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-            type=sha,prefix={{branch}}-
+            # CORREÇÃO: Usa prefixo padrão 'sha-' (ex: sha-bd8845e)
+            type=sha
+            # Opcional: Tag 'latest' apenas na branch default
             type=raw,value=latest,enable={{is_default_branch}}
-          # Fix invalid tag format by ensuring clean output
-          flavor: |
-            latest=auto
-            prefix=
-            suffix=
 
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -139,10 +140,19 @@ jobs:
           INFISICAL_PROJECT_ID: ${{ secrets.INFISICAL_PROJECT_ID }}
         run: |
           docker compose config
-          docker compose up -d
-          sleep 10
-          curl -f http://localhost:3000 || exit 1
-          curl -f http://localhost:4321 || exit 1
+          docker compose up --wait
+          # Testa Web
+          docker compose exec -T web wget --spider -q http://127.0.0.1:3000 || exit 1
+          # Testa Blog
+          docker compose exec -T blog wget --spider -q http://127.0.0.1:4321 || exit 1
+          # Testa Infisical se profile ativado
+          if docker compose ps infisical | grep -q 'Up'; then
+            docker compose exec -T infisical wget --spider -q http://127.0.0.1:8080/api/status || exit 1
+          fi
+          # Testa PostHog se profile ativado
+          if docker compose ps posthog | grep -q 'Up'; then
+            docker compose exec -T posthog wget --spider -q http://127.0.0.1:8021/health || exit 1
+          fi
           docker compose down
 
       - name: Test docker compose (selfhosted profile)
@@ -151,9 +161,15 @@ jobs:
           INFISICAL_CLIENT_SECRET: ${{ secrets.INFISICAL_CLIENT_SECRET }}
           INFISICAL_PROJECT_ID: ${{ secrets.INFISICAL_PROJECT_ID }}
         run: |
-          docker compose --profile selfhosted up -d
-          sleep 30
-          curl -f http://localhost:3000 || exit 1
-          curl -f http://localhost:4321 || exit 1
-          curl -f http://localhost:8080 || exit 1
+          docker compose --profile selfhosted up --wait
+          # Testa Web
+          docker compose exec -T web wget --spider -q http://127.0.0.1:3000 || exit 1
+          # Testa Blog
+          docker compose exec -T blog wget --spider -q http://127.0.0.1:4321 || exit 1
+          # Testa Infisical
+          docker compose exec -T infisical wget --spider -q http://127.0.0.1:8080/api/status || exit 1
+          # Testa PostHog se profile ativado
+          if docker compose ps posthog | grep -q 'Up'; then
+            docker compose exec -T posthog wget --spider -q http://127.0.0.1:8021/health || exit 1
+          fi
           docker compose --profile selfhosted down
