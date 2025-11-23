@@ -141,8 +141,18 @@ jobs:
         run: |
           docker compose config
           docker compose up --wait
-          docker compose exec web curl -f http://localhost:3000 || exit 1
-          docker compose exec blog curl -f http://localhost:4321 || exit 1
+          # Testa Web
+          docker compose exec -T web wget --spider -q http://127.0.0.1:3000 || exit 1
+          # Testa Blog
+          docker compose exec -T blog wget --spider -q http://127.0.0.1:4321 || exit 1
+          # Testa Infisical se profile ativado
+          if docker compose ps infisical | grep -q 'Up'; then
+            docker compose exec -T infisical wget --spider -q http://127.0.0.1:8080/api/status || exit 1
+          fi
+          # Testa PostHog se profile ativado
+          if docker compose ps posthog | grep -q 'Up'; then
+            docker compose exec -T posthog wget --spider -q http://127.0.0.1:8021/health || exit 1
+          fi
           docker compose down
 
       - name: Test docker compose (selfhosted profile)
@@ -151,9 +161,15 @@ jobs:
           INFISICAL_CLIENT_SECRET: ${{ secrets.INFISICAL_CLIENT_SECRET }}
           INFISICAL_PROJECT_ID: ${{ secrets.INFISICAL_PROJECT_ID }}
         run: |
-          docker compose --profile selfhosted up -d
-          sleep 30
-          curl -f http://localhost:3000 || exit 1
-          curl -f http://localhost:4321 || exit 1
-          curl -f http://localhost:8080 || exit 1
+          docker compose --profile selfhosted up --wait
+          # Testa Web
+          docker compose exec -T web wget --spider -q http://127.0.0.1:3000 || exit 1
+          # Testa Blog
+          docker compose exec -T blog wget --spider -q http://127.0.0.1:4321 || exit 1
+          # Testa Infisical
+          docker compose exec -T infisical wget --spider -q http://127.0.0.1:8080/api/status || exit 1
+          # Testa PostHog se profile ativado
+          if docker compose ps posthog | grep -q 'Up'; then
+            docker compose exec -T posthog wget --spider -q http://127.0.0.1:8021/health || exit 1
+          fi
           docker compose --profile selfhosted down
