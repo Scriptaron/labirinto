@@ -27,7 +27,7 @@ export default async function LocaleLayout({ children, params }: Props) {
       <body>
         <CSPostHogProvider
           apiKey={posthogEnv.NEXT_PUBLIC_POSTHOG_KEY || ''}
-          apiHost={posthogEnv.NEXT_PUBLIC_POSTHOG_WEBSITE || 'https://eu.i.posthog.com'}
+          apiHost="/ingest"
         >
           <NextIntlClientProvider>
             <header className="p-4 border-b">

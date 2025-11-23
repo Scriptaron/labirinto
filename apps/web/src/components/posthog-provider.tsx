@@ -18,7 +18,7 @@ export function CSPostHogProvider({
             posthog.init(apiKey, {
                 api_host: apiHost,
                 person_profiles: 'identified_only',
-                capture_pageview: false, // Handled by Next.js router usually, or manually
+                capture_pageview: true,
                 capture_pageleave: true,
             })
         }

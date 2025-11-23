@@ -13,6 +13,7 @@ import ReadingProgressBar from '@/components/ReadingProgressBar.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import CategoryBadge from '@/components/CategoryBadge.astro';
 import TagsList from '@/components/TagsList.astro';
+import PostHogLayout from '@/layouts/PostHogLayout.astro';
 
 type Props = CollectionEntry<'blog'>['data'] & {
 	headings?: { depth: number; slug: string; text: string }[];
@@ -22,23 +23,20 @@ type Props = CollectionEntry<'blog'>['data'] & {
 
 const { title, description, pubDate, updatedDate, heroImage, headings, alternateLinks, locale, alternates, category, tags } = Astro.props;
 
-// URL completa para compartilhamento
 const currentUrl = new URL(Astro.url.pathname, Astro.site).toString();
 
-// Breadcrumbs
 const breadcrumbItems = [
   { name: 'Blog', url: `/${locale}/blog` },
   { name: title }
 ];
 ---
 
-<html lang={locale}>
-	<head>
+<PostHogLayout lang={locale}>
+	<Fragment slot="head">
 		<BaseHead title={title} description={description} image={heroImage} />
 		{alternateLinks && alternateLinks.map(({ lang, url }) => (
 			<link rel="alternate" hreflang={lang} href={url} />
 		))}
-		<!-- Structured Data (JSON-LD) para SEO -->
 		<script type="application/ld+json" set:html={JSON.stringify({
 			"@context": "https://schema.org",
 			"@type": "BlogPosting",
@@ -65,14 +63,13 @@ const breadcrumbItems = [
 			},
 			"inLanguage": locale
 		})} />
-	</head>
+	</Fragment>
 
-	<body>
-		<ReadingProgressBar />
-		<SocialShareFloating url={currentUrl} title={title} />
-		<Header alternates={alternates} />
-		<main class="w-full">
-			<style>
+	<ReadingProgressBar />
+	<SocialShareFloating url={currentUrl} title={title} />
+	<Header alternates={alternates} />
+	<main class="w-full">
+		<style>
 				.hero-image-container {
 					display: flex;
 					justify-content: center;
@@ -844,4 +841,4 @@ const breadcrumbItems = [
 		document.addEventListener('DOMContentLoaded', handleExternalLinks);
 		document.addEventListener('astro:page-load', handleExternalLinks);
 	</script>
-</html>
+</PostHogLayout>

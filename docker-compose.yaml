@@ -21,6 +21,9 @@ services:
       INFISICAL_CLIENT_SECRET: ${INFISICAL_CLIENT_SECRET}
       INFISICAL_PROJECT_ID: ${INFISICAL_PROJECT_ID}
       INFISICAL_ENVIRONMENT: ${INFISICAL_ENVIRONMENT:-dev}
+      # Segredos injetados pelo Infisical CLI
+      POSTHOG_KEY: ${POSTHOG_KEY}
+      POSTHOG_WEBSITE: ${POSTHOG_WEBSITE}
     depends_on:
       - blog
     restart: unless-stopped
@@ -41,6 +44,9 @@ services:
         INFISICAL_CLIENT_SECRET: ${INFISICAL_CLIENT_SECRET}
         INFISICAL_PROJECT_ID: ${INFISICAL_PROJECT_ID}
         INFISICAL_ENVIRONMENT: ${INFISICAL_ENVIRONMENT:-dev}
+        # Segredos injetados pelo Infisical CLI
+        POSTHOG_KEY: ${POSTHOG_KEY}
+        POSTHOG_WEBSITE: ${POSTHOG_WEBSITE}
     container_name: labirinto-blog
     ports:
       - "4321"

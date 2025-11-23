@@ -6,7 +6,6 @@ interface Props {
 
 const { url, title } = Astro.props;
 
-// Remover o locale da URL para compartilhamento (canônico)
 const shareUrl = url.replace(/\/(pt|en|es)\//, '/');
 ---
 
@@ -327,11 +326,15 @@ const shareUrl = url.replace(/\/(pt|en|es)\//, '/');
 			});
 		}
 
-		// Tracking de compartilhamento
 		document.querySelectorAll('[data-platform]').forEach(btn => {
 			btn.addEventListener('click', () => {
 				const platform = btn.getAttribute('data-platform');
-				console.log('Compartilhado em:', platform);
+				if (window.posthog) {
+					window.posthog.capture('social_share_click', {
+						platform: platform,
+						url: window.location.pathname
+					});
+				}
 			});
 		});
 	}

@@ -10,7 +10,9 @@ export async function getInfisicalClient() {
   }
 
   if (!infisicalClient) {
-    const client = new InfisicalSDK();
+    const client = new InfisicalSDK({
+      siteUrl: process.env.NEXT_PUBLIC_INFISICAL_URL || "https://app.infisical.com",
+    });
 
     try {
       await client.auth().universalAuth.login({
@@ -19,7 +21,6 @@ export async function getInfisicalClient() {
       });
       infisicalClient = client;
     } catch (error) {
-      console.error("Failed to authenticate with Infisical:", error);
       return null;
     }
   }
@@ -27,31 +28,30 @@ export async function getInfisicalClient() {
 }
 
 export async function getSecret(secretName: string) {
-  // Prefer environment variables injected by Infisical CLI or standard .env
+  const client = await getInfisicalClient();
+
+  if (client) {
+    try {
+      const secret = await client.secrets().getSecret({
+        environment: process.env.INFISICAL_ENVIRONMENT || "dev",
+        projectId: process.env.INFISICAL_PROJECT_ID!,
+        secretName,
+      });
+      if (secret.secretValue) {
+        return secret.secretValue;
+      }
+    } catch (error) {
+      // fallback below
+    }
+  }
+
   if (process.env[secretName]) {
     return process.env[secretName];
   }
 
-  const client = await getInfisicalClient();
-
-  if (!client) {
-    return undefined;
-  }
-
-  try {
-    const secret = await client.secrets().getSecret({
-      environment: process.env.INFISICAL_ENVIRONMENT || "dev",
-      projectId: process.env.INFISICAL_PROJECT_ID!,
-      secretName,
-    });
-    return secret.secretValue;
-  } catch (error) {
-    console.error(`Failed to fetch secret ${secretName}:`, error);
-    return undefined;
-  }
+  return undefined;
 }
 
-// Função helper para carregar as variáveis do PostHog
 export async function loadPostHogEnv() {
   const [posthogKey, posthogWebsite] = await Promise.all([
     getSecret("POSTHOG_KEY"),
