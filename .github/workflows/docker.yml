@@ -88,23 +88,23 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata
+      - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BLOG }}
+          images: ghcr.io/scriptaron/labirinto/blog
           tags: |
+            # Gera tags para branches (ex: main, develop)
             type=ref,event=branch
+            # Gera tags para PRs (ex: pr-9)
             type=ref,event=pr
+            # Gera tags semânticas se houver git tag (ex: 1.0.0, 1.0)
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-            type=sha,prefix={{branch}}-
+            # CORREÇÃO: Usa prefixo padrão 'sha-' (ex: sha-bd8845e)
+            type=sha
+            # Opcional: Tag 'latest' apenas na branch default
             type=raw,value=latest,enable={{is_default_branch}}
-          # Fix invalid tag format by ensuring clean output
-          flavor: |
-            latest=auto
-            prefix=
-            suffix=
 
       - name: Build and push
         uses: docker/build-push-action@v5
