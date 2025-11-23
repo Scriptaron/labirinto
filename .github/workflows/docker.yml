@@ -140,8 +140,7 @@ jobs:
           INFISICAL_PROJECT_ID: ${{ secrets.INFISICAL_PROJECT_ID }}
         run: |
           docker compose config
-          docker compose up -d
-          sleep 10
+          docker compose up --wait
           curl -f http://localhost:3000 || exit 1
           curl -f http://localhost:4321 || exit 1
           docker compose down
