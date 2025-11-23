@@ -7,7 +7,7 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
-    container_name: labirinto-web
+    # container_name removido para permitir múltiplas execuções
     ports:
       - "3000"
     environment:
@@ -47,7 +47,7 @@ services:
         # Segredos injetados pelo Infisical CLI
         POSTHOG_KEY: ${POSTHOG_KEY}
         POSTHOG_WEBSITE: ${POSTHOG_WEBSITE}
-    container_name: labirinto-blog
+    # container_name removido para permitir múltiplas execuções
     ports:
       - "4321"
     environment:
@@ -64,7 +64,7 @@ services:
   # Infisical (somente profile selfhosted)
   infisical:
     image: infisical/infisical:latest
-    container_name: labirinto-infisical
+    # container_name removido para permitir múltiplas execuções
     ports:
       - "8080:8080"
     environment:
@@ -88,7 +88,7 @@ services:
   # PostgreSQL (somente profile selfhosted)
   postgres:
     image: postgres:16-alpine
-    container_name: labirinto-postgres
+    # container_name removido para permitir múltiplas execuções
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-infisical}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-infisical}
@@ -106,7 +106,7 @@ services:
   # Redis (somente profile selfhosted)
   redis:
     image: redis:7-alpine
-    container_name: labirinto-redis
+    # container_name removido para permitir múltiplas execuções
     command: redis-server --appendonly yes
     volumes:
       - redis_data:/data

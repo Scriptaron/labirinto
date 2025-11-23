@@ -141,8 +141,8 @@ jobs:
         run: |
           docker compose config
           docker compose up --wait
-          curl -f http://localhost:3000 || exit 1
-          curl -f http://localhost:4321 || exit 1
+          docker compose exec web curl -f http://localhost:3000 || exit 1
+          docker compose exec blog curl -f http://localhost:4321 || exit 1
           docker compose down
 
       - name: Test docker compose (selfhosted profile)
