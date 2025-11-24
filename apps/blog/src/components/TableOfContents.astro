@@ -1,10 +1,13 @@
 ---
-// Table of Contents Component
+import { getLangFromUrl, useTranslations } from '@/i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
 <aside class="toc-sidebar">
 	<nav class="toc-nav">
-		<h3 class="toc-title">Navegação Rápida:</h3>
+		<h3 class="toc-title">{t('toc.title')}</h3>
 		<ul class="toc-list" id="toc-list">
 			<!-- TOC items will be populated by JavaScript -->
 		</ul>
