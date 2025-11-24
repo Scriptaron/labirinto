@@ -12,7 +12,7 @@ services:
       dockerfile: apps/web/Dockerfile
     # Use "3000:3000" para acesso local ou apenas "3000" se usar Proxy (Traefik)
     ports:
-      - "3000:3000"
+      - "3000"
     environment:
       <<: *common-env
       BLOG_URL: ${BLOG_URL:-http://blog:4321}
@@ -44,7 +44,7 @@ services:
         POSTHOG_KEY: ${POSTHOG_KEY}
         POSTHOG_WEBSITE: ${POSTHOG_WEBSITE}
     ports:
-      - "4321:4321"
+      - "4321"
     environment:
       <<: *common-env
       PUBLIC_INFISICAL_URL: ${PUBLIC_INFISICAL_URL:-https://app.infisical.com}
@@ -63,7 +63,7 @@ services:
     image: infisical/infisical:latest
     profiles: ["selfhosted"]
     ports:
-      - "8080:8080"
+      - "8080"
     environment:
       ENCRYPTION_KEY: ${ENCRYPTION_KEY:-your-encryption-key-here}
       AUTH_SECRET: ${AUTH_SECRET:-your-auth-secret-here}
@@ -105,7 +105,7 @@ services:
     image: posthog/posthog:release-1.75.0
     profiles: ["posthog"]
     ports:
-      - "8000:8000"
+      - "8000"
     environment:
       SITE_URL: ${POSTHOG_SITE_URL:-http://localhost:8000}
       SECRET_KEY: ${POSTHOG_SECRET_KEY:-supersecretkeyCHANGE_ME}
