@@ -1,31 +1,64 @@
 ---
-// Table of Contents Mobile Component
+import { getLangFromUrl, useTranslations } from '@/i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const tLoading = t('toc.loading');
+const tMenuAriaLabel = t('toc.menuAriaLabel');
+const tNextAriaLabel = t('toc.nextAriaLabel');
+const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 ---
 
-<div class="lg:hidden my-8 relative" id="toc-mobile-wrapper">
+<div
+	class="lg:hidden my-8 relative"
+	id="toc-mobile-wrapper"
+	data-next-label={tNextAriaLabel}
+	data-top-label={tBackToTopAriaLabel}
+>
 	<div class="rounded-xl" id="toc-mobile">
-	<div class="flex items-center gap-3 p-6 transition-all duration-300">
-		<button class="border-0 rounded-lg w-10 h-10 flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-95 shrink-0" id="toc-menu-btn" aria-label="Menu de índices">
-			<svg class="w-5 h-5 toc-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-				<line x1="3" y1="6" x2="21" y2="6"></line>
-				<line x1="3" y1="12" x2="21" y2="12"></line>
-				<line x1="3" y1="18" x2="21" y2="18"></line>
-			</svg>
-		</button>
-		<div class="flex-1 flex items-center gap-3 min-w-0">
-			<span class="toc-header-number" id="toc-current-number">1</span>
-			<span class="toc-header-title" id="toc-current-title">Carregando...</span>
+		<div class="flex items-center gap-3 p-6 transition-all duration-300">
+			<button
+				class="border-0 rounded-lg w-10 h-10 flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-95 shrink-0"
+				id="toc-menu-btn"
+				aria-label={tMenuAriaLabel}
+			>
+				<svg
+					class="w-5 h-5 toc-btn-icon"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+				>
+					<line x1="3" y1="6" x2="21" y2="6"></line>
+					<line x1="3" y1="12" x2="21" y2="12"></line>
+					<line x1="3" y1="18" x2="21" y2="18"></line>
+				</svg>
+			</button>
+			<div class="flex-1 flex items-center gap-3 min-w-0">
+				<span class="toc-header-number" id="toc-current-number">1</span>
+				<span class="toc-header-title" id="toc-current-title">{tLoading}</span>
+			</div>
+			<button
+				class="hidden border-0 rounded-lg w-10 h-10 items-center justify-center cursor-pointer transition-all duration-200 active:scale-95 shrink-0"
+				id="toc-next-btn"
+				aria-label={tNextAriaLabel}
+			>
+				<svg
+					class="w-5 h-5 toc-btn-icon"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+				>
+					<polyline points="9 18 15 12 9 6"></polyline>
+				</svg>
+			</button>
 		</div>
-		<button class="hidden border-0 rounded-lg w-10 h-10 items-center justify-center cursor-pointer transition-all duration-200 active:scale-95 shrink-0" id="toc-next-btn" aria-label="Próximo índice">
-			<svg class="w-5 h-5 toc-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-				<polyline points="9 18 15 12 9 6"></polyline>
-			</svg>
-		</button>
-	</div>
-	
-	<div class="max-h-0 overflow-hidden transition-all duration-300" id="toc-mobile-list">
-		<!-- TOC items will be populated by JavaScript -->
-	</div>
+
+		<div class="max-h-0 overflow-hidden transition-all duration-300" id="toc-mobile-list">
+			<!-- TOC items will be populated by JavaScript -->
+		</div>
 	</div>
 </div>
 
@@ -288,6 +321,9 @@
 		const currentNumber = document.getElementById('toc-current-number');
 		const currentTitle = document.getElementById('toc-current-title');
 		const article = document.querySelector('article');
+
+		const tNextLabel = wrapper.dataset.nextLabel || 'Next section';
+		const tTopLabel = wrapper.dataset.topLabel || 'Back to top';
 		
 		if (!tocMobile || !tocList || !article) return;
 
@@ -299,7 +335,7 @@
 			return;
 		}
 
-		let currentIndex = 0;
+		let currentIndex = -1;
 		let isExpanded = false;
 		let isCollapsed = false;
 
@@ -424,7 +460,7 @@
 						<path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
 					</svg>
 				`;
-				nextBtn.setAttribute('aria-label', 'Voltar ao topo');
+				nextBtn.setAttribute('aria-label', tTopLabel);
 			} else {
 				// Show next arrow
 				nextBtn.innerHTML = `
@@ -432,7 +468,7 @@
 						<polyline points="9 18 15 12 9 6"></polyline>
 					</svg>
 				`;
-				nextBtn.setAttribute('aria-label', 'Próximo índice');
+				nextBtn.setAttribute('aria-label', tNextLabel);
 			}
 		}
 
