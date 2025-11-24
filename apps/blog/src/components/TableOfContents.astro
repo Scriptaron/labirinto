@@ -22,8 +22,9 @@ const t = useTranslations(lang);
 		
 		if (!tocList || !tocSidebar || !article) return;
 
-		// Find all h2 elements with IDs in the article
-		const headings = Array.from(article.querySelectorAll('h2[id]'));
+		// Find all h2 elements with IDs in the article, excluding footnotes
+		const headings = Array.from(article.querySelectorAll('h2[id]'))
+			.filter(heading => heading.id !== 'footnote-label');
 		
 		if (headings.length === 0) {
 			tocSidebar.style.display = 'none';

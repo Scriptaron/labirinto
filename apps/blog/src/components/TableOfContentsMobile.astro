@@ -17,14 +17,15 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
   data-top-label={tBackToTopAriaLabel}
 >
   <div class="rounded-xl" id="toc-mobile">
-    <div class="flex items-center gap-3 p-6 transition-all duration-300">
+    <div class="flex items-center gap-3 p-3 transition-all duration-300">
       <button
-        class="border-0 rounded-lg w-10 h-10 flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-95 shrink-0"
+        class="border-0 rounded-lg w-9 h-9 flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-95 shrink-0 relative"
         id="toc-menu-btn"
         aria-label={tMenuAriaLabel}
       >
         <svg
-          class="w-5 h-5 toc-btn-icon"
+          id="toc-menu-icon"
+          class="w-5 h-5 toc-btn-icon absolute transition-all duration-300"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -33,6 +34,17 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
           <line x1="3" y1="6" x2="21" y2="6"></line>
           <line x1="3" y1="12" x2="21" y2="12"></line>
           <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+        <svg
+          id="toc-close-icon"
+          class="w-5 h-5 toc-btn-icon absolute transition-all duration-300"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
       </button>
       <div class="flex-1 flex items-center gap-3 min-w-0">
@@ -313,7 +325,26 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 		border-color: var(--color-border);
 	}
 
+	/* Menu Icon Animation */
+	#toc-menu-icon {
+		opacity: 1;
+		transform: rotate(0deg) scale(1);
+	}
 
+	#toc-close-icon {
+		opacity: 0;
+		transform: rotate(180deg) scale(0.5);
+	}
+
+	#toc-menu-btn.expanded #toc-menu-icon {
+		opacity: 0;
+		transform: rotate(-180deg) scale(0.5);
+	}
+
+	#toc-menu-btn.expanded #toc-close-icon {
+		opacity: 1;
+		transform: rotate(0deg) scale(1);
+	}
 </style>
 
 <script is:inline>
@@ -332,8 +363,9 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 		
 		if (!tocMobile || !tocList || !article) return;
 
-		// Find all h2 elements with IDs in the article
-		const headings = article.querySelectorAll('h2[id]');
+		// Find all h2 elements with IDs in the article, excluding footnotes
+		const headings = Array.from(article.querySelectorAll('h2[id]'))
+			.filter(heading => heading.id !== 'footnote-label');
 		
 		if (headings.length === 0) {
 			wrapper.style.display = 'none';
@@ -357,7 +389,7 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 			
 			const link = document.createElement('a');
 			link.href = `#${heading.id}`;
-			link.className = 'toc-mobile-link no-underline flex justify-between items-center p-3 text-[0.9375rem] rounded-lg transition-all duration-200 gap-3 mx-3 my-2 border';
+			link.className = 'toc-mobile-link no-underline flex justify-between items-center p-3 text-[0.9375rem] rounded-lg transition-all duration-200 gap-2 mx-2 my-2 border';
 			
 			const number = document.createElement('span');
 			number.className = 'toc-mobile-number text-sm font-bold px-2.5 py-1.5 rounded-md min-w-[1.85rem] h-[1.85rem] flex items-center justify-center text-center shrink-0 transition-all duration-200 border';
@@ -403,6 +435,7 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 				tocList.style.maxHeight = finalHeight + 'px';
 				tocList.style.overflowY = 'auto';
 				menuBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+				menuBtn.classList.add('expanded');
 				
 				// Scroll to active item after a short delay to allow height transition to start
 				setTimeout(() => {
@@ -415,6 +448,7 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 				tocList.style.maxHeight = '0';
 				tocList.style.overflowY = 'hidden';
 				menuBtn.style.background = 'rgba(255, 255, 255, 0.1)';
+				menuBtn.classList.remove('expanded');
 			}
 		}
 
