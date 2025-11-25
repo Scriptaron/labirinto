@@ -46,7 +46,7 @@ const t = useTranslations(locale as any);
 				"headline": post.data.title,
 				"description": post.data.description,
 				"datePublished": post.data.pubDate.toISOString(),
-				"url": new URL(`/${locale}/blog/${post.data.slug}`, Astro.site).toString(),
+				"url": new URL(`/${locale}/blog/${post.data.permalink}`, Astro.site).toString(),
 				"image": post.data.heroImage ? new URL(post.data.heroImage.src, Astro.site).toString() : undefined
 			}))
 		})} />
@@ -58,7 +58,7 @@ const t = useTranslations(locale as any);
 				{
 					posts.map((post, index) => (
 						<li class={index === 0 ? "w-full mb-4 text-center max-md:mb-0" : "w-[calc(50%-1rem)] max-md:w-full max-md:text-center"}>
-							<a href={`/${locale}/blog/${post.data.slug}`} class="block no-underline transition-all duration-200 group">
+							<a href={`/${locale}/blog/${post.data.permalink}`} class="block no-underline transition-all duration-200 group">
 								{post.data.heroImage && (
 									<Image 
 										width={720} 

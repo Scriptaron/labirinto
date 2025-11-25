@@ -11,9 +11,10 @@ const LOCALE_COOKIE_NAME = 'NEXT_LOCALE';
 
 interface Props {
   alternates?: Record<string, string>;
+  alternateLinks?: { lang: string; url: string }[];
 }
 
-const { alternates } = Astro.props;
+const { alternates, alternateLinks } = Astro.props;
 const currentLocale = getLangFromUrl(Astro.url);
 const t = useTranslations(currentLocale);
 
@@ -49,8 +50,13 @@ const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}\//, '/');
       // Se temos alternates e existe um para este locale, usa o slug alternativo
       let href = `/${locale}${currentPath}`;
       
-      // Se estamos em um post (tem alternates) e existe tradução para este locale
-      if (alternates && alternates[locale]) {
+      const altLink = alternateLinks?.find(l => l.lang === locale);
+
+      // Se existe um link alternativo explícito (calculado ou do frontmatter)
+      if (altLink) {
+        href = altLink.url;
+      } else if (alternates && alternates[locale]) {
+        // Fallback para o objeto alternates antigo
         href = `/${locale}/blog/${alternates[locale]}`;
       } else if (alternates && locale === currentLocale) {
         // Se é o locale atual, mantém o path atual

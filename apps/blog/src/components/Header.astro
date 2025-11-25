@@ -7,14 +7,15 @@ import MobileMenu from '@/components/MobileMenu.astro';
 
 interface Props {
   alternates?: Record<string, string>;
+  alternateLinks?: { lang: string; url: string }[];
 }
 
-const { alternates } = Astro.props;
+const { alternates, alternateLinks } = Astro.props;
 const locale = getLangFromUrl(Astro.url);
 const t = useTranslations(locale);
 ---
 
-<MobileMenu alternates={alternates} />
+<MobileMenu alternates={alternates} alternateLinks={alternateLinks} />
 
 <header class="m-0 mb-4 sm:mb-5 md:mb-6 max-lg:mb-0 px-3 sm:px-4 py-2 sm:py-2.5 bg-surface shadow-md">
 	<nav class="flex items-center justify-between max-w-[1400px] mx-auto">
@@ -35,7 +36,7 @@ const t = useTranslations(locale);
 			<HeaderLink href={`/${locale}/blog`}>{t('nav.blog')}</HeaderLink>
 		</div>
 		<div class="hidden lg:flex items-center gap-3 lg:gap-4">
-			<LanguageSwitcher alternates={alternates} />
+			<LanguageSwitcher alternates={alternates} alternateLinks={alternateLinks} />
 			<ThemeToggle />
 		</div>
 		<div class="lg:hidden w-9 sm:w-10"></div>

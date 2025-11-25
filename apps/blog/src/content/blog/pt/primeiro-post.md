@@ -3,7 +3,7 @@ title: 'Meu Primeiro Post'
 description: 'Este é o primeiro post do blog'
 pubDate: 2024-01-15
 lang: 'pt'
-slug: 'primeiro-post'
+permalink: 'primeiro-post'
 alternates:
   en: 'first-post'
   es: 'primer-post'

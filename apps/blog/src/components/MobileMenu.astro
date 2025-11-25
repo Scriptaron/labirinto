@@ -3,9 +3,10 @@ import { getLangFromUrl, useTranslations } from '@/i18n/utils';
 
 interface Props {
   alternates?: Record<string, string>;
+  alternateLinks?: { lang: string; url: string }[];
 }
 
-const { alternates } = Astro.props;
+const { alternates, alternateLinks } = Astro.props;
 const locale = getLangFromUrl(Astro.url);
 const t = useTranslations(locale);
 
@@ -57,7 +58,11 @@ const translations = {
 					{Object.entries(localeNames).map(([loc, name]) => {
 						let href = `/${loc}${currentPath}`;
 						
-						if (alternates && alternates[loc]) {
+						const altLink = alternateLinks?.find(l => l.lang === loc);
+
+						if (altLink) {
+							href = altLink.url;
+						} else if (alternates && alternates[loc]) {
 							href = `/${loc}/blog/${alternates[loc]}`;
 						} else if (alternates && loc === locale) {
 							href = Astro.url.pathname;

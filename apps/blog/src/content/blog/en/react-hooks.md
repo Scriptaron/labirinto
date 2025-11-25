@@ -3,7 +3,7 @@ title: 'React Hooks: Practical Guide'
 description: 'Master React Hooks with practical examples'
 pubDate: 2024-11-11
 lang: 'en'
-slug: 'react-hooks'
+permalink: 'react-hooks'
 alternates:
   pt: 'react-hooks'
   es: 'react-hooks'
@@ -250,3 +250,5 @@ To deepen your knowledge[^1], check out:
 ---
 
 Now you're ready to master React Hooks!
+
+

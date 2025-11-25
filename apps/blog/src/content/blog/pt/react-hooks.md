@@ -3,7 +3,7 @@ title: 'React Hooks: Guia Prático'
 description: 'Domine os React Hooks com exemplos práticos'
 pubDate: 2024-11-11
 lang: 'pt'
-slug: 'react-hooks'
+permalink: 'react-hooks'
 alternates:
   en: 'react-hooks'
   es: 'react-hooks'
