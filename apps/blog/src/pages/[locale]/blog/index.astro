@@ -58,7 +58,7 @@ const t = useTranslations(locale as any);
 				{
 					posts.map((post, index) => (
 						<li class={index === 0 ? "w-full mb-4 text-center max-md:mb-0" : "w-[calc(50%-1rem)] max-md:w-full max-md:text-center"}>
-							<a href={`/${locale}/blog/${post.data.permalink}`} class="block no-underline transition-all duration-200 group">
+							<a href={`/${locale}/blog/${post.data.permalink}?ref=${index === 0 ? 'blog_index_featured' : 'blog_index_list'}`} class="block no-underline transition-all duration-200 group">
 								{post.data.heroImage && (
 									<Image 
 										width={720} 

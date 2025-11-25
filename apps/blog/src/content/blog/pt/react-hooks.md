@@ -8,18 +8,6 @@ alternates:
   en: 'react-hooks'
   es: 'react-hooks'
 heroImage: '../../../assets/blog-placeholder-3.jpg'
-category: 'development'
-tags: ['react', 'javascript', 'hooks', 'frontend']
----
-
-# React Hooks: Guia Prático
-
-Os Hooks revolucionaram a forma como escrevemos componentes React. Introduzidos no React 16.8, eles permitem usar estado e outras features do React sem escrever classes. Isso tornou o código mais reutilizável, testável e fácil de entender. Neste guia, exploraremos os principais hooks e como usá-los efetivamente em seus projetos.
-
-## Principais Hooks
-
-### useState
-Gerencia estado em componentes funcionais. É o hook mais fundamental e versátil.
 
 ```javascript
 const [count, setCount] = useState(0);

@@ -34,7 +34,7 @@ const tagsList = tags.map(tagId => {
 	<div class="flex flex-wrap gap-2">
 		{tagsList.map((tag) => (
 			<a 
-				href={`/${locale}/blog/tag/${tag.slug}`}
+				href={`/${locale}/blog/tag/${tag.slug}?ref=tag_list`}
 				class="tag-link"
 			>
 				{tag.name}
