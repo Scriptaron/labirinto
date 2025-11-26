@@ -17,7 +17,7 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
   data-top-label={tBackToTopAriaLabel}
 >
   <div id="toc-mobile">
-    <div class="flex items-center gap-3 p-3 transition-all duration-300">
+    <div class="flex items-center gap-3 p-3 transition-all duration-300" style="border-bottom: 1px solid var(--color-border-subtle);">
       <button
         class="border-0 rounded-lg w-9 h-9 flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-95 shrink-0 relative"
         id="toc-menu-btn"
@@ -41,7 +41,7 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          stroke-width="1.5"
+          stroke-width="2.5"
         >
           <line x1="18" y1="6" x2="6" y2="18"></line>
           <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -228,12 +228,13 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 		scrollbar-width: thin;
 		scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 		border-radius: 0;
+		mask-image: linear-gradient(to bottom, transparent, black 1.5rem, black calc(100% - 1.5rem), transparent);
+		-webkit-mask-image: linear-gradient(to bottom, transparent, black 1.5rem, black calc(100% - 1.5rem), transparent);
 	}
 	
 	/* Inner container for items with padding */
 	#toc-mobile-list .toc-mobile-items-inner {
-		padding: 0.5rem 0 0.75rem 0;
-		border-top: 1px solid var(--color-border-subtle);
+		padding: 1.5rem 0;
 	}
 	
 	#toc-mobile-list::-webkit-scrollbar {

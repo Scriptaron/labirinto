@@ -9,6 +9,7 @@ import TableOfContents from '@/components/TableOfContents.astro';
 import TableOfContentsMobile from '@/components/TableOfContentsMobile.astro';
 import SocialShare from '@/components/SocialShare.astro';
 import SocialShareFloating from '@/components/SocialShareFloating.astro';
+import BackToTop from '@/components/BackToTop.astro';
 import ReadingProgressBar from '@/components/ReadingProgressBar.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import CategoryBadge from '@/components/CategoryBadge.astro';
@@ -69,6 +70,7 @@ const breadcrumbItems = [
 
 	<ReadingProgressBar />
 	<SocialShareFloating url={currentUrl} title={title} />
+	<BackToTop />
 	<Header alternates={alternates} alternateLinks={alternateLinks} />
 	<main class="w-full">
 		<style>
@@ -748,7 +750,7 @@ const breadcrumbItems = [
 			</style>
 			<article>
 				<div class="max-w-[1440px] mx-auto relative">
-					<nav class="w-full mx-auto px-4 sm:px-6 py-3 sm:py-4" aria-label="Breadcrumb">
+					<nav class="w-full mx-auto px-4 sm:px-6 lg:px-8 2xl:px-16 py-3 sm:py-4" aria-label="Breadcrumb">
 						<Breadcrumbs items={breadcrumbItems} />
 					</nav>
 					<div class="w-full mx-auto px-4 sm:px-6 lg:px-0 lg:max-w-[1020px]">
@@ -794,7 +796,7 @@ const breadcrumbItems = [
 					)}
 					<TableOfContentsMobile />
 					<div class="flex justify-center gap-6 lg:gap-6 xl:gap-8 items-start px-4 sm:px-6 lg:px-8 2xl:px-16">
-						<aside class="toc-share-sidebar w-[280px] shrink-0 hidden lg:flex flex-col gap-6 sticky top-8 self-start h-[calc(100vh-4rem)] overflow-y-auto scrollbar-hide">
+						<aside class="toc-share-sidebar w-[280px] shrink-0 hidden lg:flex flex-col gap-6 sticky top-8 self-start overflow-y-auto scrollbar-hide">
 							<TableOfContents />
 							<SocialShare url={currentUrl} title={title} />
 						</aside>
@@ -817,7 +819,7 @@ const breadcrumbItems = [
 						
 						{recommendedPosts && recommendedPosts.length > 0 && (
 							<aside class="hidden xl:block w-[280px] shrink-0 self-start sticky top-8">
-								<RecommendedPosts posts={recommendedPosts} locale={locale} />
+								<RecommendedPosts posts={recommendedPosts} locale={locale} sidebar={true} />
 							</aside>
 						)}
 					</div>
