@@ -7,6 +7,7 @@ import Footer from '@/components/Footer.astro';
 import FormattedDate from '@/components/FormattedDate.astro';
 import Header from '@/components/Header.astro';
 import { useTranslations } from '@/i18n/utils';
+import { SITE_URL } from '@/consts';
 
 export async function getStaticPaths() {
 	const allPosts = await getCollection('blog');
@@ -29,11 +30,15 @@ type Props = { posts: CollectionEntry<'blog'>[] };
 const { posts } = Astro.props;
 const locale = Astro.params.locale as string;
 const t = useTranslations(locale as any);
+const locales = ['pt', 'en', 'es'];
 ---
 
 <PostHogLayout lang={locale}>
 	<Fragment slot="head">
 		<BaseHead title={t('site.title')} description={t('site.description')} />
+		{locales.map((l) => (
+			<link rel="alternate" hreflang={l} href={`${SITE_URL}/${l}/blog`} />
+		))}
 		<script type="application/ld+json" set:html={JSON.stringify({
 			"@context": "https://schema.org",
 			"@type": "Blog",

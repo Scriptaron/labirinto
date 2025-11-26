@@ -20,7 +20,7 @@ const [isLoading, setIsLoading] = useState(false);
 
 Você pode usar múltiplos `useState` em um componente. Cada um mantém seu próprio estado independente.
 
-### useEffect
+## useEffect
 Executa efeitos colaterais como fetching de dados, subscrições e manipulação do DOM.
 
 ```javascript
@@ -39,7 +39,7 @@ useEffect(() => {
 }, []);
 ```
 
-### useContext
+## useContext
 Acessa o contexto sem prop drilling, evitando passar props através de múltiplos níveis.
 
 ```javascript
@@ -47,14 +47,14 @@ const theme = useContext(ThemeContext);
 const user = useContext(UserContext);
 ```
 
-### useReducer
+## useReducer
 Para estado mais complexo, `useReducer` é mais apropriado que `useState`.
 
 ```javascript
 const [state, dispatch] = useReducer(reducer, initialState);
 ```
 
-### useCallback
+## useCallback
 Memoriza uma função para evitar re-renders desnecessários em componentes filhos.
 
 ```javascript
@@ -63,7 +63,7 @@ const memoizedCallback = useCallback(() => {
 }, [a, b]);
 ```
 
-### useMemo
+## useMemo
 Memoriza um valor computado para evitar cálculos desnecessários.
 
 ```javascript
@@ -72,7 +72,7 @@ const memoizedValue = useMemo(() => {
 }, [a, b]);
 ```
 
-### useRef
+## useRef
 Cria uma referência mutável que persiste entre renders.
 
 ```javascript

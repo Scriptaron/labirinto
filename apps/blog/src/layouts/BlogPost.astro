@@ -372,6 +372,11 @@ const breadcrumbItems = [
 					background-color: var(--shiki-dark-bg) !important;
 				}
 
+				/* Fix contrast for comments in light mode */
+				:global(:root:not([data-theme='dark'])) .blog-content :global(pre.astro-code span[style*="#6A737D"]) {
+					color: #505860 !important;
+				}
+
 				/* Ajustes para mobile */
 				@media (min-width: 768px) {
 					.blog-content :global(pre) {
@@ -852,13 +857,22 @@ const breadcrumbItems = [
 			});
 		}
 
+		function handleCheckboxes() {
+			const checkboxes = document.querySelectorAll('.blog-content input[type="checkbox"]');
+			checkboxes.forEach((checkbox, index) => {
+				checkbox.setAttribute('aria-label', `Task item ${index + 1}`);
+			});
+		}
+
 		// Run on load and after Astro page transitions
 		document.addEventListener('DOMContentLoaded', () => {
 			handleExternalLinks();
+			handleCheckboxes();
 			filterReadPosts();
 		});
 		document.addEventListener('astro:page-load', () => {
 			handleExternalLinks();
+			handleCheckboxes();
 			filterReadPosts();
 		});
 

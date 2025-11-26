@@ -26,14 +26,14 @@ const translations = {
 };
 ---
 
-<div id="mobile-menu-overlay" class="fixed inset-0 bg-black/50 z-[9998] opacity-0 pointer-events-none transition-opacity duration-300">
+<div id="mobile-menu-overlay" class="fixed inset-0 bg-black/50 z-[9998] opacity-0 invisible pointer-events-none transition-opacity duration-300">
 	<div 
 		id="mobile-menu" 
 		class="fixed top-0 left-0 bottom-0 w-[85%] max-w-[320px] overflow-y-auto shadow-[4px_0_12px_rgba(0,0,0,0.3)] z-[9999]"
 		data-translations={JSON.stringify(translations)}
 	>
 		<div class="flex items-center justify-between p-6 border-b" style="border-color: var(--color-border-subtle);">
-			<h2 class="m-0 text-xl font-bold" style="color: var(--color-text);">{t('site.title')}</h2>
+			<div class="m-0 text-xl font-bold" style="color: var(--color-text);">{t('site.title')}</div>
 			<button id="mobile-menu-close" class="w-10 h-10 flex items-center justify-center rounded-lg cursor-pointer transition-all duration-200 hover:scale-105" style="background: var(--color-border-subtle); color: var(--color-text);" aria-label={t('mobileMenu.closeAriaLabel')}>
 				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
 					<line x1="18" y1="6" x2="6" y2="18"></line>
@@ -122,7 +122,7 @@ const translations = {
 	}
 
 	.mobile-menu-option {
-		color: var(--color-text-muted);
+		color: var(--color-text);
 		background: var(--color-border-subtle);
 	}
 
@@ -145,6 +145,7 @@ const translations = {
 
 	#mobile-menu-overlay.open {
 		opacity: 1;
+		visibility: visible;
 		pointer-events: auto;
 	}
 

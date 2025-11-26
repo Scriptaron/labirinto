@@ -26,12 +26,12 @@ const t = useTranslations(locale);
 				<line x1="3" y1="18" x2="21" y2="18"></line>
 			</svg>
 		</button>
-		<h2 class="m-0 text-base sm:text-lg lg:block hidden">
-			<a href={`/${locale}/blog?ref=header_logo`} class="no-underline">{t('site.title')}</a>
-		</h2>
-		<h2 class="m-0 text-sm sm:text-base lg:hidden flex-1 text-center px-2">
-			<a href={`/${locale}/blog?ref=header_logo`} class="no-underline">{t('site.title')}</a>
-		</h2>
+		<div class="m-0 text-base sm:text-lg lg:block hidden">
+			<a href={`/${locale}/blog?ref=header_logo`} class="no-underline font-bold">{t('site.title')}</a>
+		</div>
+		<div class="m-0 text-sm sm:text-base lg:hidden flex-1 text-center px-2">
+			<a href={`/${locale}/blog?ref=header_logo`} class="no-underline font-bold">{t('site.title')}</a>
+		</div>
 		<div class="internal-links hidden lg:flex">
 			<HeaderLink href={`/${locale}/blog?ref=header_nav`}>{t('nav.blog')}</HeaderLink>
 		</div>

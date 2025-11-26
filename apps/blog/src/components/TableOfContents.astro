@@ -7,7 +7,7 @@ const t = useTranslations(lang);
 
 <aside class="toc-sidebar">
 	<nav class="toc-nav">
-		<h3 class="toc-title">{t('toc.title')}</h3>
+		<h2 class="toc-title">{t('toc.title')}</h2>
 		<ul class="toc-list" id="toc-list">
 			<!-- TOC items will be populated by JavaScript -->
 		</ul>
@@ -293,8 +293,8 @@ const t = useTranslations(lang);
 	}
 
 	:root:not([data-theme="dark"]) .toc-number {
-		color: var(--color-text-muted);
-		background: var(--color-border);
-		border-color: var(--color-border-subtle);
+		color: var(--neutral-900);
+		background: var(--neutral-200);
+		border-color: var(--neutral-300);
 	}
 </style>

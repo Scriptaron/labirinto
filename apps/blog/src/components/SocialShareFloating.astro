@@ -38,7 +38,7 @@ const translations = {
 	<!-- Menu de compartilhamento -->
 	<div 
 		id="floating-share-menu"
-		class="floating-share-backdrop fixed inset-0 z-[1001] opacity-0 pointer-events-none transition-all duration-300"
+		class="floating-share-backdrop fixed inset-0 z-[1001] opacity-0 invisible pointer-events-none transition-all duration-300"
 		aria-hidden="true"
     data-translations={JSON.stringify(translations)}
 	>
@@ -329,7 +329,7 @@ const translations = {
 		}
 
 		const openMenu = () => {
-			menu.classList.remove('opacity-0', 'pointer-events-none');
+			menu.classList.remove('opacity-0', 'invisible', 'pointer-events-none');
 			menu.classList.add('opacity-100', 'pointer-events-auto');
 			menu.setAttribute('aria-hidden', 'false');
 			const panel = menu.querySelector('div');
@@ -350,7 +350,7 @@ const translations = {
 		};
 
 		const closeMenu = () => {
-			menu.classList.add('opacity-0', 'pointer-events-none');
+			menu.classList.add('opacity-0', 'invisible', 'pointer-events-none');
 			menu.classList.remove('opacity-100', 'pointer-events-auto');
 			menu.setAttribute('aria-hidden', 'true');
 			const panel = menu.querySelector('div');
