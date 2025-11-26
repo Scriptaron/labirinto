@@ -816,10 +816,8 @@ const breadcrumbItems = [
 						</div>
 						
 						{recommendedPosts && recommendedPosts.length > 0 && (
-							<aside class="hidden xl:block w-[280px] shrink-0">
-								<div class="sticky top-8">
-									<RecommendedPosts posts={recommendedPosts} locale={locale} />
-								</div>
+							<aside class="hidden xl:block w-[280px] shrink-0 self-start sticky top-8">
+								<RecommendedPosts posts={recommendedPosts} locale={locale} />
 							</aside>
 						)}
 					</div>

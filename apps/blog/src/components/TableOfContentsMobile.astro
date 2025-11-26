@@ -68,12 +68,10 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
       </button>
     </div>
 
-    <div class="max-h-0 overflow-hidden transition-all duration-300" id="toc-mobile-list">
+    <div class="overflow-hidden transition-all duration-300" id="toc-mobile-list" style="max-height: 0;">
       <!-- TOC items will be populated by JavaScript -->
     </div>
   </div>
-</div>
-	</div>
 </div>
 
 <style is:global>
@@ -230,7 +228,12 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 		scrollbar-width: thin;
 		scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 		border-radius: 0;
-		padding-bottom: 1rem;
+	}
+	
+	/* Inner container for items with padding */
+	#toc-mobile-list .toc-mobile-items-inner {
+		padding: 0.5rem 0 0.75rem 0;
+		border-top: 1px solid var(--color-border-subtle);
 	}
 	
 	#toc-mobile-list::-webkit-scrollbar {
@@ -253,6 +256,10 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 	:root:not([data-theme="dark"]) #toc-mobile-list {
 		background: var(--color-surface);
 		scrollbar-color: var(--color-border-subtle) transparent;
+	}
+	
+	:root:not([data-theme="dark"]) #toc-mobile-list .toc-mobile-items-inner {
+		border-top-color: var(--color-border-subtle);
 	}
 	
 	:root:not([data-theme="dark"]) #toc-mobile-list::-webkit-scrollbar-thumb {
@@ -397,6 +404,11 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 			return document.documentElement.getAttribute('data-theme') === 'dark';
 		}
 		
+		// Create inner container for items
+		const itemsInner = document.createElement('div');
+		itemsInner.className = 'toc-mobile-items-inner';
+		tocList.appendChild(itemsInner);
+		
 		// Generate TOC items with Tailwind classes
 		headings.forEach((heading, index) => {
 			const item = document.createElement('div');
@@ -407,9 +419,9 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 			link.href = `#${heading.id}`;
 			link.className = 'toc-mobile-link no-underline flex justify-between items-center p-3 text-[0.9375rem] rounded-lg transition-all duration-200 gap-2 mx-2 my-2 border';
 			
-			const number = document.createElement('span');
-			number.className = 'toc-mobile-number text-sm font-bold px-2.5 py-1.5 rounded-md min-w-[1.85rem] h-[1.85rem] flex items-center justify-center text-center shrink-0 transition-all duration-200 border';
-			number.textContent = (index + 1).toString();
+			const numberEl = document.createElement('span');
+			numberEl.className = 'toc-mobile-number text-sm font-bold px-2.5 py-1.5 rounded-md min-w-[1.85rem] h-[1.85rem] flex items-center justify-center text-center shrink-0 transition-all duration-200 border';
+			numberEl.textContent = (index + 1).toString();
 			
 			const text = document.createElement('span');
 			text.className = 'toc-mobile-text flex-1 leading-[1.4] line-clamp-2 overflow-hidden text-ellipsis';
@@ -419,10 +431,10 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 			text.style.maxHeight = 'calc(1.4em * 2)';
 			text.textContent = heading.textContent || '';
 			
-			link.appendChild(number);
+			link.appendChild(numberEl);
 			link.appendChild(text);
 			item.appendChild(link);
-			tocList.appendChild(item);
+			itemsInner.appendChild(item);
 			
 			// Click handler
 			link.addEventListener('click', (e) => {
@@ -455,7 +467,7 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 				
 				// Scroll to active item after a short delay to allow height transition to start
 				setTimeout(() => {
-					const items = tocList.querySelectorAll('.toc-mobile-item');
+					const items = tocList.querySelectorAll('.toc-mobile-items-inner .toc-mobile-item');
 					if (items[currentIndex]) {
 						updateListScroll(items[currentIndex]);
 					}
@@ -509,7 +521,7 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 				currentTitle.textContent = headings[currentIndex].textContent || '';
 				
 				// Update active item - EXACT same colors as desktop TOC
-				const items = tocList.querySelectorAll('.toc-mobile-item');
+				const items = tocList.querySelectorAll('.toc-mobile-items-inner .toc-mobile-item');
 				
 				items.forEach((item, index) => {
 					const link = item.querySelector('.toc-mobile-link');

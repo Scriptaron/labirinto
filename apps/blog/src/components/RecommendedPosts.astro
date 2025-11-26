@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import { getImage } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import { categories } from '@/content.config';
 
@@ -10,6 +10,18 @@ interface Props {
 }
 
 const { posts, locale, class: className } = Astro.props;
+
+// Pre-process images to get optimized URLs
+const postsWithImages = await Promise.all(
+  posts.map(async (post) => {
+    let imageUrl = '';
+    if (post.data.heroImage) {
+      const optimized = await getImage({ src: post.data.heroImage, width: 400, height: 225 });
+      imageUrl = optimized.src;
+    }
+    return { post, imageUrl };
+  })
+);
 ---
 
 <div class={`recommended-posts-wrapper ${className || ''}`}>
@@ -17,7 +29,7 @@ const { posts, locale, class: className } = Astro.props;
     {locale === 'pt' ? 'Recomendados para você' : locale === 'es' ? 'Recomendado para ti' : 'Recommended for you'}
   </h3>
   <div class="grid gap-3 md:gap-4 grid-cols-1">
-    {posts.map(post => {
+    {postsWithImages.map(({ post, imageUrl }) => {
       const categoryId = post.data.category;
       const categoryData = categoryId ? Object.values(categories).find(c => c.id === categoryId || c.slug === categoryId) : null;
       const categoryName = categoryData?.name[locale] || (categoryId ? categoryId.charAt(0).toUpperCase() + categoryId.slice(1) : 'Geral');
@@ -28,22 +40,19 @@ const { posts, locale, class: className } = Astro.props;
         class="recommended-post-card group block rounded-xl border border-border-subtle transition-shadow hover:shadow-md overflow-hidden no-underline"
         data-permalink={post.data.permalink}
       >
-        {post.data.heroImage && (
-          <div class="w-full h-40 overflow-hidden relative">
-            <Image 
-              src={post.data.heroImage} 
-              alt={post.data.title} 
-              width={400} 
-              height={225} 
-              class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 rounded-none m-0 block" 
-            />
-          </div>
+        {imageUrl && (
+          <div 
+            class="recommended-post-image w-full aspect-video bg-cover bg-center transition-transform duration-300 group-hover:scale-105"
+            style={`background-image: url('${imageUrl}');`}
+            role="img"
+            aria-label={post.data.title}
+          />
         )}
-        <div class="px-3 pb-3 pt-2 md:px-4 md:pb-4 md:pt-3 flex flex-col gap-1.5 md:gap-2">
-          <span class="text-[0.65rem] font-semibold text-text-muted uppercase tracking-wide">
+        <div class="p-3 md:p-4 flex flex-col gap-1">
+          <span class="text-[0.65rem] font-semibold text-text-muted uppercase tracking-wide leading-none">
             {categoryName}
           </span>
-          <h4 class="text-sm font-semibold text-text group-hover:text-blog-highlight transition-colors line-clamp-2 leading-snug">
+          <h4 class="text-sm font-semibold text-text group-hover:text-blog-highlight transition-colors line-clamp-2 leading-snug m-0">
             {post.data.title}
           </h4>
         </div>
