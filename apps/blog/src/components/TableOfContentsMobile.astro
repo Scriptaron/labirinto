@@ -11,12 +11,12 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 ---
 
 <div
-  class="lg:hidden my-8 relative"
+  class="lg:hidden mt-8 relative"
   id="toc-mobile-wrapper"
   data-next-label={tNextAriaLabel}
   data-top-label={tBackToTopAriaLabel}
 >
-  <div class="rounded-xl" id="toc-mobile">
+  <div id="toc-mobile">
     <div class="flex items-center gap-3 p-3 transition-all duration-300">
       <button
         class="border-0 rounded-lg w-9 h-9 flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-95 shrink-0 relative"
@@ -29,7 +29,7 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          stroke-width="2"
+          stroke-width="1.5"
         >
           <line x1="3" y1="6" x2="21" y2="6"></line>
           <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -41,7 +41,7 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          stroke-width="2"
+          stroke-width="1.5"
         >
           <line x1="18" y1="6" x2="6" y2="18"></line>
           <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -61,7 +61,7 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          stroke-width="2"
+          stroke-width="1.5"
         >
           <polyline points="9 18 15 12 9 6"></polyline>
         </svg>
@@ -79,14 +79,27 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 <style is:global>
 	/* Mobile TOC Container - Dark theme default */
 	#toc-mobile {
-		background: #1a1a1a;
+		background: var(--shiki-dark-bg);
 		box-shadow: var(--shadow-lg);
 		transition: background-color 0.3s ease, box-shadow 0.3s ease, border-radius 0.3s ease;
+		border: 1px solid var(--color-border-subtle);
+	}
+	
+	/* Fixed state */
+	#toc-mobile.toc-fixed {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: 100;
+		margin: 0 !important;
+		border-radius: 0;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 	}
 	
 	:root:not([data-theme="dark"]) #toc-mobile {
 		background: var(--color-surface);
-		border: 1px solid var(--color-border);
+		border: 1px solid var(--color-border-subtle);
 	}
 	
 	/* Header Number - Default state (same as .toc-number) */
@@ -103,16 +116,16 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 		flex-shrink: 0;
 		transition: all 0.3s ease;
 		/* Dark theme - same as .toc-number */
-		color: #6b7280;
-		background: rgba(255, 255, 255, 0.1);
-		border: 1px solid rgba(255, 255, 255, 0.15);
+		color: var(--color-text-muted);
+		background: rgba(255, 255, 255, 0.05);
+		border: 1px solid var(--color-border-subtle);
 	}
 	
 	/* Light theme - same as .toc-number */
 	:root:not([data-theme="dark"]) .toc-header-number {
 		color: var(--color-text-muted);
 		background: var(--color-border);
-		border-color: var(--color-border);
+		border-color: var(--color-border-subtle);
 	}
 	
 	/* Header Number - Active state when fixed */
@@ -139,7 +152,7 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 		text-overflow: ellipsis;
 		transition: all 0.3s ease;
 		/* Dark theme - same as .toc-link */
-		color: #9ca3af;
+		color: var(--color-text-muted);
 	}
 	
 	/* Light theme - same as .toc-link */
@@ -158,19 +171,21 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 	
 	/* Menu Button - Same background as container */
 	#toc-menu-btn {
-		background: transparent !important;
+		background: rgba(255, 255, 255, 0.1) !important;
+		color: var(--color-text);
 	}
 	
 	#toc-menu-btn:hover {
-		background: rgba(255, 255, 255, 0.05) !important;
+		background: rgba(255, 255, 255, 0.15) !important;
 	}
 	
 	:root:not([data-theme="dark"]) #toc-menu-btn {
-		background: transparent !important;
+		background: var(--color-border-subtle) !important;
+		color: var(--color-text);
 	}
 	
 	:root:not([data-theme="dark"]) #toc-menu-btn:hover {
-		background: var(--color-border-subtle) !important;
+		background: var(--color-border) !important;
 	}
 	
 	/* Next Button - Dark theme with accent-dark */
@@ -200,7 +215,7 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 	}
 	
 	.toc-btn-icon {
-		color: white;
+		color: var(--color-text);
 	}
 	
 	:root:not([data-theme="dark"]) .toc-btn-icon {
@@ -209,12 +224,13 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 	
 	/* TOC List Background and Scroll */
 	#toc-mobile-list {
-		background: #1a1a1a;
+		background: var(--shiki-dark-bg);
 		overflow-y: auto;
 		overscroll-behavior: contain;
 		scrollbar-width: thin;
 		scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 		border-radius: 0;
+		padding-bottom: 1rem;
 	}
 	
 	#toc-mobile-list::-webkit-scrollbar {
@@ -236,11 +252,11 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 	
 	:root:not([data-theme="dark"]) #toc-mobile-list {
 		background: var(--color-surface);
-		scrollbar-color: var(--color-border) transparent;
+		scrollbar-color: var(--color-border-subtle) transparent;
 	}
 	
 	:root:not([data-theme="dark"]) #toc-mobile-list::-webkit-scrollbar-thumb {
-		background: var(--color-border);
+		background: var(--color-border-subtle);
 	}
 	
 	:root:not([data-theme="dark"]) #toc-mobile-list::-webkit-scrollbar-thumb:hover {
@@ -249,7 +265,7 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 	
 	/* TOC Mobile Links - EXACT same as desktop .toc-link */
 	.toc-mobile-link {
-		color: #9ca3af;
+		color: var(--color-text-muted);
 		background: rgba(255, 255, 255, 0.03);
 		border-color: transparent;
 	}
@@ -269,7 +285,7 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 	:root:not([data-theme="dark"]) .toc-mobile-link:hover {
 		color: var(--color-text);
 		background: var(--color-border);
-		border-color: var(--color-border);
+		border-color: var(--color-border-subtle);
 	}
 	
 	.toc-mobile-link:hover .toc-mobile-number {
@@ -314,15 +330,15 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 	
 	/* TOC Mobile Number - EXACT same as desktop .toc-number */
 	.toc-mobile-number {
-		color: #6b7280;
-		background: rgba(255, 255, 255, 0.1);
-		border-color: rgba(255, 255, 255, 0.15);
+		color: var(--color-text-muted);
+		background: rgba(255, 255, 255, 0.05);
+		border-color: var(--color-border-subtle);
 	}
 	
 	:root:not([data-theme="dark"]) .toc-mobile-number {
 		color: var(--color-text-muted);
 		background: var(--color-border);
-		border-color: var(--color-border);
+		border-color: var(--color-border-subtle);
 	}
 
 	/* Menu Icon Animation */
@@ -525,7 +541,7 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 			if (isLast) {
 				// Show restart icon
 				nextBtn.innerHTML = `
-					<svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg class="w-5 h-5 toc-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
 						<polyline points="1 4 1 10 7 10"></polyline>
 						<path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
 					</svg>
@@ -534,7 +550,7 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 			} else {
 				// Show next arrow
 				nextBtn.innerHTML = `
-					<svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg class="w-5 h-5 toc-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
 						<polyline points="9 18 15 12 9 6"></polyline>
 					</svg>
 				`;
@@ -576,11 +592,11 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 					wrapper.style.height = header.offsetHeight + 'px';
 				}
 
-				tocMobile.classList.add('!fixed', 'top-0', 'left-0', 'right-0', 'z-[100]', '!my-0', '!rounded-none', 'toc-fixed');
-				tocMobile.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.25)';
-				
-				// Remove wrapper margins to reduce gap
-				wrapper.classList.add('!my-0');
+				// Set wrapper height to preserve space
+				wrapper.style.height = tocMobile.offsetHeight + 'px';
+
+				// Use fixed class
+				tocMobile.classList.add('toc-fixed');
 				
 				// Show next button when collapsed
 				nextBtn.classList.remove('hidden');
@@ -592,12 +608,10 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 				}
 			} else if (scrollY <= wrapperTop - 20 && isCollapsed) {
 				isCollapsed = false;
-				tocMobile.classList.remove('!fixed', 'top-0', 'left-0', 'right-0', 'z-[100]', '!my-0', '!rounded-none', 'toc-fixed');
-				tocMobile.style.boxShadow = 'var(--shadow-lg)';
-				wrapper.style.height = '';
+				tocMobile.classList.remove('toc-fixed');
 				
-				// Restore wrapper margins
-				wrapper.classList.remove('!my-0');
+				// Reset wrapper height
+				wrapper.style.height = '';
 				
 				// Hide next button when not collapsed
 				nextBtn.classList.add('hidden');

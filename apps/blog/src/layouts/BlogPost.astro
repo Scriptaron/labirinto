@@ -13,6 +13,7 @@ import ReadingProgressBar from '@/components/ReadingProgressBar.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import CategoryBadge from '@/components/CategoryBadge.astro';
 import TagsList from '@/components/TagsList.astro';
+import RecommendedPosts from '@/components/RecommendedPosts.astro';
 import PostHogLayout from '@/layouts/PostHogLayout.astro';
 
 type Props = CollectionEntry<'blog'>['data'] & {
@@ -111,9 +112,6 @@ const breadcrumbItems = [
 					display: flex;
 					flex-direction: column;
 					gap: 1.5rem;
-					position: sticky;
-					top: 2rem;
-					align-self: flex-start;
 				}
 
 				@media (max-width: 1024px) {
@@ -341,7 +339,7 @@ const breadcrumbItems = [
 					overflow-x: auto;
 					margin: 1.5rem 0;
 					box-shadow: var(--shadow-sm);
-					border: 1px solid var(--color-border);
+					border: 1px solid var(--color-border-subtle);
 				}
 
 				/* Código dentro do pre */
@@ -606,7 +604,7 @@ const breadcrumbItems = [
 					font-weight: 800;
 					color: var(--color-text);
 					background-color: rgba(0, 0, 0, 0.04);
-					border-bottom: 2px solid var(--color-border);
+					border-bottom: 2px solid var(--color-border-subtle);
 					border-right: 1px solid var(--neutral-300);
 					text-transform: uppercase;
 					font-size: 0.85rem;
@@ -667,7 +665,7 @@ const breadcrumbItems = [
 				.blog-content :global(.footnotes) {
 					margin-top: 3rem;
 					padding-top: 2rem;
-					border-top: 1px solid var(--color-border);
+					border-top: 1px solid var(--color-border-subtle);
 					font-size: 0.875rem;
 					color: var(--color-text-muted);
 				}
@@ -749,12 +747,12 @@ const breadcrumbItems = [
 				}
 			</style>
 			<article>
-				<div class="max-w-[1200px] mx-auto relative">
-					<div class="w-full mx-auto px-4 sm:px-6 py-3 sm:py-4">
+				<div class="max-w-[1440px] mx-auto relative">
+					<nav class="w-full mx-auto px-4 sm:px-6 py-3 sm:py-4" aria-label="Breadcrumb">
 						<Breadcrumbs items={breadcrumbItems} />
-					</div>
+					</nav>
 					<div class="w-full mx-auto px-4 sm:px-6 lg:px-0 lg:max-w-[1020px]">
-						<div class="pt-4 sm:pt-5 md:pt-6 pb-0">
+						<header class="pt-4 sm:pt-5 md:pt-6 pb-0">
 							<div class="mb-3 sm:mb-3.5 md:mb-4 text-xs uppercase tracking-wider text-text-muted font-semibold flex items-center gap-3 flex-wrap">
 								{category && (
 									<>
@@ -780,11 +778,11 @@ const breadcrumbItems = [
 							{description && (
 								<p class="text-base sm:text-lg text-text-muted leading-relaxed mb-4 sm:mb-5 md:mb-6">{description}</p>
 							)}
-							<hr class="w-16 sm:w-20 border-t border-border" />
-						</div>
+							<hr class="w-16 sm:w-20 border-t border-border-subtle" />
+						</header>
 					</div>
 					{heroImage && (
-						<div class="hero-image-container mb-8 lg:mb-12">
+						<figure class="hero-image-container mb-8 lg:mb-12">
 							<Image
 								class="hero-image"
 								width={1020}
@@ -792,51 +790,38 @@ const breadcrumbItems = [
 								src={heroImage}
 								alt={title}
 							/>
-						</div>
+						</figure>
 					)}
 					<TableOfContentsMobile />
-					<div class="flex gap-6 lg:gap-10 xl:gap-12 items-start px-4 sm:px-6 lg:px-0">
-						<div class="toc-share-sidebar">
+					<div class="flex justify-center gap-6 lg:gap-6 xl:gap-8 items-start px-4 sm:px-6 lg:px-8 2xl:px-16">
+						<aside class="toc-share-sidebar w-[280px] shrink-0 hidden lg:flex flex-col gap-6 sticky top-8 self-start h-[calc(100vh-4rem)] overflow-y-auto scrollbar-hide">
 							<TableOfContents />
 							<SocialShare url={currentUrl} title={title} />
-						</div>
-						<div class="flex-1 max-w-full lg:max-w-[720px] min-w-0 blog-content">
-							<slot />
-							{tags && tags.length > 0 && (
-								<div class="mt-12 pt-6 border-t border-border">
-									<TagsList tags={tags} locale={locale} />
-								</div>
-							)}
+						</aside>
+						<div class="flex-1 max-w-full lg:max-w-[820px] min-w-0">
+							<div class="blog-content">
+								<slot />
+								{tags && tags.length > 0 && (
+									<div class="mt-12 pt-8 border-t border-border-subtle">
+										<TagsList tags={tags} locale={locale} />
+									</div>
+								)}
+							</div>
 
 							{recommendedPosts && recommendedPosts.length > 0 && (
-								<div class="mt-12 pt-8 border-t border-border">
-									<h3 class="text-lg font-bold text-text mb-6 uppercase tracking-wider">
-										{locale === 'pt' ? 'Recomendados para você' : locale === 'es' ? 'Recomendado para ti' : 'Recommended for you'}
-									</h3>
-									<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-1" id="recommended-posts-container">
-										{recommendedPosts.map(post => (
-											<a 
-												href={`/${locale}/blog/${post.data.permalink}?ref=blog_recommendation`} 
-												class="recommended-post-card group block p-5 bg-surface-hover rounded-xl border border-border transition-all hover:border-blog-highlight hover:shadow-md"
-												data-permalink={post.data.permalink}
-											>
-												<div class="flex flex-col gap-2">
-													<span class="text-xs font-semibold text-blog-highlight uppercase tracking-wide">
-														{post.data.category}
-													</span>
-													<h4 class="text-lg font-bold text-text group-hover:text-blog-highlight transition-colors line-clamp-2">
-														{post.data.title}
-													</h4>
-													<p class="text-sm text-text-muted line-clamp-2">
-														{post.data.description}
-													</p>
-												</div>
-											</a>
-										))}
-									</div>
+								<div class="mt-12 pt-8 border-t border-border-subtle xl:hidden">
+									<RecommendedPosts posts={recommendedPosts} locale={locale} />
 								</div>
 							)}
 						</div>
+						
+						{recommendedPosts && recommendedPosts.length > 0 && (
+							<aside class="hidden xl:block w-[280px] shrink-0">
+								<div class="sticky top-8">
+									<RecommendedPosts posts={recommendedPosts} locale={locale} />
+								</div>
+							</aside>
+						)}
 					</div>
 				</div>
 			</article>
@@ -881,24 +866,26 @@ const breadcrumbItems = [
 			try {
 				const READ_POSTS_KEY = 'labirinto_read_posts';
 				const readPosts = JSON.parse(localStorage.getItem(READ_POSTS_KEY) || '[]');
-				const container = document.getElementById('recommended-posts-container');
+				const containers = document.querySelectorAll('.recommended-posts-container');
 				
-				if (!container || readPosts.length === 0) return;
+				if (containers.length === 0 || readPosts.length === 0) return;
 
-				const cards = container.querySelectorAll('.recommended-post-card');
-				let visibleCount = 0;
+				containers.forEach(container => {
+					const cards = container.querySelectorAll('.recommended-post-card');
+					let visibleCount = 0;
 
-				cards.forEach(card => {
-					const permalink = card.getAttribute('data-permalink');
-					// Se já foi lido, move para o final e diminui opacidade (ou esconde se preferir)
-					if (readPosts.includes(permalink)) {
-						(card as HTMLElement).style.order = '99';
-						(card as HTMLElement).style.opacity = '0.6';
-						// Opcional: Adicionar um ícone de "Lido"
-					} else {
-						(card as HTMLElement).style.order = visibleCount.toString();
-						visibleCount++;
-					}
+					cards.forEach(card => {
+						const permalink = card.getAttribute('data-permalink');
+						// Se já foi lido, move para o final e diminui opacidade (ou esconde se preferir)
+						if (readPosts.includes(permalink)) {
+							(card as HTMLElement).style.order = '99';
+							(card as HTMLElement).style.opacity = '0.6';
+							// Opcional: Adicionar um ícone de "Lido"
+						} else {
+							(card as HTMLElement).style.order = visibleCount.toString();
+							visibleCount++;
+						}
+					});
 				});
 			} catch (e) {
 				// Ignora erros

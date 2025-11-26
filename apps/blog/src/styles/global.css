@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @import "../../../../packages/tailwind-config/globals.css";
 
+:root {
+  --shiki-light-bg: #ffffff;
+  --shiki-dark-bg: #24292e;
+}
+
 /* Critical CSS - carregado primeiro */
 body {
   background: var(--color-background);
@@ -11,7 +16,7 @@ body {
 
 hr {
   border: 0;
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--color-border-subtle);
   margin: 2rem 0;
 }
 

@@ -8,6 +8,9 @@ alternates:
   en: 'react-hooks'
   es: 'react-hooks'
 heroImage: '../../../assets/blog-placeholder-3.jpg'
+category: 'development'
+tags: ['react', 'javascript', 'hooks', 'frontend']
+---
 
 ```javascript
 const [count, setCount] = useState(0);

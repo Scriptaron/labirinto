@@ -24,7 +24,7 @@ const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}\//, '/');
 
 <div class="language-switcher relative" data-cookie-name={LOCALE_COOKIE_NAME}>
   <button 
-    class="relative flex items-center justify-center w-11 h-11 rounded-lg border-2 border-border bg-surface text-text hover:border-primary hover:scale-105 transition-all duration-300 focus:outline-2 focus:outline-primary focus:outline-offset-2"
+    class="relative flex items-center justify-center w-11 h-11 rounded-lg border-2 border-border-subtle bg-surface text-text hover:border-primary hover:scale-105 transition-all duration-300 focus:outline-2 focus:outline-primary focus:outline-offset-2"
     aria-label={t('language.label')}
     type="button"
   >
@@ -135,7 +135,7 @@ const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}\//, '/');
   :root:not([data-theme="dark"]) .language-option:hover {
     color: var(--color-text);
     background: var(--color-border);
-    border-color: var(--color-border);
+    border-color: var(--color-border-subtle);
   }
 
   .language-option.active {

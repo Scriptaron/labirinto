@@ -43,7 +43,7 @@ const translations = {
     data-translations={JSON.stringify(translations)}
 	>
 		<div class="absolute bottom-0 left-0 right-0 rounded-t-3xl shadow-2xl transform translate-y-full transition-transform duration-300 max-h-[80vh] overflow-y-auto z-[1002]" style="background: var(--color-surface);">
-			<div class="sticky top-0 px-6 py-4 flex items-center justify-between z-10" style="background: var(--color-surface); border-bottom: 1px solid var(--color-border);">
+			<div class="sticky top-0 px-6 py-4 flex items-center justify-between z-10" style="background: var(--color-surface); border-bottom: 1px solid var(--color-border-subtle);">
 				<h3 class="text-lg font-semibold m-0" style="color: var(--color-text);">{t('socialShare.modalTitle')}</h3>
 				<button 
 					id="floating-share-close"
@@ -60,14 +60,14 @@ const translations = {
 
 			<div class="p-6">
 				<!-- Copiar Link -->
-				<div class="mb-6 pb-6" style="border-bottom: 1px solid var(--color-border);">
+				<div class="mb-6 pb-6" style="border-bottom: 1px solid var(--color-border-subtle);">
 					<label for="floating-share-url" class="block text-sm font-semibold mb-2 share-label">{t('socialShare.postLink')}</label>
 					<div class="flex gap-2">
 						<input 
 							type="text" 
 							id="floating-share-url" 
 							class="flex-1 px-4 py-3 rounded-lg text-sm font-mono" 
-							style="border: 2px solid var(--color-border); color: var(--color-text); background: var(--color-background);"
+							style="border: 2px solid var(--color-border-subtle); color: var(--color-text); background: var(--color-background);"
 							value={shareUrl + '?utm_source=copy&utm_medium=share&utm_campaign=share'}
 						/>
 						<button 
