@@ -13,7 +13,7 @@ const categorySchema = z.object({
 // Schema para tags
 const tagSchema = z.object({
 	id: z.string(),
-	name: z.string(),
+	name: z.record(z.string()), // { pt: 'JavaScript', en: 'JavaScript', es: 'JavaScript' }
 	slug: z.string(),
 	description: z.string().optional(),
 });
@@ -48,21 +48,21 @@ export const categories = {
 
 // Tags predefinidas
 export const tags = {
-	javascript: { id: 'javascript', name: 'JavaScript', slug: 'javascript' },
-	typescript: { id: 'typescript', name: 'TypeScript', slug: 'typescript' },
-	react: { id: 'react', name: 'React', slug: 'react' },
-	vue: { id: 'vue', name: 'Vue', slug: 'vue' },
-	angular: { id: 'angular', name: 'Angular', slug: 'angular' },
-	nodejs: { id: 'nodejs', name: 'Node.js', slug: 'nodejs' },
-	python: { id: 'python', name: 'Python', slug: 'python' },
-	frontend: { id: 'frontend', name: 'Frontend', slug: 'frontend' },
-	backend: { id: 'backend', name: 'Backend', slug: 'backend' },
-	tutorial: { id: 'tutorial', name: 'Tutorial', slug: 'tutorial' },
-	web: { id: 'web', name: 'Web', slug: 'web' },
-	programming: { id: 'programming', name: 'Programming', slug: 'programming' },
-	hooks: { id: 'hooks', name: 'Hooks', slug: 'hooks' },
-	introduction: { id: 'introduction', name: 'Introduction', slug: 'introduction' },
-	blog: { id: 'blog', name: 'Blog', slug: 'blog' },
+	javascript: { id: 'javascript', name: { pt: 'JavaScript', en: 'JavaScript', es: 'JavaScript' }, slug: 'javascript' },
+	typescript: { id: 'typescript', name: { pt: 'TypeScript', en: 'TypeScript', es: 'TypeScript' }, slug: 'typescript' },
+	react: { id: 'react', name: { pt: 'React', en: 'React', es: 'React' }, slug: 'react' },
+	vue: { id: 'vue', name: { pt: 'Vue', en: 'Vue', es: 'Vue' }, slug: 'vue' },
+	angular: { id: 'angular', name: { pt: 'Angular', en: 'Angular', es: 'Angular' }, slug: 'angular' },
+	nodejs: { id: 'nodejs', name: { pt: 'Node.js', en: 'Node.js', es: 'Node.js' }, slug: 'nodejs' },
+	python: { id: 'python', name: { pt: 'Python', en: 'Python', es: 'Python' }, slug: 'python' },
+	frontend: { id: 'frontend', name: { pt: 'Frontend', en: 'Frontend', es: 'Frontend' }, slug: 'frontend' },
+	backend: { id: 'backend', name: { pt: 'Backend', en: 'Backend', es: 'Backend' }, slug: 'backend' },
+	tutorial: { id: 'tutorial', name: { pt: 'Tutorial', en: 'Tutorial', es: 'Tutorial' }, slug: 'tutorial' },
+	web: { id: 'web', name: { pt: 'Web', en: 'Web', es: 'Web' }, slug: 'web' },
+	programming: { id: 'programming', name: { pt: 'Programação', en: 'Programming', es: 'Programación' }, slug: 'programming' },
+	hooks: { id: 'hooks', name: { pt: 'Hooks', en: 'Hooks', es: 'Hooks' }, slug: 'hooks' },
+	introduction: { id: 'introduction', name: { pt: 'Introdução', en: 'Introduction', es: 'Introducción' }, slug: 'introduction' },
+	blog: { id: 'blog', name: { pt: 'Blog', en: 'Blog', es: 'Blog' }, slug: 'blog' },
 } as const;
 
 const blog = defineCollection({
