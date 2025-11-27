@@ -56,7 +56,13 @@ export async function getStaticPaths() {
 		});
 
 		// Pega os top 3 posts recomendados
-		const recommendedPosts = currentLangPosts.slice(0, 3);
+		const recommendedPosts = currentLangPosts.slice(0, 3).map(p => ({
+			...p,
+			data: {
+				...p.data,
+				_score: calculateScore(p)
+			}
+		}));
 
 		return {
 			params: { 
@@ -79,7 +85,7 @@ const { Content, headings } = await render(post);
 const locale = Astro.params.locale as string;
 ---
 
-	<BlogPost {...post.data} headings={headings} alternateLinks={alternateLinks} locale={locale} recommendedPosts={recommendedPosts}>
+	<BlogPost {...post.data} headings={headings} alternateLinks={alternateLinks} locale={locale as any} recommendedPosts={recommendedPosts}>
 		<Content />
 	</BlogPost>
 

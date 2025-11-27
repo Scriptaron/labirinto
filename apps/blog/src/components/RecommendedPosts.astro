@@ -40,6 +40,7 @@ const postsWithImages = await Promise.all(
         href={`/${locale}/blog/${post.data.permalink}?ref=blog_recommendation`} 
         class="recommended-post-card group block rounded-xl border border-border-subtle transition-shadow hover:shadow-md overflow-hidden no-underline"
         data-permalink={post.data.permalink}
+        data-relevance-score={(post.data as any)._score}
       >
         {imageUrl && (
           <div 

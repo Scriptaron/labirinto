@@ -840,16 +840,17 @@ const breadcrumbItems = [
 
 			links.forEach(link => {
 				try {
+					const anchor = link as HTMLAnchorElement;
 					// Check if it's a valid URL
-					const url = new URL(link.href);
+					const url = new URL(anchor.href);
 					
 					// If hostname is different and not a mailto/tel link
-					if (url.hostname !== currentHost && !link.href.startsWith('mailto:') && !link.href.startsWith('tel:')) {
-						link.setAttribute('target', '_blank');
-						link.setAttribute('rel', 'noopener noreferrer');
+					if (url.hostname !== currentHost && !anchor.href.startsWith('mailto:') && !anchor.href.startsWith('tel:')) {
+						anchor.setAttribute('target', '_blank');
+						anchor.setAttribute('rel', 'noopener noreferrer');
 						
 						// Optional: Add an external link icon or indicator class
-						link.classList.add('external-link');
+						anchor.classList.add('external-link');
 					}
 				} catch (e) {
 					// Invalid URL, ignore

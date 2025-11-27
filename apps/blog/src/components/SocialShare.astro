@@ -272,7 +272,7 @@ const translations = {
 
 		if (!modal || !modalOverlay || !closeBtn) return;
     
-    const t = JSON.parse(modal.dataset.translations);
+    const t = JSON.parse(modal.dataset.translations || '{}');
 
 		// Move modal to body to avoid z-index issues with sticky parents
 		if (modal && modal.parentElement !== document.body) {
@@ -287,7 +287,7 @@ const translations = {
 			const progressBar = document.getElementById('reading-progress-container');
 			if (progressBar) {
 				progressBar.style.backdropFilter = 'blur(4px)';
-				progressBar.style.webkitBackdropFilter = 'blur(4px)';
+				(progressBar.style as any).webkitBackdropFilter = 'blur(4px)';
 				progressBar.classList.add('modal-open');
 			}
 		};
@@ -308,7 +308,7 @@ const translations = {
 			const progressBar = document.getElementById('reading-progress-container');
 			if (progressBar) {
 				progressBar.style.backdropFilter = '';
-				progressBar.style.webkitBackdropFilter = '';
+				(progressBar.style as any).webkitBackdropFilter = '';
 				progressBar.classList.remove('modal-open');
 			}
 		};
@@ -351,8 +351,8 @@ const translations = {
 		document.querySelectorAll('[data-platform]').forEach(btn => {
 			btn.addEventListener('click', () => {
 				const platform = btn.getAttribute('data-platform');
-				if (window.posthog) {
-					window.posthog.capture('social_share_click', {
+				if ((window as any).posthog) {
+					(window as any).posthog.capture('social_share_click', {
 						platform: platform,
 						url: window.location.pathname
 					});

@@ -14,5 +14,18 @@ const { lang } = Astro.props;
   </head>
   <body>
     <slot />
+    {
+      import.meta.env.DEV && (
+        <script>
+          import { createElement, render } from 'preact';
+          import DevTools from '@/components/DevTools/DevTools';
+          
+          const container = document.createElement('div');
+          container.id = 'devtools-root';
+          document.body.appendChild(container);
+          render(createElement(DevTools, null), container);
+        </script>
+      )
+    }
   </body>
 </html>

@@ -15,16 +15,26 @@ const tagsList = tags.map(tagId => {
   // Se não encontrar, tenta encontrar por slug ou nome (case-insensitive)
   if (!tagData) {
     const normalizedId = tagId.toLowerCase().replace(/\s+/g, '-');
-    tagData = Object.values(tagsSchema).find(t => 
+    tagData = Object.values(tagsSchema).find((t: any) => 
       t.slug === normalizedId || 
       t.id.toLowerCase() === normalizedId ||
-      t.name.toLowerCase() === tagId.toLowerCase()
-    );
+      (typeof t.name === 'object' && Object.values(t.name).some((n: any) => n.toLowerCase() === tagId.toLowerCase()))
+    ) as any;
+  }
+
+  let tagName = tagId;
+  if (tagData && tagData.name) {
+    if (typeof tagData.name === 'object') {
+      // @ts-ignore
+      tagName = tagData.name[locale] || tagData.name['pt'] || Object.values(tagData.name)[0] || tagId;
+    } else {
+      tagName = tagData.name;
+    }
   }
 
   return {
     id: tagId,
-    name: tagData?.name || tagId,
+    name: tagName,
     slug: tagData?.slug || tagId.toLowerCase().replace(/\s+/g, '-')
   };
 });
