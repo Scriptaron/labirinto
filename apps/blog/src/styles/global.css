@@ -1,15 +1,31 @@
 @import "tailwindcss";
 @import "../../../../packages/tailwind-config/globals.css";
 
+:root {
+  --shiki-light-bg: #ffffff;
+  --shiki-dark-bg: #24292e;
+}
+
 /* Critical CSS - carregado primeiro */
 body {
   background: var(--color-background);
   color: var(--color-text);
-  font-display: swap; /* Otimização de fontes */
+  font-display: swap;
+  /* Otimização de fontes */
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--color-border-subtle);
+  margin: 2rem 0;
 }
 
 /* Otimização de renderização */
-img, picture, video, canvas, svg {
+img,
+picture,
+video,
+canvas,
+svg {
   display: block;
   max-width: 100%;
   height: auto;
@@ -42,7 +58,7 @@ html {
   html {
     scroll-behavior: auto;
   }
-  
+
   *,
   *::before,
   *::after {
@@ -50,4 +66,26 @@ html {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+::selection {
+  background-color: var(--primary-dark);
+  color: #000000;
+}
+
+@media (prefers-color-scheme: dark) {
+  ::selection {
+    background-color: var(--accent-dark);
+    color: #000000;
+  }
+}
+
+[data-theme="dark"] ::selection {
+  background-color: var(--accent-dark);
+  color: #000000;
+}
+
+[data-theme="light"] ::selection {
+  background-color: var(--primary-dark);
+  color: #ffffff;
 }

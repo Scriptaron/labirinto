@@ -9,7 +9,19 @@ interface Props {
 const { tags, locale } = Astro.props;
 
 const tagsList = tags.map(tagId => {
-  const tagData = tagsSchema[tagId as keyof typeof tagsSchema];
+  // Tenta encontrar a tag pelo ID exato
+  let tagData = tagsSchema[tagId as keyof typeof tagsSchema];
+  
+  // Se não encontrar, tenta encontrar por slug ou nome (case-insensitive)
+  if (!tagData) {
+    const normalizedId = tagId.toLowerCase().replace(/\s+/g, '-');
+    tagData = Object.values(tagsSchema).find(t => 
+      t.slug === normalizedId || 
+      t.id.toLowerCase() === normalizedId ||
+      t.name.toLowerCase() === tagId.toLowerCase()
+    );
+  }
+
   return {
     id: tagId,
     name: tagData?.name || tagId,
@@ -34,7 +46,7 @@ const tagsList = tags.map(tagId => {
 	<div class="flex flex-wrap gap-2">
 		{tagsList.map((tag) => (
 			<a 
-				href={`/${locale}/blog/tag/${tag.slug}`}
+				href={`/${locale}/blog/tag/${tag.slug}?ref=tag_list`}
 				class="tag-link"
 			>
 				{tag.name}

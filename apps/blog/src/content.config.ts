@@ -67,7 +67,7 @@ export const tags = {
 
 const blog = defineCollection({
 	// Load Markdown and MDX files in the `src/content/blog/` directory.
-	loader: glob({ base: './src/content/blog', pattern: '**/*.{md,mdx}' }),
+	loader: glob({ base: './src/content', pattern: 'blog/**/*.{md,mdx}' }),
 	// Type-check frontmatter using a schema
 	schema: ({ image }) =>
 		z.object({
@@ -80,7 +80,7 @@ const blog = defineCollection({
 			// Idioma do post
 			lang: z.enum(['pt', 'en', 'es']),
 			// Slug descritivo no idioma do post
-			slug: z.string(),
+			permalink: z.string(),
 			// Referências para o mesmo post em outros idiomas
 			alternates: z.record(z.string()).optional(),
 			// Categoria do post (deve corresponder a uma categoria predefinida)

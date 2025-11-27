@@ -1,4 +1,9 @@
 ---
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
 interface BreadcrumbItem {
   name: string;
   url?: string;
@@ -27,7 +32,7 @@ const breadcrumbSchema = {
 <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbSchema)} />
 
 <!-- Visual Breadcrumbs -->
-<nav aria-label="Breadcrumb" class="breadcrumbs">
+<nav aria-label={t('breadcrumb.ariaLabel')} class="breadcrumbs">
   <ol class="flex items-center gap-2 text-sm">
     {items.map((item, index) => (
       <li class="flex items-center gap-2">

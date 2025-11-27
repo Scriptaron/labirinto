@@ -1,36 +1,102 @@
 ---
 import { type CollectionEntry, getCollection, render } from 'astro:content';
 import BlogPost from '@/layouts/BlogPost.astro';
-import PostHogLayout from '@/layouts/PostHogLayout.astro';
+import { SITE_URL } from '@/consts';
 
 export async function getStaticPaths() {
 	const posts = await getCollection('blog');
-	return posts.map((post) => ({
-		params: { 
-			locale: post.data.lang,
-			slug: post.data.slug 
-		},
-		props: { post },
-	}));
+	return posts.map((post) => {
+		// Encontra posts com o mesmo slug em outros idiomas
+		const alternates = { ...(post.data.alternates || {}) };
+		const sameSlugPosts = posts.filter(p => 
+			p.data.permalink === post.data.permalink && 
+			p.data.lang !== post.data.lang
+		);
+
+		for (const p of sameSlugPosts) {
+			if (!alternates[p.data.lang]) {
+				alternates[p.data.lang] = p.data.permalink;
+			}
+		}
+
+		const alternateLinks = Object.entries(alternates).map(([lang, slug]) => ({
+			lang,
+			url: `${SITE_URL}/${lang}/blog/${slug}`
+		}));
+
+		// Encontra posts recomendados (mesmo idioma, excluindo o atual)
+		const currentLangPosts = posts.filter(p => p.data.lang === post.data.lang && p.id !== post.id);
+		
+		// Função para calcular pontuação de relevância
+		const calculateScore = (p: typeof post) => {
+			let score = 0;
+			
+			// Mesma categoria: +5 pontos
+			if (p.data.category === post.data.category) score += 5;
+			
+			// Tags em comum: +2 pontos por tag
+			if (post.data.tags && p.data.tags) {
+				const commonTags = p.data.tags.filter(tag => post.data.tags!.includes(tag));
+				score += commonTags.length * 2;
+			}
+			
+			// Mais recente: +1 ponto (desempate)
+			if (p.data.pubDate > post.data.pubDate) score += 1;
+			
+			return score;
+		};
+
+		// Ordena por pontuação (maior primeiro) e depois por data
+		currentLangPosts.sort((a, b) => {
+			const scoreA = calculateScore(a);
+			const scoreB = calculateScore(b);
+			
+			if (scoreA !== scoreB) return scoreB - scoreA;
+			return b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
+		});
+
+		// Pega os top 3 posts recomendados
+		const recommendedPosts = currentLangPosts.slice(0, 3);
+
+		return {
+			params: { 
+				locale: post.data.lang,
+				slug: post.data.permalink 
+			},
+			props: { post, alternateLinks, recommendedPosts },
+		};
+	});
 }
 
-type Props = { post: CollectionEntry<'blog'> };
+type Props = { 
+	post: CollectionEntry<'blog'>;
+	alternateLinks: { lang: string; url: string }[];
+	recommendedPosts?: CollectionEntry<'blog'>[];
+};
 
-const { post } = Astro.props;
+const { post, alternateLinks, recommendedPosts } = Astro.props;
 const { Content, headings } = await render(post);
 const locale = Astro.params.locale as string;
-
-// Gera links alternativos para outros idiomas
-const alternateLinks = post.data.alternates 
-	? Object.entries(post.data.alternates).map(([lang, slug]) => ({
-		lang,
-		url: `/${lang}/blog/${slug}`
-	}))
-	: [];
 ---
 
-<PostHogLayout>
-	<BlogPost {...post.data} headings={headings} alternateLinks={alternateLinks} locale={locale}>
+	<BlogPost {...post.data} headings={headings} alternateLinks={alternateLinks} locale={locale} recommendedPosts={recommendedPosts}>
 		<Content />
 	</BlogPost>
-</PostHogLayout>
+
+	<script define:vars={{ currentPermalink: post.data.permalink }}>
+		// Gerenciamento simples de histórico de leitura
+		try {
+			const READ_POSTS_KEY = 'labirinto_read_posts';
+			let readPosts = JSON.parse(localStorage.getItem(READ_POSTS_KEY) || '[]');
+			
+			// Adiciona o post atual se não estiver na lista
+			if (!readPosts.includes(currentPermalink)) {
+				readPosts.push(currentPermalink);
+				// Mantém apenas os últimos 20 posts
+				if (readPosts.length > 20) readPosts.shift();
+				localStorage.setItem(READ_POSTS_KEY, JSON.stringify(readPosts));
+			}
+		} catch (e) {
+			// Ignora erros de localStorage (ex: modo privado)
+		}
+	</script>

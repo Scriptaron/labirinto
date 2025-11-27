@@ -3,9 +3,10 @@ import { getLangFromUrl, useTranslations } from '@/i18n/utils';
 
 interface Props {
   alternates?: Record<string, string>;
+  alternateLinks?: { lang: string; url: string }[];
 }
 
-const { alternates } = Astro.props;
+const { alternates, alternateLinks } = Astro.props;
 const locale = getLangFromUrl(Astro.url);
 const t = useTranslations(locale);
 
@@ -17,14 +18,24 @@ const localeNames = {
 
 const LOCALE_COOKIE_NAME = 'NEXT_LOCALE';
 const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}\//, '/');
+
+const translations = {
+  light: t('mobileMenu.theme.light'),
+  dark: t('mobileMenu.theme.dark'),
+  error: t('mobileMenu.theme.error'),
+};
 ---
 
-<div id="mobile-menu-overlay" class="fixed inset-0 bg-black/50 z-[9998] opacity-0 pointer-events-none transition-opacity duration-300">
-	<div id="mobile-menu" class="fixed top-0 left-0 bottom-0 w-[85%] max-w-[320px] overflow-y-auto shadow-[4px_0_12px_rgba(0,0,0,0.3)] z-[9999]">
-		<div class="flex items-center justify-between p-6 border-b" style="border-color: var(--color-border);">
-			<h2 class="m-0 text-xl font-bold" style="color: var(--color-text);">{t('site.title')}</h2>
-			<button id="mobile-menu-close" class="w-10 h-10 flex items-center justify-center rounded-lg cursor-pointer transition-all duration-200 hover:scale-105" style="background: var(--color-border-subtle); color: var(--color-text);" aria-label="Fechar menu">
-				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<div id="mobile-menu-overlay" class="fixed inset-0 bg-black/50 z-[9998] opacity-0 invisible pointer-events-none transition-opacity duration-300">
+	<div 
+		id="mobile-menu" 
+		class="fixed top-0 left-0 bottom-0 w-[85%] max-w-[320px] overflow-y-auto shadow-[4px_0_12px_rgba(0,0,0,0.3)] z-[9999]"
+		data-translations={JSON.stringify(translations)}
+	>
+		<div class="flex items-center justify-between p-6 border-b" style="border-color: var(--color-border-subtle);">
+			<div class="m-0 text-xl font-bold" style="color: var(--color-text);">{t('site.title')}</div>
+			<button id="mobile-menu-close" class="w-10 h-10 flex items-center justify-center rounded-lg cursor-pointer transition-all duration-200 hover:scale-105" style="background: var(--color-border-subtle); color: var(--color-text);" aria-label={t('mobileMenu.closeAriaLabel')}>
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
 					<line x1="18" y1="6" x2="6" y2="18"></line>
 					<line x1="6" y1="6" x2="18" y2="18"></line>
 				</svg>
@@ -32,14 +43,14 @@ const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}\//, '/');
 		</div>
 
 		<nav class="p-4 flex flex-col gap-2">
-			<a href={`/${locale}/blog`} class="flex items-center gap-3 px-4 py-4 text-base font-medium rounded-xl no-underline transition-all duration-200" style="color: var(--color-text); background: var(--color-border-subtle);">
+			<a href={`/${locale}/blog?ref=mobile_menu_blog`} class="flex items-center gap-3 px-4 py-4 text-base font-medium rounded-xl no-underline transition-all duration-200" style="color: var(--color-text); background: var(--color-border-subtle);">
 				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 					<path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
 				</svg>
 				{t('nav.blog')}
 			</a>
 
-			<hr class="border-0 border-t my-2" style="border-color: var(--color-border);" />
+			<hr class="border-0 border-t my-2" style="border-color: var(--color-border-subtle);" />
 
 			<div class="flex flex-col gap-3">
 				<span class="text-xs font-semibold uppercase tracking-wider px-4 pt-2" style="color: var(--color-text-muted);">{t('language.label')}</span>
@@ -47,7 +58,11 @@ const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}\//, '/');
 					{Object.entries(localeNames).map(([loc, name]) => {
 						let href = `/${loc}${currentPath}`;
 						
-						if (alternates && alternates[loc]) {
+						const altLink = alternateLinks?.find(l => l.lang === loc);
+
+						if (altLink) {
+							href = altLink.url;
+						} else if (alternates && alternates[loc]) {
 							href = `/${loc}/blog/${alternates[loc]}`;
 						} else if (alternates && loc === locale) {
 							href = Astro.url.pathname;
@@ -74,7 +89,7 @@ const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}\//, '/');
 			</div>
 
 			<div class="flex flex-col gap-3">
-				<span class="text-xs font-semibold uppercase tracking-wider px-4 pt-2" style="color: var(--color-text-muted);">Tema</span>
+				<span class="text-xs font-semibold uppercase tracking-wider px-4 pt-2" style="color: var(--color-text-muted);">{t('mobileMenu.theme')}</span>
 				<button id="mobile-theme-toggle" class="mobile-menu-option flex items-center gap-3 px-5 py-4 transition-all duration-200 rounded-lg border border-transparent text-base font-medium cursor-pointer min-h-[44px]" type="button" style="color: var(--color-text-muted); background: var(--color-border-subtle);">
 					<svg id="mobile-sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<circle cx="12" cy="12" r="5"></circle>
@@ -90,7 +105,7 @@ const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}\//, '/');
 					<svg id="mobile-moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
 					</svg>
-					<span id="mobile-theme-text" class="ml-6">Claro</span>
+					<span id="mobile-theme-text" class="ml-6"></span>
 				</button>
 			</div>
 		</nav>
@@ -107,7 +122,7 @@ const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}\//, '/');
 	}
 
 	.mobile-menu-option {
-		color: var(--color-text-muted);
+		color: var(--color-text);
 		background: var(--color-border-subtle);
 	}
 
@@ -130,6 +145,7 @@ const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}\//, '/');
 
 	#mobile-menu-overlay.open {
 		opacity: 1;
+		visibility: visible;
 		pointer-events: auto;
 	}
 
@@ -143,7 +159,7 @@ const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}\//, '/');
 
 	.mobile-menu-option:hover {
 		filter: brightness(0.95);
-		border-color: var(--color-border);
+		border-color: var(--color-border-subtle);
 	}
 
 	/* Theme toggle icons */
@@ -181,8 +197,11 @@ const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}\//, '/');
 		const menuClose = document.getElementById('mobile-menu-close');
 		const themeToggle = document.getElementById('mobile-theme-toggle');
 		const themeText = document.getElementById('mobile-theme-text');
+		const menu = document.getElementById('mobile-menu');
 
-		if (!menuButton || !menuOverlay || !menuClose) return;
+		if (!menuButton || !menuOverlay || !menuClose || !menu) return;
+
+		const t = JSON.parse(menu.dataset.translations);
 
 		// Open menu
 		menuButton.addEventListener('click', () => {
@@ -221,7 +240,7 @@ const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}\//, '/');
 		if (themeToggle && themeText) {
 			const updateThemeText = () => {
 				const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-				themeText.textContent = currentTheme === 'dark' ? 'Escuro' : 'Claro';
+				themeText.textContent = currentTheme === 'dark' ? t.dark : t.light;
 			};
 
 			themeToggle.addEventListener('click', () => {
@@ -235,7 +254,7 @@ const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}\//, '/');
 				try {
 					localStorage.setItem('theme', newTheme);
 				} catch (e) {
-					console.warn('Não foi possível salvar o tema:', e);
+					console.warn(t.error, e);
 				}
 				
 				updateThemeText();

@@ -1,0 +1,77 @@
+---
+import { getImage } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { categories } from '@/content.config';
+
+interface Props {
+  posts: CollectionEntry<'blog'>[];
+  locale: 'pt' | 'es' | 'en';
+  class?: string;
+  sidebar?: boolean;
+}
+
+const { posts, locale, class: className, sidebar = false } = Astro.props;
+
+// Pre-process images to get optimized URLs
+const postsWithImages = await Promise.all(
+  posts.map(async (post) => {
+    let imageUrl = '';
+    if (post.data.heroImage) {
+      const optimized = await getImage({ src: post.data.heroImage, width: 400, height: 225 });
+      imageUrl = optimized.src;
+    }
+    return { post, imageUrl };
+  })
+);
+---
+
+<div class={`recommended-posts-wrapper ${className || ''}`}>
+  <h3 class="text-lg font-bold text-text mb-4 pl-1 uppercase tracking-wider">
+    {locale === 'pt' ? 'Recomendados para você' : locale === 'es' ? 'Recomendado para ti' : 'Recommended for you'}
+  </h3>
+  <div class={`grid gap-3 md:gap-4 ${sidebar ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2'}`}>
+    {postsWithImages.map(({ post, imageUrl }) => {
+      const categoryId = post.data.category;
+      const categoryData = categoryId ? Object.values(categories).find(c => c.id === categoryId || c.slug === categoryId) : null;
+      const categoryName = categoryData?.name[locale] || (categoryId ? categoryId.charAt(0).toUpperCase() + categoryId.slice(1) : 'Geral');
+      
+      return (
+      <a 
+        href={`/${locale}/blog/${post.data.permalink}?ref=blog_recommendation`} 
+        class="recommended-post-card group block rounded-xl border border-border-subtle transition-shadow hover:shadow-md overflow-hidden no-underline"
+        data-permalink={post.data.permalink}
+      >
+        {imageUrl && (
+          <div 
+            class="recommended-post-image w-full aspect-video bg-cover bg-center transition-transform duration-300 group-hover:scale-105"
+            style={`background-image: url('${imageUrl}');`}
+            role="img"
+            aria-label={post.data.title}
+          />
+        )}
+        <div class="p-3 md:p-4 flex flex-col gap-1">
+          <span class="text-[0.65rem] font-semibold text-text-muted uppercase tracking-wide leading-none">
+            {categoryName}
+          </span>
+          <h4 class="text-sm font-semibold text-text group-hover:text-blog-highlight transition-colors line-clamp-2 leading-snug m-0">
+            {post.data.title}
+          </h4>
+        </div>
+      </a>
+      );
+    })}
+  </div>
+</div>
+
+<style>
+  .recommended-post-card {
+    background: var(--color-surface);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border-subtle);
+  }
+
+  :global([data-theme="dark"]) .recommended-post-card {
+    background: var(--shiki-dark-bg);
+    border: 1px solid var(--color-border-subtle);
+  }
+</style>

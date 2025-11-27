@@ -11,16 +11,23 @@ const { category, locale } = Astro.props;
 // Encontrar a categoria no schema
 const categoryKey = category.toLowerCase().replace(/\s+/g, '-');
 const categoryData = Object.values(categories).find(
-	cat => cat.slug === categoryKey || cat.id === categoryKey
+	cat => 
+		cat.slug === categoryKey || 
+		cat.id.toLowerCase() === categoryKey ||
+		cat.id.toLowerCase() === category.toLowerCase() ||
+		Object.values(cat.name).some(n => n.toLowerCase() === category.toLowerCase())
 );
 
 // Nome traduzido ou fallback para o valor original
 const displayName = categoryData?.name[locale] || category;
+if (!displayName) {
+	console.warn(`CategoryBadge: Display name not found for category "${category}" in locale "${locale}"`);
+}
 const categoryColor = categoryData?.color || 'var(--accent)';
 ---
 
 <a 
-	href={`/${locale}/blog/category/${categoryKey}`}
+	href={`/${locale}/blog/category/${categoryKey}?ref=category_badge`}
 	class="inline-flex items-center gap-1 px-0 py-1 text-text text-xs font-medium no-underline transition-colors duration-300 category-badge"
 	style={`--category-color: ${categoryColor}`}
 >
@@ -32,7 +39,7 @@ const categoryColor = categoryData?.color || 'var(--accent)';
 
 <style>
 	.category-badge {
-		color: var(--text-muted);
+		color: var(--color-text-muted);
 	}
 	.category-badge:hover {
 		color: var(--category-color);
