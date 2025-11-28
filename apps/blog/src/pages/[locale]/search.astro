@@ -1,0 +1,86 @@
+---
+import BaseHead from "@/components/BaseHead.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import SearchWidget from "@/components/Search/SearchWidget";
+import { getCollection } from "astro:content";
+import { getLangFromUrl, useTranslations } from "@/i18n/utils";
+import { categories, tags } from "@/content.config";
+
+export async function getStaticPaths() {
+    return [
+        { params: { locale: "pt" } },
+        { params: { locale: "en" } },
+        { params: { locale: "es" } },
+    ];
+}
+
+const { locale } = Astro.params;
+const t = useTranslations(locale as "pt" | "en" | "es");
+
+// Fetch ALL posts for cross-language search
+const posts = (await getCollection("blog"))
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+    .map((post) => ({
+        title: post.data.title,
+        description: post.data.description,
+        pubDate: post.data.pubDate,
+        slug: post.id,
+        category: post.data.category,
+        tags: post.data.tags,
+        lang: post.data.lang,
+        permalink: post.data.permalink,
+        heroImage:
+            typeof post.data.heroImage === "string"
+                ? post.data.heroImage
+                : post.data.heroImage?.src,
+    }));
+
+const labels = {
+    searchPlaceholder: t("search.placeholder"),
+    filterCategory: t("search.filter.categories"),
+    filterTags: t("search.filter.tags"),
+    filterDate: t("search.filter.date"),
+    filterDateFrom: t("search.filter.dateFrom"),
+    filterDateTo: t("search.filter.dateTo"),
+    filterLanguages: t("search.filter.languages"),
+    noResults: t("search.results.none"),
+    resultsFound: t("search.results.found"),
+    clearFilters: t("search.filters.clear"),
+    readMore: t("search.readMore"),
+};
+---
+
+<!doctype html>
+<html lang={locale}>
+    <head>
+        <BaseHead
+            title={t("search.title")}
+            description={t("search.description")}
+        />
+    </head>
+    <body class="bg-background text-text transition-colors duration-300">
+        <Header />
+        <main class="max-w-[1400px] mx-auto px-4 py-8 min-h-[60vh]">
+            <div class="text-center mb-10">
+                <h1
+                    class="text-4xl font-bold mb-4 bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent inline-block"
+                >
+                    {t("search.title")}
+                </h1>
+                <p class="text-text-muted text-lg max-w-2xl mx-auto">
+                    {t("search.description")}
+                </p>
+            </div>
+            <SearchWidget
+                client:load
+                posts={posts}
+                categories={categories}
+                tags={tags}
+                currentLocale={locale}
+                labels={labels}
+            />
+        </main>
+        <Footer />
+    </body>
+</html>
