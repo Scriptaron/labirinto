@@ -137,8 +137,8 @@ export default function SearchWidget({ posts, categories, tags, currentLocale, l
     return (
         <div class="w-full max-w-[1440px] mx-auto p-4 flex flex-col lg:flex-row gap-8 items-start">
             {/* Sidebar Filters */}
-            <aside class="w-full lg:w-80 flex-shrink-0">
-                <div class="lg:sticky lg:top-24 bg-surface dark:bg-[#24292e] p-5 rounded-xl border border-border-subtle shadow-lg max-h-[calc(100vh-6rem)] overflow-y-auto custom-scrollbar">
+            <aside class="w-full lg:w-80 shrink-0">
+                <div class="lg:sticky lg:top-24 bg-border-subtle dark:bg-white/3 p-5 rounded-xl border border-transparent shadow-lg max-h-[calc(100vh-6rem)] overflow-y-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
                     <div class="space-y-6">
                         {/* Search Input */}
                         <div>
@@ -151,7 +151,7 @@ export default function SearchWidget({ posts, categories, tags, currentLocale, l
                                     value={query}
                                     onInput={(e) => setQuery((e.target as HTMLInputElement).value)}
                                     placeholder={labels.searchPlaceholder}
-                                    class="w-full px-4 py-2.5 bg-background/50 dark:bg-white/5 border border-transparent focus:border-primary rounded-lg outline-none transition-all placeholder:text-text-muted/50"
+                                    class="w-full px-4 py-2.5 bg-background border border-border-subtle focus:border-primary rounded-lg outline-none transition-all placeholder:text-text-muted/50 text-text"
                                 />
                                 <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -171,7 +171,7 @@ export default function SearchWidget({ posts, categories, tags, currentLocale, l
                                         type="date"
                                         value={dateFrom}
                                         onInput={(e) => setDateFrom((e.target as HTMLInputElement).value)}
-                                        class="w-full px-3 py-2 bg-background/50 dark:bg-white/5 border border-transparent focus:border-primary rounded-lg outline-none text-sm text-text-muted"
+                                        class="w-full px-3 py-2 bg-background border border-border-subtle focus:border-primary rounded-lg outline-none text-sm text-text-muted"
                                     />
                                 </div>
                                 <div>
@@ -180,7 +180,7 @@ export default function SearchWidget({ posts, categories, tags, currentLocale, l
                                         type="date"
                                         value={dateTo}
                                         onInput={(e) => setDateTo((e.target as HTMLInputElement).value)}
-                                        class="w-full px-3 py-2 bg-background/50 dark:bg-white/5 border border-transparent focus:border-primary rounded-lg outline-none text-sm text-text-muted"
+                                        class="w-full px-3 py-2 bg-background border border-border-subtle focus:border-primary rounded-lg outline-none text-sm text-text-muted"
                                     />
                                 </div>
                             </div>
@@ -196,9 +196,9 @@ export default function SearchWidget({ posts, categories, tags, currentLocale, l
                                     <button
                                         key={lang}
                                         onClick={() => toggleLanguage(lang)}
-                                        class={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all border ${selectedLanguages.includes(lang)
-                                            ? 'bg-primary text-white border-primary'
-                                            : 'bg-background/50 dark:bg-white/5 border-transparent text-text-muted hover:bg-black/5 dark:hover:bg-white/10'
+                                        class={`flex items-center justify-center px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all border cursor-pointer ${selectedLanguages.includes(lang)
+                                            ? 'bg-primary/12 text-primary border-primary/30 dark:bg-accent-dark/15 dark:text-accent-dark dark:border-accent-dark/35'
+                                            : 'bg-border-subtle text-text-muted border-transparent hover:bg-border hover:text-text hover:border-border-subtle dark:bg-white/3 dark:text-text-muted dark:border-transparent dark:hover:bg-white/5 dark:hover:text-text dark:hover:border-white/10'
                                             }`}
                                     >
                                         {lang.toUpperCase()}
@@ -219,9 +219,9 @@ export default function SearchWidget({ posts, categories, tags, currentLocale, l
                                         <button
                                             key={cat.id}
                                             onClick={() => toggleCategory(cat.id)}
-                                            class={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all border ${isSelected
-                                                ? 'bg-primary text-white border-primary'
-                                                : 'bg-background/50 dark:bg-white/5 border-transparent text-text-muted hover:bg-black/5 dark:hover:bg-white/10'
+                                            class={`flex items-center justify-center px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all border cursor-pointer ${isSelected
+                                                ? 'bg-primary/12 text-primary border-primary/30 dark:bg-accent-dark/15 dark:text-accent-dark dark:border-accent-dark/35'
+                                                : 'bg-border-subtle text-text-muted border-transparent hover:bg-border hover:text-text hover:border-border-subtle dark:bg-white/3 dark:text-text-muted dark:border-transparent dark:hover:bg-white/5 dark:hover:text-text dark:hover:border-white/10'
                                                 }`}
                                         >
                                             {cat.name[currentLocale] || cat.name['en']}
@@ -236,19 +236,19 @@ export default function SearchWidget({ posts, categories, tags, currentLocale, l
                             <label class="block text-xs uppercase tracking-wider font-semibold text-text-muted mb-2">
                                 {labels.filterTags}
                             </label>
-                            <div class="flex flex-wrap gap-2 max-h-48 overflow-y-auto p-1 custom-scrollbar">
+                            <div class="flex flex-wrap gap-2 max-h-48 overflow-y-auto p-1 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
                                 {Object.values(tags).map((tag) => {
                                     const isSelected = selectedTags.includes(tag.id);
                                     return (
                                         <button
                                             key={tag.id}
                                             onClick={() => toggleTag(tag.id)}
-                                            class={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${isSelected
-                                                ? 'bg-secondary text-white border-secondary'
-                                                : 'bg-background/50 dark:bg-white/5 border-transparent text-text-muted hover:bg-black/5 dark:hover:bg-white/10'
+                                            class={`flex items-center justify-center px-3.5 py-2.5 rounded-lg text-xs font-medium transition-all border cursor-pointer ${isSelected
+                                                ? 'bg-primary/12 text-primary border-primary/30 dark:bg-accent-dark/15 dark:text-accent-dark dark:border-accent-dark/35'
+                                                : 'bg-border-subtle text-text-muted border-transparent hover:bg-border hover:text-text hover:border-border-subtle dark:bg-white/3 dark:text-text-muted dark:border-transparent dark:hover:bg-white/5 dark:hover:text-text dark:hover:border-white/10'
                                                 }`}
                                         >
-                                            #{tag.name[currentLocale] || tag.name['en']}
+                                            {tag.name[currentLocale] || tag.name['en']}
                                         </button>
                                     );
                                 })}
@@ -268,7 +268,7 @@ export default function SearchWidget({ posts, categories, tags, currentLocale, l
                                     setDateFrom('');
                                     setDateTo('');
                                 }}
-                                class="w-full text-sm font-medium text-text-muted hover:text-primary transition-colors flex items-center justify-center gap-2 px-4 py-2 rounded-lg hover:bg-surface-hover border border-transparent hover:border-border-subtle"
+                                class="w-full text-sm font-medium text-text-muted hover:text-primary transition-colors flex items-center justify-center gap-2 px-4 py-2 rounded-lg hover:bg-border-subtle border border-transparent hover:border-border-subtle"
                             >
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -295,7 +295,7 @@ export default function SearchWidget({ posts, categories, tags, currentLocale, l
                 ) : (
                     <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
                         {filteredPosts.map((post) => (
-                            <article key={post.slug} class="relative group bg-white dark:bg-[#24292e] rounded-lg border border-border-subtle shadow-sm overflow-hidden transition-all duration-300 hover:-translate-y-1 flex flex-col h-full">
+                            <article key={post.slug} class="relative group bg-border-subtle dark:bg-white/3 rounded-lg border border-transparent dark:hover:border-white/10 hover:bg-border dark:hover:bg-white/5 shadow-sm overflow-hidden transition-all duration-300 hover:-translate-y-1 flex flex-col h-full">
                                 {post.heroImage && (
                                     <div class="aspect-video overflow-hidden relative">
                                         <img
@@ -303,7 +303,7 @@ export default function SearchWidget({ posts, categories, tags, currentLocale, l
                                             alt={post.title}
                                             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                         />
-                                        <div class="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded backdrop-blur-sm uppercase font-bold">
+                                        <div class="absolute top-2 right-2 px-2 py-1 rounded-md text-xs font-bold border backdrop-blur-sm transition-colors uppercase bg-primary/10 text-primary border-primary/30 dark:bg-accent-dark/15 dark:text-accent-dark dark:border-accent-dark/30">
                                             {post.lang}
                                         </div>
                                     </div>
@@ -346,13 +346,18 @@ export default function SearchWidget({ posts, categories, tags, currentLocale, l
                                                 const tag = tags[tagId];
                                                 if (!tag) return null;
                                                 return (
-                                                    <span key={tagId} class="text-xs text-text-muted bg-background px-2 py-1 rounded border border-border-subtle">
-                                                        #{tag.name[currentLocale] || tag.name['en']}
+                                                    <span key={tagId} class="post-tag">
+                                                        {tag.name[currentLocale] || tag.name['en']}
                                                     </span>
                                                 );
                                             })}
                                             {post.tags.length > 3 && (
-                                                <span class="text-xs text-text-muted px-1">+{post.tags.length - 3}</span>
+                                                <span
+                                                    class="post-tag cursor-help"
+                                                    title={post.tags.slice(3).map(tagId => tags[tagId]?.name[currentLocale] || tags[tagId]?.name['en'] || tagId).join(', ')}
+                                                >
+                                                    +{post.tags.length - 3}
+                                                </span>
                                             )}
                                         </div>
                                     )}
