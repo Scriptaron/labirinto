@@ -1,38 +1,52 @@
 ---
-import { categories } from '@/content.config';
+import { categories } from "@/content.config";
 
 interface Props {
 	category: string;
-	locale: 'pt' | 'en' | 'es';
+	locale: "pt" | "en" | "es";
 }
 
 const { category, locale } = Astro.props;
 
 // Encontrar a categoria no schema
-const categoryKey = category.toLowerCase().replace(/\s+/g, '-');
+const categoryKey = category.toLowerCase().replace(/\s+/g, "-");
 const categoryData = Object.values(categories).find(
-	cat => 
-		cat.slug === categoryKey || 
+	(cat) =>
+		cat.slug === categoryKey ||
 		cat.id.toLowerCase() === categoryKey ||
 		cat.id.toLowerCase() === category.toLowerCase() ||
-		Object.values(cat.name).some(n => n.toLowerCase() === category.toLowerCase())
+		Object.values(cat.name).some(
+			(n) => n.toLowerCase() === category.toLowerCase(),
+		),
 );
 
 // Nome traduzido ou fallback para o valor original
 const displayName = categoryData?.name[locale] || category;
 if (!displayName) {
-	console.warn(`CategoryBadge: Display name not found for category "${category}" in locale "${locale}"`);
+	console.warn(
+		`CategoryBadge: Display name not found for category "${category}" in locale "${locale}"`,
+	);
 }
-const categoryColor = categoryData?.color || 'var(--accent)';
+const categoryColor = categoryData?.color || "var(--accent)";
 ---
 
-<a 
-	href={`/${locale}/blog/category/${categoryKey}?ref=category_badge`}
+<a
+	href={`/${locale}/search?categories=${categoryData?.id || categoryKey}`}
 	class="inline-flex items-center gap-1 px-0 py-1 text-text text-xs font-medium no-underline transition-colors duration-300 category-badge"
 	style={`--category-color: ${categoryColor}`}
 >
-	<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-		<path d="M4 7V4h16v3M9 20h6M12 4v16"/>
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		width="12"
+		height="12"
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="2"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+	>
+		<path d="M4 7V4h16v3M9 20h6M12 4v16"></path>
 	</svg>
 	{displayName}
 </a>

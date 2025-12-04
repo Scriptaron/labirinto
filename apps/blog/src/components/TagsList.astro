@@ -1,109 +1,130 @@
 ---
-import { tags as tagsSchema } from '@/content.config';
+import { tags as tagsSchema } from "@/content.config";
 
 interface Props {
-  tags: string[];
-  locale: string;
+	tags: string[];
+	locale: string;
 }
 
 const { tags, locale } = Astro.props;
 
-const tagsList = tags.map(tagId => {
-  // Tenta encontrar a tag pelo ID exato
-  let tagData = tagsSchema[tagId as keyof typeof tagsSchema];
-  
-  // Se não encontrar, tenta encontrar por slug ou nome (case-insensitive)
-  if (!tagData) {
-    const normalizedId = tagId.toLowerCase().replace(/\s+/g, '-');
-    tagData = Object.values(tagsSchema).find((t: any) => 
-      t.slug === normalizedId || 
-      t.id.toLowerCase() === normalizedId ||
-      (typeof t.name === 'object' && Object.values(t.name).some((n: any) => n.toLowerCase() === tagId.toLowerCase()))
-    ) as any;
-  }
+const tagsList = tags.map((tagId) => {
+	// Tenta encontrar a tag pelo ID exato
+	let tagData = tagsSchema[tagId as keyof typeof tagsSchema];
 
-  let tagName = tagId;
-  if (tagData && tagData.name) {
-    if (typeof tagData.name === 'object') {
-      // @ts-ignore
-      tagName = tagData.name[locale] || tagData.name['pt'] || Object.values(tagData.name)[0] || tagId;
-    } else {
-      tagName = tagData.name;
-    }
-  }
+	// Se não encontrar, tenta encontrar por slug ou nome (case-insensitive)
+	if (!tagData) {
+		const normalizedId = tagId.toLowerCase().replace(/\s+/g, "-");
+		tagData = Object.values(tagsSchema).find(
+			(t: any) =>
+				t.slug === normalizedId ||
+				t.id.toLowerCase() === normalizedId ||
+				(typeof t.name === "object" &&
+					Object.values(t.name).some(
+						(n: any) => n.toLowerCase() === tagId.toLowerCase(),
+					)),
+		) as any;
+	}
 
-  return {
-    id: tagId,
-    name: tagName,
-    slug: tagData?.slug || tagId.toLowerCase().replace(/\s+/g, '-')
-  };
+	let tagName = tagId;
+	if (tagData && tagData.name) {
+		if (typeof tagData.name === "object") {
+			// @ts-ignore
+			tagName =
+				tagData.name[locale as keyof typeof tagData.name] ||
+				tagData.name["pt"] ||
+				Object.values(tagData.name)[0] ||
+				tagId;
+		} else {
+			tagName = tagData.name;
+		}
+	}
+
+	return {
+		id: tagData?.id || tagId,
+		name: tagName,
+		slug: tagData?.slug || tagId.toLowerCase().replace(/\s+/g, "-"),
+	};
 });
 ---
 
 <div class="flex items-center gap-3 flex-wrap">
-	<svg 
-		xmlns="http://www.w3.org/2000/svg" 
-		width="18" height="18" 
-		viewBox="0 0 24 24" 
-		fill="none" stroke="currentColor" stroke-width="2" 
-		stroke-linecap="round" stroke-linejoin="round"
-		class="text-[var(--color-text-muted)] shrink-0"
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		width="18"
+		height="18"
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="2"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+		class="text-(--color-text-muted) shrink-0"
 	>
-		<path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
-		<line x1="7" y1="7" x2="7.01" y2="7"/>
+		<path
+			d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"
+		></path>
+		<line x1="7" y1="7" x2="7.01" y2="7"></line>
 	</svg>
 
 	<div class="flex flex-wrap gap-2">
-		{tagsList.map((tag) => (
-			<a 
-				href={`/${locale}/blog/tag/${tag.slug}?ref=tag_list`}
-				class="tag-link"
-			>
-				{tag.name}
-			</a>
-		))}
+		{
+			tagsList.map((tag) => (
+				<a href={`/${locale}/search?tags=${tag.id}`} class="tag-link">
+					{tag.name}
+				</a>
+			))
+		}
 	</div>
 
-<style is:global>
-	.tag-link {
-		display: inline-block;
-		padding: 0.375rem 0.75rem;
-		border-radius: 0.5rem;
-		font-size: 0.875rem;
-		font-weight: 500;
-		text-decoration: none;
-		transition: all 0.2s ease;
-		border: 1px solid transparent !important;
-		
-		/* Tema escuro (padrão) - seguindo padrão do tema claro com accent */
-		background: color-mix(in srgb, var(--accent-dark) 8%, transparent);
-		color: var(--accent-dark);
-		border-color: transparent !important;
-		border-bottom-color: transparent !important;
-	}
+	<style is:global>
+		.tag-link {
+			display: inline-block;
+			padding: 0.375rem 0.75rem;
+			border-radius: 0.5rem;
+			font-size: 0.875rem;
+			font-weight: 500;
+			text-decoration: none;
+			transition: all 0.2s ease;
+			border: 1px solid transparent !important;
 
-	/* Tema claro - seguindo padrão do tema escuro com primary */
-	:root:not([data-theme="dark"]) .tag-link {
-		background: color-mix(in srgb, var(--primary) 8%, transparent);
-		color: var(--primary);
-		border-color: transparent;
-	}
+			/* Tema escuro (padrão) - seguindo padrão do tema claro com accent */
+			background: color-mix(in srgb, var(--accent-dark) 8%, transparent);
+			color: var(--accent-dark);
+			border-color: transparent !important;
+			border-bottom-color: transparent !important;
+		}
 
-	/* Hover - Tema escuro */
-	.tag-link:hover {
-		background: color-mix(in srgb, var(--accent-dark) 15%, transparent);
-		color: var(--accent-dark);
-		border: 1px solid color-mix(in srgb, var(--accent-dark) 25%, transparent) !important;
-		border-bottom: 1px solid color-mix(in srgb, var(--accent-dark) 25%, transparent) !important;
-		border-bottom-color: color-mix(in srgb, var(--accent-dark) 25%, transparent) !important;
-	}
+		/* Tema claro - seguindo padrão do tema escuro com primary */
+		:root:not([data-theme="dark"]) .tag-link {
+			background: color-mix(in srgb, var(--primary) 8%, transparent);
+			color: var(--primary);
+			border-color: transparent;
+		}
 
-	/* Hover - Tema claro */
-	:root:not([data-theme="dark"]) .tag-link:hover {
-		background: color-mix(in srgb, var(--primary) 15%, transparent);
-		color: var(--primary);
-		border: 1px solid color-mix(in srgb, var(--primary) 25%, transparent);
-		border-bottom: 1px solid color-mix(in srgb, var(--primary) 25%, transparent);
-	}
-</style>
+		/* Hover - Tema escuro */
+		.tag-link:hover {
+			background: color-mix(in srgb, var(--accent-dark) 15%, transparent);
+			color: var(--accent-dark);
+			border: 1px solid
+				color-mix(in srgb, var(--accent-dark) 25%, transparent) !important;
+			border-bottom: 1px solid
+				color-mix(in srgb, var(--accent-dark) 25%, transparent) !important;
+			border-bottom-color: color-mix(
+				in srgb,
+				var(--accent-dark) 25%,
+				transparent
+			) !important;
+		}
+
+		/* Hover - Tema claro */
+		:root:not([data-theme="dark"]) .tag-link:hover {
+			background: color-mix(in srgb, var(--primary) 15%, transparent);
+			color: var(--primary);
+			border: 1px solid
+				color-mix(in srgb, var(--primary) 25%, transparent);
+			border-bottom: 1px solid
+				color-mix(in srgb, var(--primary) 25%, transparent);
+		}
+	</style>
 </div>
