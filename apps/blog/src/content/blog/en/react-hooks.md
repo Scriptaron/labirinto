@@ -3,7 +3,7 @@ title: 'React Hooks: Practical Guide'
 description: 'Master React Hooks with practical examples'
 pubDate: 2024-11-11
 lang: 'en'
-slug: 'react-hooks'
+permalink: 'react-hooks'
 alternates:
   pt: 'react-hooks'
   es: 'react-hooks'
@@ -14,7 +14,10 @@ tags: ['react', 'javascript', 'hooks', 'frontend']
 
 # React Hooks: Practical Guide
 
-Hooks revolutionized how we write React components. Introduced in React 16.8, they allow you to use state and other React features without writing classes. This made code more reusable, testable, and easier to understand. In this guide, we'll explore the main hooks and how to use them effectively in your projects.
+Hooks revolutionized how we write React components. Introduced in React 16.8, they allow you to use state and other React features without writing classes. This made code more reusable, testable, and easier to understand.
+> **Note:** To make the most of Hooks, it's essential to have a solid foundation in the language. If you need to review concepts like destructuring or arrow functions, check out our [Complete JavaScript Guide](/en/blog/javascript-guide).
+
+In this guide, we'll explore the main hooks and how to use them effectively in your projects.
 
 ## Main Hooks
 
@@ -250,3 +253,5 @@ To deepen your knowledge[^1], check out:
 ---
 
 Now you're ready to master React Hooks!
+
+

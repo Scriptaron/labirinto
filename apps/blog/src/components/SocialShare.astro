@@ -19,7 +19,7 @@ const translations = {
 };
 ---
 
-<div class="pt-4 border-t border-border">
+<div class="pt-4 border-t border-border-subtle">
 	<div class="flex gap-3 items-center justify-center">
 		<!-- WhatsApp -->
 		<a 
@@ -88,13 +88,13 @@ const translations = {
 <!-- Modal de compartilhamento -->
 <div 
   id="share-modal" 
-  class="fixed inset-0 z-[9999] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 [&[aria-hidden='false']]:opacity-100 [&[aria-hidden='false']]:pointer-events-auto" 
+  class="group fixed inset-0 z-[9999] flex items-center justify-center invisible pointer-events-none [&[aria-hidden='false']]:visible [&[aria-hidden='false']]:pointer-events-auto" 
   aria-hidden="true"
   data-translations={JSON.stringify(translations)}
 >
-	<div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="share-modal-overlay"></div>
-	<div class="share-modal-content relative rounded-2xl max-w-[640px] w-[calc(100%-2rem)] max-h-[80vh] overflow-hidden shadow-2xl scale-95 transition-transform duration-300 [.opacity-100_&]:scale-100" style="background: var(--color-surface); border: 1px solid var(--color-border);">
-		<div class="flex items-center justify-between p-6" style="border-bottom: 1px solid var(--color-border);">
+	<div class="absolute inset-0 bg-black/0 backdrop-blur-none transition-all duration-300 group-aria-[hidden=false]:bg-black/70 group-aria-[hidden=false]:backdrop-blur-sm" id="share-modal-overlay"></div>
+	<div class="share-modal-content relative rounded-2xl max-w-[640px] w-[calc(100%-2rem)] max-h-[80vh] overflow-hidden shadow-2xl scale-95 opacity-0 transition-all duration-300 group-aria-[hidden=false]:scale-100 group-aria-[hidden=false]:opacity-100" style="background: var(--color-surface); border: 1px solid var(--color-border-subtle);">
+		<div class="flex items-center justify-between p-6" style="border-bottom: 1px solid var(--color-border-subtle);">
 			<h3 class="m-0 text-xl font-semibold" style="color: var(--color-text);">{t('socialShare.modalTitle')}</h3>
 			<button class="flex items-center justify-center p-2 bg-transparent border-none cursor-pointer transition-colors" style="color: var(--color-text-muted);" id="share-modal-close" aria-label={t('socialShare.closeAriaLabel')}>
 				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -105,14 +105,14 @@ const translations = {
 		</div>
 		<div class="p-6 overflow-y-auto max-h-[calc(80vh-80px)]">
 			<!-- Seção de Link -->
-			<div class="mb-6 pb-6" style="border-bottom: 1px solid var(--color-border);">
+			<div class="mb-6 pb-6" style="border-bottom: 1px solid var(--color-border-subtle);">
 				<label for="share-url-input" class="block text-sm font-semibold mb-2" style="color: var(--color-text);">{t('socialShare.postLink')}</label>
 				<div class="flex gap-2 items-stretch">
 					<input 
 						type="text" 
 						id="share-url-input" 
 						class="flex-1 px-4 py-3 rounded-lg text-sm font-mono transition-all focus:outline-none" 
-						style="border: 2px solid var(--color-border); color: var(--color-text); background: var(--color-background);" 
+						style="border: 2px solid var(--color-border-subtle); color: var(--color-text); background: var(--color-background);" 
 						value={shareUrl + '?utm_source=copy&utm_medium=share&utm_campaign=share'}
 						readonly
 					/>
@@ -232,7 +232,7 @@ const translations = {
 
 <style is:global>
 	.share-modal-link {
-		border: 2px solid var(--color-border);
+		border: 2px solid var(--color-border-subtle);
 		background: var(--color-surface);
 		color: var(--color-text);
 		transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
@@ -245,7 +245,7 @@ const translations = {
 
 	.share-modal-link:hover {
 		background: var(--color-border-subtle);
-		border-color: var(--color-border);
+		border-color: var(--color-border-subtle);
 	}
 
 	:root[data-theme='dark'] .share-modal-link:hover {
@@ -272,7 +272,12 @@ const translations = {
 
 		if (!modal || !modalOverlay || !closeBtn) return;
     
-    const t = JSON.parse(modal.dataset.translations);
+    const t = JSON.parse(modal.dataset.translations || '{}');
+
+		// Move modal to body to avoid z-index issues with sticky parents
+		if (modal && modal.parentElement !== document.body) {
+			document.body.appendChild(modal);
+		}
 
 		// Abrir modal
 		const openModal = () => {
@@ -282,7 +287,7 @@ const translations = {
 			const progressBar = document.getElementById('reading-progress-container');
 			if (progressBar) {
 				progressBar.style.backdropFilter = 'blur(4px)';
-				progressBar.style.webkitBackdropFilter = 'blur(4px)';
+				(progressBar.style as any).webkitBackdropFilter = 'blur(4px)';
 				progressBar.classList.add('modal-open');
 			}
 		};
@@ -303,7 +308,7 @@ const translations = {
 			const progressBar = document.getElementById('reading-progress-container');
 			if (progressBar) {
 				progressBar.style.backdropFilter = '';
-				progressBar.style.webkitBackdropFilter = '';
+				(progressBar.style as any).webkitBackdropFilter = '';
 				progressBar.classList.remove('modal-open');
 			}
 		};
@@ -346,8 +351,8 @@ const translations = {
 		document.querySelectorAll('[data-platform]').forEach(btn => {
 			btn.addEventListener('click', () => {
 				const platform = btn.getAttribute('data-platform');
-				if (window.posthog) {
-					window.posthog.capture('social_share_click', {
+				if ((window as any).posthog) {
+					(window as any).posthog.capture('social_share_click', {
 						platform: platform,
 						url: window.location.pathname
 					});

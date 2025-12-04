@@ -3,7 +3,7 @@ title: 'Guia Completo de JavaScript'
 description: 'Aprenda JavaScript do básico ao avançado'
 pubDate: 2024-11-10
 lang: 'pt'
-slug: 'guia-javascript'
+permalink: 'guia-javascript'
 alternates:
   en: 'javascript-guide'
   es: 'guia-de-javascript'

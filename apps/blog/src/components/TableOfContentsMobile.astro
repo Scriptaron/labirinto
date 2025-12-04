@@ -11,94 +11,119 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 ---
 
 <div
-	class="lg:hidden my-8 relative"
-	id="toc-mobile-wrapper"
-	data-next-label={tNextAriaLabel}
-	data-top-label={tBackToTopAriaLabel}
+  class="lg:hidden mt-8 relative"
+  id="toc-mobile-wrapper"
+  data-next-label={tNextAriaLabel}
+  data-top-label={tBackToTopAriaLabel}
 >
-	<div class="rounded-xl" id="toc-mobile">
-		<div class="flex items-center gap-3 p-6 transition-all duration-300">
-			<button
-				class="border-0 rounded-lg w-10 h-10 flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-95 shrink-0"
-				id="toc-menu-btn"
-				aria-label={tMenuAriaLabel}
-			>
-				<svg
-					class="w-5 h-5 toc-btn-icon"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-				>
-					<line x1="3" y1="6" x2="21" y2="6"></line>
-					<line x1="3" y1="12" x2="21" y2="12"></line>
-					<line x1="3" y1="18" x2="21" y2="18"></line>
-				</svg>
-			</button>
-			<div class="flex-1 flex items-center gap-3 min-w-0">
-				<span class="toc-header-number" id="toc-current-number">1</span>
-				<span class="toc-header-title" id="toc-current-title">{tLoading}</span>
-			</div>
-			<button
-				class="hidden border-0 rounded-lg w-10 h-10 items-center justify-center cursor-pointer transition-all duration-200 active:scale-95 shrink-0"
-				id="toc-next-btn"
-				aria-label={tNextAriaLabel}
-			>
-				<svg
-					class="w-5 h-5 toc-btn-icon"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-				>
-					<polyline points="9 18 15 12 9 6"></polyline>
-				</svg>
-			</button>
-		</div>
+  <div id="toc-mobile">
+    <div class="flex items-center gap-3 p-3 transition-all duration-300" style="border-bottom: 1px solid var(--color-border-subtle);">
+      <button
+        class="border-0 rounded-lg w-9 h-9 flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-95 shrink-0 relative"
+        id="toc-menu-btn"
+        aria-label={tMenuAriaLabel}
+      >
+        <svg
+          id="toc-menu-icon"
+          class="w-5 h-5 toc-btn-icon absolute transition-all duration-300"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+        >
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+        <svg
+          id="toc-close-icon"
+          class="w-5 h-5 toc-btn-icon absolute transition-all duration-300"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+        >
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <div class="flex-1 flex items-center gap-3 min-w-0">
+        <span class="toc-header-number" id="toc-current-number">1</span>
+        <span class="toc-header-title" id="toc-current-title">{tLoading}</span>
+      </div>
+      <button
+        class="hidden border-0 rounded-lg w-10 h-10 items-center justify-center cursor-pointer transition-all duration-200 active:scale-95 shrink-0"
+        id="toc-next-btn"
+        aria-label={tNextAriaLabel}
+      >
+        <svg
+          class="w-5 h-5 toc-btn-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+        >
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    </div>
 
-		<div class="max-h-0 overflow-hidden transition-all duration-300" id="toc-mobile-list">
-			<!-- TOC items will be populated by JavaScript -->
-		</div>
-	</div>
+    <div class="overflow-hidden transition-all duration-300" id="toc-mobile-list" style="max-height: 0; visibility: hidden;">
+      <!-- TOC items will be populated by JavaScript -->
+    </div>
+  </div>
 </div>
 
 <style is:global>
 	/* Mobile TOC Container - Dark theme default */
 	#toc-mobile {
-		background: #1a1a1a;
+		background: var(--shiki-dark-bg);
 		box-shadow: var(--shadow-lg);
 		transition: background-color 0.3s ease, box-shadow 0.3s ease, border-radius 0.3s ease;
+		border: 1px solid var(--color-border-subtle);
+	}
+	
+	/* Fixed state */
+	#toc-mobile.toc-fixed {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: 100;
+		margin: 0 !important;
+		border-radius: 0;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 	}
 	
 	:root:not([data-theme="dark"]) #toc-mobile {
 		background: var(--color-surface);
-		border: 1px solid var(--color-border);
+		border: 1px solid var(--color-border-subtle);
 	}
 	
 	/* Header Number - Default state (same as .toc-number) */
 	.toc-header-number {
-		font-size: 0.875rem;
+		font-size: 0.75rem;
 		font-weight: 700;
 		padding: 0.35rem 0.6rem;
 		border-radius: 0.375rem;
-		min-width: 1.85rem;
-		height: 1.85rem;
+		min-width: 1.5rem;
+		height: 1.5rem;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		flex-shrink: 0;
 		transition: all 0.3s ease;
 		/* Dark theme - same as .toc-number */
-		color: #6b7280;
-		background: rgba(255, 255, 255, 0.1);
-		border: 1px solid rgba(255, 255, 255, 0.15);
+		color: var(--color-text-muted);
+		background: rgba(255, 255, 255, 0.05);
+		border: 1px solid var(--color-border-subtle);
 	}
 	
 	/* Light theme - same as .toc-number */
 	:root:not([data-theme="dark"]) .toc-header-number {
-		color: var(--color-text-muted);
-		background: var(--color-border);
-		border-color: var(--color-border);
+		color: var(--neutral-900);
+		background: var(--neutral-200);
+		border-color: var(--neutral-300);
 	}
 	
 	/* Header Number - Active state when fixed */
@@ -118,19 +143,19 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 	
 	/* Header Title - Default state (same as .toc-link) */
 	.toc-header-title {
-		font-size: 0.9375rem;
+		font-size: 0.875rem;
 		font-weight: 500;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		transition: all 0.3s ease;
 		/* Dark theme - same as .toc-link */
-		color: #9ca3af;
+		color: var(--color-text-muted);
 	}
 	
 	/* Light theme - same as .toc-link */
 	:root:not([data-theme="dark"]) .toc-header-title {
-		color: var(--color-text-muted);
+		color: var(--color-text);
 	}
 	
 	/* Header Title - Active state when fixed */
@@ -144,19 +169,21 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 	
 	/* Menu Button - Same background as container */
 	#toc-menu-btn {
-		background: transparent !important;
+		background: rgba(255, 255, 255, 0.1) !important;
+		color: var(--color-text);
 	}
 	
 	#toc-menu-btn:hover {
-		background: rgba(255, 255, 255, 0.05) !important;
+		background: rgba(255, 255, 255, 0.15) !important;
 	}
 	
 	:root:not([data-theme="dark"]) #toc-menu-btn {
-		background: transparent !important;
+		background: var(--color-border-subtle) !important;
+		color: var(--color-text);
 	}
 	
 	:root:not([data-theme="dark"]) #toc-menu-btn:hover {
-		background: var(--color-border-subtle) !important;
+		background: var(--color-border) !important;
 	}
 	
 	/* Next Button - Dark theme with accent-dark */
@@ -186,7 +213,7 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 	}
 	
 	.toc-btn-icon {
-		color: white;
+		color: var(--color-text);
 	}
 	
 	:root:not([data-theme="dark"]) .toc-btn-icon {
@@ -195,11 +222,19 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 	
 	/* TOC List Background and Scroll */
 	#toc-mobile-list {
-		background: #1a1a1a;
+		background: var(--shiki-dark-bg);
 		overflow-y: auto;
+		overscroll-behavior: contain;
 		scrollbar-width: thin;
 		scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-		border-radius: 0 0 0.75rem 0.75rem;
+		border-radius: 0;
+		mask-image: linear-gradient(to bottom, transparent, black 1.5rem, black calc(100% - 1.5rem), transparent);
+		-webkit-mask-image: linear-gradient(to bottom, transparent, black 1.5rem, black calc(100% - 1.5rem), transparent);
+	}
+	
+	/* Inner container for items with padding */
+	#toc-mobile-list .toc-mobile-items-inner {
+		padding: 0;
 	}
 	
 	#toc-mobile-list::-webkit-scrollbar {
@@ -221,11 +256,15 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 	
 	:root:not([data-theme="dark"]) #toc-mobile-list {
 		background: var(--color-surface);
-		scrollbar-color: var(--color-border) transparent;
+		scrollbar-color: var(--color-border-subtle) transparent;
+	}
+	
+	:root:not([data-theme="dark"]) #toc-mobile-list .toc-mobile-items-inner {
+		border-top-color: var(--color-border-subtle);
 	}
 	
 	:root:not([data-theme="dark"]) #toc-mobile-list::-webkit-scrollbar-thumb {
-		background: var(--color-border);
+		background: var(--color-border-subtle);
 	}
 	
 	:root:not([data-theme="dark"]) #toc-mobile-list::-webkit-scrollbar-thumb:hover {
@@ -234,13 +273,13 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 	
 	/* TOC Mobile Links - EXACT same as desktop .toc-link */
 	.toc-mobile-link {
-		color: #9ca3af;
+		color: var(--color-text-muted);
 		background: rgba(255, 255, 255, 0.03);
 		border-color: transparent;
 	}
 	
 	:root:not([data-theme="dark"]) .toc-mobile-link {
-		color: var(--color-text-muted);
+		color: var(--color-text);
 		background: var(--color-border-subtle);
 	}
 	
@@ -254,7 +293,7 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 	:root:not([data-theme="dark"]) .toc-mobile-link:hover {
 		color: var(--color-text);
 		background: var(--color-border);
-		border-color: var(--color-border);
+		border-color: var(--color-border-subtle);
 	}
 	
 	.toc-mobile-link:hover .toc-mobile-number {
@@ -299,15 +338,36 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 	
 	/* TOC Mobile Number - EXACT same as desktop .toc-number */
 	.toc-mobile-number {
-		color: #6b7280;
-		background: rgba(255, 255, 255, 0.1);
-		border-color: rgba(255, 255, 255, 0.15);
+		color: var(--color-text-muted);
+		background: rgba(255, 255, 255, 0.05);
+		border-color: var(--color-border-subtle);
 	}
 	
 	:root:not([data-theme="dark"]) .toc-mobile-number {
-		color: var(--color-text-muted);
-		background: var(--color-border);
-		border-color: var(--color-border);
+		color: var(--neutral-900);
+		background: var(--neutral-200);
+		border-color: var(--neutral-300);
+	}
+
+	/* Menu Icon Animation */
+	#toc-menu-icon {
+		opacity: 1;
+		transform: rotate(0deg) scale(1);
+	}
+
+	#toc-close-icon {
+		opacity: 0;
+		transform: rotate(180deg) scale(0.5);
+	}
+
+	#toc-menu-btn.expanded #toc-menu-icon {
+		opacity: 0;
+		transform: rotate(-180deg) scale(0.5);
+	}
+
+	#toc-menu-btn.expanded #toc-close-icon {
+		opacity: 1;
+		transform: rotate(0deg) scale(1);
 	}
 </style>
 
@@ -327,8 +387,9 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 		
 		if (!tocMobile || !tocList || !article) return;
 
-		// Find all h2 elements with IDs in the article
-		const headings = article.querySelectorAll('h2[id]');
+		// Find all h2 elements with IDs in the article, excluding footnotes
+		const headings = Array.from(article.querySelectorAll('h2[id]'))
+			.filter(heading => heading.id !== 'footnote-label');
 		
 		if (headings.length === 0) {
 			wrapper.style.display = 'none';
@@ -344,6 +405,11 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 			return document.documentElement.getAttribute('data-theme') === 'dark';
 		}
 		
+		// Create inner container for items
+		const itemsInner = document.createElement('div');
+		itemsInner.className = 'toc-mobile-items-inner';
+		tocList.appendChild(itemsInner);
+		
 		// Generate TOC items with Tailwind classes
 		headings.forEach((heading, index) => {
 			const item = document.createElement('div');
@@ -352,11 +418,11 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 			
 			const link = document.createElement('a');
 			link.href = `#${heading.id}`;
-			link.className = 'toc-mobile-link no-underline flex justify-between items-center p-3 text-[0.9375rem] rounded-lg transition-all duration-200 gap-3 mx-3 my-2 border';
+			link.className = 'toc-mobile-link no-underline flex justify-between items-center p-3 text-[0.9375rem] rounded-lg transition-all duration-200 gap-2 mx-2 my-2 border';
 			
-			const number = document.createElement('span');
-			number.className = 'toc-mobile-number text-sm font-bold px-2.5 py-1.5 rounded-md min-w-[1.85rem] h-[1.85rem] flex items-center justify-center text-center shrink-0 transition-all duration-200 border';
-			number.textContent = (index + 1).toString();
+			const numberEl = document.createElement('span');
+			numberEl.className = 'toc-mobile-number text-sm font-bold px-2.5 py-1.5 rounded-md min-w-[2rem] h-[2rem] flex items-center justify-center text-center shrink-0 transition-all duration-200 border';
+			numberEl.textContent = (index + 1).toString();
 			
 			const text = document.createElement('span');
 			text.className = 'toc-mobile-text flex-1 leading-[1.4] line-clamp-2 overflow-hidden text-ellipsis';
@@ -366,10 +432,10 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 			text.style.maxHeight = 'calc(1.4em * 2)';
 			text.textContent = heading.textContent || '';
 			
-			link.appendChild(number);
+			link.appendChild(numberEl);
 			link.appendChild(text);
 			item.appendChild(link);
-			tocList.appendChild(item);
+			itemsInner.appendChild(item);
 			
 			// Click handler
 			link.addEventListener('click', (e) => {
@@ -387,22 +453,55 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 			isExpanded = forceState !== undefined ? forceState : !isExpanded;
 			
 			if (isExpanded) {
-				// Calculate height for 2.5 items (approximate)
-				const firstItem = tocList.querySelector('.toc-mobile-item');
-				if (firstItem) {
-					const itemHeight = firstItem.offsetHeight;
-					const maxHeight = itemHeight * 2.5;
-					tocList.style.maxHeight = maxHeight + 'px';
-				} else {
-					tocList.style.maxHeight = '200px'; // fallback
-				}
+				// Calculate height: max 50% of screen height
+				const maxAllowedHeight = window.innerHeight * 0.5;
+				const contentHeight = tocList.scrollHeight;
+				
+				// Use the smaller of content height or 50vh
+				// This ensures smooth transition for short lists, and caps long lists at 50vh
+				const finalHeight = Math.min(contentHeight, maxAllowedHeight);
+				
+				tocList.style.visibility = 'visible';
+				tocList.style.maxHeight = finalHeight + 'px';
 				tocList.style.overflowY = 'auto';
 				menuBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+				menuBtn.classList.add('expanded');
+				
+				// Scroll to active item after a short delay to allow height transition to start
+				setTimeout(() => {
+					const items = tocList.querySelectorAll('.toc-mobile-items-inner .toc-mobile-item');
+					if (items[currentIndex]) {
+						updateListScroll(items[currentIndex]);
+					}
+				}, 100);
 			} else {
 				tocList.style.maxHeight = '0';
 				tocList.style.overflowY = 'hidden';
+				// Delay hiding visibility to allow transition to finish
+				setTimeout(() => {
+					if (!isExpanded) tocList.style.visibility = 'hidden';
+				}, 300);
 				menuBtn.style.background = 'rgba(255, 255, 255, 0.1)';
+				menuBtn.classList.remove('expanded');
 			}
+		}
+
+		// Center the active item in the list
+		function updateListScroll(activeElement) {
+			if (!tocList || !activeElement) return;
+			
+			const listRect = tocList.getBoundingClientRect();
+			const itemRect = activeElement.getBoundingClientRect();
+
+			// Calculate target scroll position to center the item
+			const scrollTop = tocList.scrollTop;
+			const itemTopRelative = itemRect.top - listRect.top;
+			const targetScroll = scrollTop + itemTopRelative - (listRect.height / 2) + (itemRect.height / 2);
+			
+			tocList.scrollTo({
+				top: targetScroll,
+				behavior: 'smooth'
+			});
 		}
 
 		// Update current section
@@ -428,7 +527,7 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 				currentTitle.textContent = headings[currentIndex].textContent || '';
 				
 				// Update active item - EXACT same colors as desktop TOC
-				const items = tocList.querySelectorAll('.toc-mobile-item');
+				const items = tocList.querySelectorAll('.toc-mobile-items-inner .toc-mobile-item');
 				
 				items.forEach((item, index) => {
 					const link = item.querySelector('.toc-mobile-link');
@@ -437,6 +536,11 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 					if (index === currentIndex) {
 						// Active state - EXACT same as desktop .toc-link.active
 						link.classList.add('active');
+						
+						// Center in list if expanded
+						if (isExpanded) {
+							updateListScroll(item);
+						}
 					} else {
 						// Default state
 						link.classList.remove('active');
@@ -455,7 +559,7 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 			if (isLast) {
 				// Show restart icon
 				nextBtn.innerHTML = `
-					<svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg class="w-5 h-5 toc-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
 						<polyline points="1 4 1 10 7 10"></polyline>
 						<path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
 					</svg>
@@ -464,7 +568,7 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 			} else {
 				// Show next arrow
 				nextBtn.innerHTML = `
-					<svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg class="w-5 h-5 toc-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
 						<polyline points="9 18 15 12 9 6"></polyline>
 					</svg>
 				`;
@@ -472,13 +576,26 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 			}
 		}
 
+		// Calculate wrapper position accurately
+		function getWrapperTop() {
+			const rect = wrapper.getBoundingClientRect();
+			return rect.top + window.scrollY;
+		}
+
+		let wrapperTop = getWrapperTop();
+
 		// Handle scroll to collapse/expand TOC
 		function handleScroll() {
+			// Close expanded menu on page scroll
+			if (isExpanded) {
+				toggleExpanded(false);
+			}
+
 			const scrollY = window.scrollY;
-			const wrapperTop = wrapper.offsetTop;
 			
 			// Collapse when scrolled past the TOC original position
-			if (scrollY > wrapperTop && !isCollapsed) {
+			// Using a small offset (10px) to make it feel more responsive
+			if (scrollY > wrapperTop - 2 && !isCollapsed) {
 				isCollapsed = true;
 				
 				// Close expanded menu when collapsing
@@ -493,31 +610,15 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 					wrapper.style.height = header.offsetHeight + 'px';
 				}
 
-				tocMobile.classList.add('!fixed', 'top-0', 'left-0', 'right-0', 'z-[100]', '!my-0', '!rounded-none', 'toc-fixed');
-				tocMobile.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.25)';
+				// Set wrapper height to preserve space
+				wrapper.style.height = tocMobile.offsetHeight + 'px';
+
+				// Use fixed class
+				tocMobile.classList.add('toc-fixed');
 				
 				// Show next button when collapsed
 				nextBtn.classList.remove('hidden');
 				nextBtn.classList.add('flex');
-				
-				
-				// Adjust button and number sizes
-				const buttons = tocMobile.querySelectorAll('button');
-				buttons.forEach(btn => {
-					btn.classList.remove('w-10', 'h-10');
-					btn.classList.add('w-9', 'h-9');
-				});
-				
-				currentNumber.style.minWidth = '1.5rem';
-				currentNumber.style.height = '1.5rem';
-				currentNumber.style.fontSize = '0.75rem';
-				
-				currentTitle.classList.remove('text-[0.9375rem]');
-				currentTitle.classList.add('text-sm');
-				
-				// Adjust padding
-				tocMobile.querySelector('div').classList.remove('p-6');
-				tocMobile.querySelector('div').classList.add('p-3');
 				
 				// Close expanded menu when collapsing
 				if (isExpanded) {
@@ -525,31 +626,14 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 				}
 			} else if (scrollY <= wrapperTop - 20 && isCollapsed) {
 				isCollapsed = false;
-				tocMobile.classList.remove('!fixed', 'top-0', 'left-0', 'right-0', 'z-[100]', '!my-0', '!rounded-none', 'toc-fixed');
-				tocMobile.style.boxShadow = 'var(--shadow-lg)';
+				tocMobile.classList.remove('toc-fixed');
+				
+				// Reset wrapper height
 				wrapper.style.height = '';
 				
 				// Hide next button when not collapsed
 				nextBtn.classList.add('hidden');
 				nextBtn.classList.remove('flex');
-				
-				// Restore button and number sizes
-				const buttons = tocMobile.querySelectorAll('button');
-				buttons.forEach(btn => {
-					btn.classList.add('w-10', 'h-10');
-					btn.classList.remove('w-9', 'h-9');
-				});
-				
-				currentNumber.style.minWidth = '1.85rem';
-				currentNumber.style.height = '1.85rem';
-				currentNumber.style.fontSize = '0.875rem';
-				
-				currentTitle.classList.add('text-[0.9375rem]');
-				currentTitle.classList.remove('text-sm');
-				
-				// Restore padding
-				tocMobile.querySelector('div').classList.add('p-6');
-				tocMobile.querySelector('div').classList.remove('p-3');
 			}
 			
 			updateCurrentSection();
@@ -572,6 +656,21 @@ const tBackToTopAriaLabel = t('toc.backToTopAriaLabel');
 		// Event listeners
 		menuBtn.addEventListener('click', () => toggleExpanded());
 		nextBtn.addEventListener('click', goToNext);
+		
+		// Handle resize/rotation to update height if expanded
+		window.addEventListener('resize', () => {
+			wrapperTop = getWrapperTop();
+			if (isExpanded) {
+				toggleExpanded(true);
+			}
+		});
+
+		// Close when clicking outside
+		document.addEventListener('click', (e) => {
+			if (isExpanded && !tocMobile.contains(e.target)) {
+				toggleExpanded(false);
+			}
+		});
 		
 		let ticking = false;
 		window.addEventListener('scroll', () => {

@@ -1,40 +1,64 @@
 ---
-import { getLangFromUrl, useTranslations } from '@/i18n/utils';
+import { getLangFromUrl, useTranslations } from "@/i18n/utils";
 
 interface Props {
-  alternates?: Record<string, string>;
+	alternates?: Record<string, string>;
+	alternateLinks?: { lang: string; url: string }[];
 }
 
-const { alternates } = Astro.props;
+const { alternates, alternateLinks } = Astro.props;
 const locale = getLangFromUrl(Astro.url);
 const t = useTranslations(locale);
 
 const localeNames = {
-  pt: 'Português',
-  en: 'English',
-  es: 'Español',
+	pt: "Português",
+	en: "English",
+	es: "Español",
 } as const;
 
-const LOCALE_COOKIE_NAME = 'NEXT_LOCALE';
-const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}\//, '/');
+const LOCALE_COOKIE_NAME = "NEXT_LOCALE";
+const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}\//, "/");
 
 const translations = {
-  light: t('mobileMenu.theme.light'),
-  dark: t('mobileMenu.theme.dark'),
-  error: t('mobileMenu.theme.error'),
+	light: t("mobileMenu.theme.light"),
+	dark: t("mobileMenu.theme.dark"),
+	error: t("mobileMenu.theme.error"),
 };
 ---
 
-<div id="mobile-menu-overlay" class="fixed inset-0 bg-black/50 z-[9998] opacity-0 pointer-events-none transition-opacity duration-300">
-	<div 
-		id="mobile-menu" 
-		class="fixed top-0 left-0 bottom-0 w-[85%] max-w-[320px] overflow-y-auto shadow-[4px_0_12px_rgba(0,0,0,0.3)] z-[9999]"
+<div
+	id="mobile-menu-overlay"
+	class="fixed inset-0 bg-black/50 z-9998 opacity-0 invisible pointer-events-none transition-opacity duration-300"
+>
+	<div
+		id="mobile-menu"
+		class="fixed top-0 left-0 bottom-0 w-[85%] max-w-[320px] overflow-y-auto shadow-[4px_0_12px_rgba(0,0,0,0.3)] z-9999"
 		data-translations={JSON.stringify(translations)}
 	>
-		<div class="flex items-center justify-between p-6 border-b" style="border-color: var(--color-border);">
-			<h2 class="m-0 text-xl font-bold" style="color: var(--color-text);">{t('site.title')}</h2>
-			<button id="mobile-menu-close" class="w-10 h-10 flex items-center justify-center rounded-lg cursor-pointer transition-all duration-200 hover:scale-105" style="background: var(--color-border-subtle); color: var(--color-text);" aria-label={t('mobileMenu.closeAriaLabel')}>
-				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+		<div
+			class="flex items-center justify-between p-6 border-b"
+			style="border-color: var(--color-border-subtle);"
+		>
+			<div
+				class="m-0 text-xl font-bold"
+				style="color: var(--color-text);"
+			>
+				{t("site.title")}
+			</div>
+			<button
+				id="mobile-menu-close"
+				class="w-10 h-10 flex items-center justify-center rounded-lg cursor-pointer transition-all duration-200 hover:scale-105"
+				style="background: var(--color-border-subtle); color: var(--color-text);"
+				aria-label={t("mobileMenu.closeAriaLabel")}
+			>
+				<svg
+					width="24"
+					height="24"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.5"
+				>
 					<line x1="18" y1="6" x2="6" y2="18"></line>
 					<line x1="6" y1="6" x2="18" y2="18"></line>
 				</svg>
@@ -42,63 +66,146 @@ const translations = {
 		</div>
 
 		<nav class="p-4 flex flex-col gap-2">
-			<a href={`/${locale}/blog`} class="flex items-center gap-3 px-4 py-4 text-base font-medium rounded-xl no-underline transition-all duration-200" style="color: var(--color-text); background: var(--color-border-subtle);">
-				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-					<path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+			<a
+				href={`/${locale}/search`}
+				class="flex items-center gap-3 px-4 py-4 text-base font-medium rounded-xl no-underline transition-all duration-200"
+				style="color: var(--color-text); background: var(--color-border-subtle);"
+			>
+				<svg
+					width="20"
+					height="20"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+				>
+					<circle cx="11" cy="11" r="8"></circle>
+					<line x1="21" y1="21" x2="16.65" y2="16.65"></line>
 				</svg>
-				{t('nav.blog')}
+				{t("search.title")}
+			</a>
+			<a
+				href={`/${locale}/blog?ref=mobile_menu_blog`}
+				class="flex items-center gap-3 px-4 py-4 text-base font-medium rounded-xl no-underline transition-all duration-200"
+				style="color: var(--color-text); background: var(--color-border-subtle);"
+			>
+				<svg
+					width="20"
+					height="20"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+				>
+					<path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"
+					></path>
+				</svg>
+				{t("nav.blog")}
 			</a>
 
-			<hr class="border-0 border-t my-2" style="border-color: var(--color-border);" />
+			<hr
+				class="border-0 border-t my-2"
+				style="border-color: var(--color-border-subtle);"
+			/>
 
 			<div class="flex flex-col gap-3">
-				<span class="text-xs font-semibold uppercase tracking-wider px-4 pt-2" style="color: var(--color-text-muted);">{t('language.label')}</span>
-				<div class="mobile-menu-options flex flex-col gap-2" data-cookie-name={LOCALE_COOKIE_NAME}>
-					{Object.entries(localeNames).map(([loc, name]) => {
-						let href = `/${loc}${currentPath}`;
-						
-						if (alternates && alternates[loc]) {
-							href = `/${loc}/blog/${alternates[loc]}`;
-						} else if (alternates && loc === locale) {
-							href = Astro.url.pathname;
-						} else if (currentPath.includes('/blog/')) {
-							href = `/${loc}/blog`;
-						}
-						
-						return (
-							<a
-								href={href}
-								class={`mobile-menu-option flex items-center gap-3 px-5 py-4 no-underline transition-all duration-200 rounded-lg border border-transparent text-base font-medium cursor-pointer min-h-[44px] ${loc === locale ? 'active' : ''}`}
-								data-locale={loc}
-							>
-								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-									<circle cx="12" cy="12" r="10"/>
-									<path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
-									<path d="M2 12h20"/>
-								</svg>
-								{name}
-							</a>
-						);
-					})}
+				<span
+					class="text-xs font-semibold uppercase tracking-wider px-4 pt-2"
+					style="color: var(--color-text-muted);"
+					>{t("language.label")}</span
+				>
+				<div
+					class="mobile-menu-options flex flex-col gap-2"
+					data-cookie-name={LOCALE_COOKIE_NAME}
+				>
+					{
+						Object.entries(localeNames).map(([loc, name]) => {
+							let href = `/${loc}${currentPath}`;
+
+							const altLink = alternateLinks?.find(
+								(l) => l.lang === loc,
+							);
+
+							if (altLink) {
+								href = altLink.url;
+							} else if (alternates && alternates[loc]) {
+								href = `/${loc}/blog/${alternates[loc]}`;
+							} else if (alternates && loc === locale) {
+								href = Astro.url.pathname;
+							} else if (currentPath.includes("/blog/")) {
+								href = `/${loc}/blog`;
+							}
+
+							return (
+								<a
+									href={href}
+									class={`mobile-menu-option flex items-center gap-3 px-5 py-4 no-underline transition-all duration-200 rounded-lg border border-transparent text-base font-medium cursor-pointer min-h-[44px] ${loc === locale ? "active" : ""}`}
+									data-locale={loc}
+								>
+									<svg
+										width="18"
+										height="18"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+									>
+										<circle cx="12" cy="12" r="10" />
+										<path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+										<path d="M2 12h20" />
+									</svg>
+									{name}
+								</a>
+							);
+						})
+					}
 				</div>
 			</div>
 
 			<div class="flex flex-col gap-3">
-				<span class="text-xs font-semibold uppercase tracking-wider px-4 pt-2" style="color: var(--color-text-muted);">{t('mobileMenu.theme')}</span>
-				<button id="mobile-theme-toggle" class="mobile-menu-option flex items-center gap-3 px-5 py-4 transition-all duration-200 rounded-lg border border-transparent text-base font-medium cursor-pointer min-h-[44px]" type="button" style="color: var(--color-text-muted); background: var(--color-border-subtle);">
-					<svg id="mobile-sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<span
+					class="text-xs font-semibold uppercase tracking-wider px-4 pt-2"
+					style="color: var(--color-text-muted);"
+					>{t("mobileMenu.theme")}</span
+				>
+				<button
+					id="mobile-theme-toggle"
+					class="mobile-menu-option flex items-center gap-3 px-5 py-4 transition-all duration-200 rounded-lg border border-transparent text-base font-medium cursor-pointer min-h-[44px]"
+					type="button"
+					style="color: var(--color-text-muted); background: var(--color-border-subtle);"
+				>
+					<svg
+						id="mobile-sun-icon"
+						width="18"
+						height="18"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<circle cx="12" cy="12" r="5"></circle>
 						<line x1="12" y1="1" x2="12" y2="3"></line>
 						<line x1="12" y1="21" x2="12" y2="23"></line>
 						<line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-						<line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+						<line x1="18.36" y1="18.36" x2="19.78" y2="19.78"
+						></line>
 						<line x1="1" y1="12" x2="3" y2="12"></line>
 						<line x1="21" y1="12" x2="23" y2="12"></line>
 						<line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
 						<line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
 					</svg>
-					<svg id="mobile-moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-						<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+					<svg
+						id="mobile-moon-icon"
+						width="18"
+						height="18"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
+						<path
+							d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+						></path>
 					</svg>
 					<span id="mobile-theme-text" class="ml-6"></span>
 				</button>
@@ -112,18 +219,22 @@ const translations = {
 		--mobile-menu-active-color: var(--color-primary);
 	}
 
-	[data-theme='dark'] {
+	[data-theme="dark"] {
 		--mobile-menu-active-color: var(--color-accent);
 	}
 
 	.mobile-menu-option {
-		color: var(--color-text-muted);
+		color: var(--color-text);
 		background: var(--color-border-subtle);
 	}
 
 	.mobile-menu-option.active {
 		color: var(--mobile-menu-active-color);
-		background: color-mix(in srgb, var(--mobile-menu-active-color) 18%, transparent);
+		background: color-mix(
+			in srgb,
+			var(--mobile-menu-active-color) 18%,
+			transparent
+		);
 		font-weight: 600;
 	}
 
@@ -140,6 +251,7 @@ const translations = {
 
 	#mobile-menu-overlay.open {
 		opacity: 1;
+		visibility: visible;
 		pointer-events: auto;
 	}
 
@@ -153,7 +265,7 @@ const translations = {
 
 	.mobile-menu-option:hover {
 		filter: brightness(0.95);
-		border-color: var(--color-border);
+		border-color: var(--color-border-subtle);
 	}
 
 	/* Theme toggle icons */
@@ -173,12 +285,12 @@ const translations = {
 		transform: rotate(180deg) scale(0.5);
 	}
 
-	[data-theme='dark'] #mobile-sun-icon {
+	[data-theme="dark"] #mobile-sun-icon {
 		opacity: 0;
 		transform: rotate(-180deg) scale(0.5);
 	}
 
-	[data-theme='dark'] #mobile-moon-icon {
+	[data-theme="dark"] #mobile-moon-icon {
 		opacity: 1;
 		transform: rotate(0deg) scale(1);
 	}
@@ -186,45 +298,49 @@ const translations = {
 
 <script is:inline>
 	function initMobileMenu() {
-		const menuButton = document.getElementById('mobile-menu-button');
-		const menuOverlay = document.getElementById('mobile-menu-overlay');
-		const menuClose = document.getElementById('mobile-menu-close');
-		const themeToggle = document.getElementById('mobile-theme-toggle');
-		const themeText = document.getElementById('mobile-theme-text');
-		const menu = document.getElementById('mobile-menu');
+		const menuButton = document.getElementById("mobile-menu-button");
+		const menuOverlay = document.getElementById("mobile-menu-overlay");
+		const menuClose = document.getElementById("mobile-menu-close");
+		const themeToggle = document.getElementById("mobile-theme-toggle");
+		const themeText = document.getElementById("mobile-theme-text");
+		const menu = document.getElementById("mobile-menu");
 
 		if (!menuButton || !menuOverlay || !menuClose || !menu) return;
 
 		const t = JSON.parse(menu.dataset.translations);
 
 		// Open menu
-		menuButton.addEventListener('click', () => {
-			menuOverlay.classList.add('open');
-			document.body.style.overflow = 'hidden';
+		menuButton.addEventListener("click", () => {
+			menuOverlay.classList.add("open");
+			document.body.style.overflow = "hidden";
 			// Aplicar blur e overlay na barra de progresso
-			const progressBar = document.getElementById('reading-progress-container');
+			const progressBar = document.getElementById(
+				"reading-progress-container",
+			);
 			if (progressBar) {
-				progressBar.style.backdropFilter = 'blur(4px)';
-				progressBar.style.webkitBackdropFilter = 'blur(4px)';
-				progressBar.classList.add('modal-open');
+				progressBar.style.backdropFilter = "blur(4px)";
+				progressBar.style.webkitBackdropFilter = "blur(4px)";
+				progressBar.classList.add("modal-open");
 			}
 		});
 
 		// Close menu
 		const closeMenu = () => {
-			menuOverlay.classList.remove('open');
-			document.body.style.overflow = '';
+			menuOverlay.classList.remove("open");
+			document.body.style.overflow = "";
 			// Remover blur e overlay da barra de progresso
-			const progressBar = document.getElementById('reading-progress-container');
+			const progressBar = document.getElementById(
+				"reading-progress-container",
+			);
 			if (progressBar) {
-				progressBar.style.backdropFilter = '';
-				progressBar.style.webkitBackdropFilter = '';
-				progressBar.classList.remove('modal-open');
+				progressBar.style.backdropFilter = "";
+				progressBar.style.webkitBackdropFilter = "";
+				progressBar.classList.remove("modal-open");
 			}
 		};
 
-		menuClose.addEventListener('click', closeMenu);
-		menuOverlay.addEventListener('click', (e) => {
+		menuClose.addEventListener("click", closeMenu);
+		menuOverlay.addEventListener("click", (e) => {
 			if (e.target === menuOverlay) {
 				closeMenu();
 			}
@@ -233,24 +349,29 @@ const translations = {
 		// Theme toggle
 		if (themeToggle && themeText) {
 			const updateThemeText = () => {
-				const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-				themeText.textContent = currentTheme === 'dark' ? t.dark : t.light;
+				const currentTheme =
+					document.documentElement.getAttribute("data-theme") ||
+					"light";
+				themeText.textContent =
+					currentTheme === "dark" ? t.dark : t.light;
 			};
 
-			themeToggle.addEventListener('click', () => {
-				const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-				const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-				
-				document.documentElement.setAttribute('data-theme', newTheme);
+			themeToggle.addEventListener("click", () => {
+				const currentTheme =
+					document.documentElement.getAttribute("data-theme") ||
+					"light";
+				const newTheme = currentTheme === "light" ? "dark" : "light";
+
+				document.documentElement.setAttribute("data-theme", newTheme);
 				if (document.body) {
-					document.body.setAttribute('data-theme', newTheme);
+					document.body.setAttribute("data-theme", newTheme);
 				}
 				try {
-					localStorage.setItem('theme', newTheme);
+					localStorage.setItem("theme", newTheme);
 				} catch (e) {
 					console.warn(t.error, e);
 				}
-				
+
 				updateThemeText();
 			});
 
@@ -258,13 +379,17 @@ const translations = {
 		}
 
 		// Language switcher
-		const languageOptions = document.querySelectorAll('.mobile-menu-option[data-locale]');
-		const cookieName = document.querySelector('.mobile-menu-options')?.getAttribute('data-cookie-name');
-		
-		languageOptions.forEach(option => {
-			option.addEventListener('click', (e) => {
+		const languageOptions = document.querySelectorAll(
+			".mobile-menu-option[data-locale]",
+		);
+		const cookieName = document
+			.querySelector(".mobile-menu-options")
+			?.getAttribute("data-cookie-name");
+
+		languageOptions.forEach((option) => {
+			option.addEventListener("click", (e) => {
 				const target = e.currentTarget;
-				const locale = target && target.getAttribute('data-locale');
+				const locale = target && target.getAttribute("data-locale");
 				if (locale && cookieName) {
 					const expires = new Date();
 					expires.setFullYear(expires.getFullYear() + 1);
@@ -274,12 +399,12 @@ const translations = {
 		});
 
 		// Close menu on navigation
-		const menuLinks = menuOverlay.querySelectorAll('a');
-		menuLinks.forEach(link => {
-			link.addEventListener('click', closeMenu);
+		const menuLinks = menuOverlay.querySelectorAll("a");
+		menuLinks.forEach((link) => {
+			link.addEventListener("click", closeMenu);
 		});
 	}
 
-	document.addEventListener('DOMContentLoaded', initMobileMenu);
-	document.addEventListener('astro:page-load', initMobileMenu);
+	document.addEventListener("DOMContentLoaded", initMobileMenu);
+	document.addEventListener("astro:page-load", initMobileMenu);
 </script>

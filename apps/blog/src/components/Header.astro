@@ -1,41 +1,99 @@
 ---
-import { getLangFromUrl, useTranslations } from '@/i18n/utils';
-import HeaderLink from '@/components/HeaderLink.astro';
-import ThemeToggle from '@/components/ThemeToggle.astro';
-import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
-import MobileMenu from '@/components/MobileMenu.astro';
+import { getLangFromUrl, useTranslations } from "@/i18n/utils";
+import HeaderLink from "@/components/HeaderLink.astro";
+import ThemeToggle from "@/components/ThemeToggle.astro";
+import LanguageSwitcher from "@/components/LanguageSwitcher.astro";
+import MobileMenu from "@/components/MobileMenu.astro";
 
 interface Props {
-  alternates?: Record<string, string>;
+	alternates?: Record<string, string>;
+	alternateLinks?: { lang: string; url: string }[];
 }
 
-const { alternates } = Astro.props;
+const { alternates, alternateLinks } = Astro.props;
 const locale = getLangFromUrl(Astro.url);
 const t = useTranslations(locale);
 ---
 
-<MobileMenu alternates={alternates} />
+<MobileMenu alternates={alternates} alternateLinks={alternateLinks} />
 
-<header class="m-0 mb-4 sm:mb-5 md:mb-6 max-lg:mb-0 px-3 sm:px-4 py-2 sm:py-2.5 bg-surface shadow-md">
+<header
+	class="m-0 mb-4 sm:mb-5 md:mb-6 max-lg:mb-0 px-3 sm:px-4 py-2 sm:py-2.5 bg-surface shadow-md"
+>
 	<nav class="flex items-center justify-between max-w-[1400px] mx-auto">
-		<button id="mobile-menu-button" class="lg:hidden flex items-center justify-center w-9 sm:w-10 h-9 sm:h-10 rounded-lg border-none cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95" aria-label={t('header.openMenuAriaLabel')}>
-			<svg width="18" height="18" class="sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+		<button
+			id="mobile-menu-button"
+			class="lg:hidden flex items-center justify-center w-9 sm:w-10 h-9 sm:h-10 rounded-lg border-none cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95"
+			aria-label={t("header.openMenuAriaLabel")}
+		>
+			<svg
+				width="18"
+				height="18"
+				class="sm:w-5 sm:h-5"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="1.5"
+			>
 				<line x1="3" y1="6" x2="21" y2="6"></line>
 				<line x1="3" y1="12" x2="21" y2="12"></line>
 				<line x1="3" y1="18" x2="21" y2="18"></line>
 			</svg>
 		</button>
-		<h2 class="m-0 text-base sm:text-lg lg:block hidden">
-			<a href={`/${locale}/blog`} class="no-underline">{t('site.title')}</a>
-		</h2>
-		<h2 class="m-0 text-sm sm:text-base lg:hidden flex-1 text-center px-2">
-			<a href={`/${locale}/blog`} class="no-underline">{t('site.title')}</a>
-		</h2>
+		<div class="m-0 text-base sm:text-lg lg:block hidden">
+			<a
+				href={`/${locale}/blog?ref=header_logo`}
+				class="no-underline font-bold">{t("site.title")}</a
+			>
+		</div>
+		<div class="m-0 text-sm sm:text-base lg:hidden flex-1 text-center px-2">
+			<a
+				href={`/${locale}/blog?ref=header_logo`}
+				class="no-underline font-bold">{t("site.title")}</a
+			>
+		</div>
 		<div class="internal-links hidden lg:flex">
-			<HeaderLink href={`/${locale}/blog`}>{t('nav.blog')}</HeaderLink>
+			<HeaderLink href={`/${locale}/blog?ref=header_nav`}
+				>{t("nav.blog")}</HeaderLink
+			>
 		</div>
 		<div class="hidden lg:flex items-center gap-3 lg:gap-4">
-			<LanguageSwitcher alternates={alternates} />
+			<form
+				action={`/${locale}/search`}
+				method="get"
+				class="relative group"
+			>
+				<input
+					type="text"
+					name="q"
+					placeholder={t("search.placeholder")}
+					class="pl-4 pr-10 py-1.5 text-sm bg-background border border-border-subtle rounded-lg w-48 focus:w-64 transition-all duration-300 outline-none focus:border-primary focus:ring-1 focus:ring-primary/50"
+					aria-label={t("search.placeholder")}
+				/>
+				<button
+					type="submit"
+					class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted group-focus-within:text-primary transition-colors"
+					aria-label={t("search.title")}
+				>
+					<svg
+						width="16"
+						height="16"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<circle cx="11" cy="11" r="8"></circle>
+						<line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+					</svg>
+				</button>
+			</form>
+			<LanguageSwitcher
+				alternates={alternates}
+				alternateLinks={alternateLinks}
+			/>
 			<ThemeToggle />
 		</div>
 		<div class="lg:hidden w-9 sm:w-10"></div>
@@ -45,7 +103,7 @@ const t = useTranslations(locale);
 <style>
 	#mobile-menu-button {
 		background: rgba(255, 255, 255, 0.1);
-		color: white;
+		color: var(--color-text);
 	}
 
 	#mobile-menu-button:hover {
@@ -58,6 +116,6 @@ const t = useTranslations(locale);
 	}
 
 	:root:not([data-theme="dark"]) #mobile-menu-button:hover {
-		background: var(--color-border);
+		background: var(--color-border-subtle);
 	}
 </style>

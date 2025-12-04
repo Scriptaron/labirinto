@@ -3,7 +3,7 @@ title: 'React Hooks: Guia Prático'
 description: 'Domine os React Hooks com exemplos práticos'
 pubDate: 2024-11-11
 lang: 'pt'
-slug: 'react-hooks'
+permalink: 'react-hooks'
 alternates:
   en: 'react-hooks'
   es: 'react-hooks'
@@ -11,15 +11,6 @@ heroImage: '../../../assets/blog-placeholder-3.jpg'
 category: 'development'
 tags: ['react', 'javascript', 'hooks', 'frontend']
 ---
-
-# React Hooks: Guia Prático
-
-Os Hooks revolucionaram a forma como escrevemos componentes React. Introduzidos no React 16.8, eles permitem usar estado e outras features do React sem escrever classes. Isso tornou o código mais reutilizável, testável e fácil de entender. Neste guia, exploraremos os principais hooks e como usá-los efetivamente em seus projetos.
-
-## Principais Hooks
-
-### useState
-Gerencia estado em componentes funcionais. É o hook mais fundamental e versátil.
 
 ```javascript
 const [count, setCount] = useState(0);
@@ -29,7 +20,7 @@ const [isLoading, setIsLoading] = useState(false);
 
 Você pode usar múltiplos `useState` em um componente. Cada um mantém seu próprio estado independente.
 
-### useEffect
+## useEffect
 Executa efeitos colaterais como fetching de dados, subscrições e manipulação do DOM.
 
 ```javascript
@@ -48,7 +39,7 @@ useEffect(() => {
 }, []);
 ```
 
-### useContext
+## useContext
 Acessa o contexto sem prop drilling, evitando passar props através de múltiplos níveis.
 
 ```javascript
@@ -56,14 +47,14 @@ const theme = useContext(ThemeContext);
 const user = useContext(UserContext);
 ```
 
-### useReducer
+## useReducer
 Para estado mais complexo, `useReducer` é mais apropriado que `useState`.
 
 ```javascript
 const [state, dispatch] = useReducer(reducer, initialState);
 ```
 
-### useCallback
+## useCallback
 Memoriza uma função para evitar re-renders desnecessários em componentes filhos.
 
 ```javascript
@@ -72,7 +63,7 @@ const memoizedCallback = useCallback(() => {
 }, [a, b]);
 ```
 
-### useMemo
+## useMemo
 Memoriza um valor computado para evitar cálculos desnecessários.
 
 ```javascript
@@ -81,7 +72,7 @@ const memoizedValue = useMemo(() => {
 }, [a, b]);
 ```
 
-### useRef
+## useRef
 Cria uma referência mutável que persiste entre renders.
 
 ```javascript

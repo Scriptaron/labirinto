@@ -1,6 +1,16 @@
 @import "tailwindcss";
 @import "../../../../packages/tailwind-config/globals.css";
 
+:root {
+  --shiki-light-bg: #ffffff;
+  --shiki-dark-bg: #24292e;
+  --color-card-bg: var(--color-surface);
+}
+
+[data-theme="dark"] {
+  --color-card-bg: var(--shiki-dark-bg);
+}
+
 /* Critical CSS - carregado primeiro */
 body {
   background: var(--color-background);
@@ -11,7 +21,7 @@ body {
 
 hr {
   border: 0;
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--color-border-subtle);
   margin: 2rem 0;
 }
 
@@ -83,4 +93,43 @@ html {
 [data-theme="light"] ::selection {
   background-color: var(--primary-dark);
   color: #ffffff;
+}
+
+/* =================================
+ * COMPONENTES GLOBAIS
+ * ================================= */
+
+/* Tags (Pills) - Standardized Style */
+.post-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  line-height: 1;
+
+  /* Dark Mode (Default) */
+  background: color-mix(in srgb, var(--accent-dark) 8%, transparent);
+  color: var(--accent-dark);
+}
+
+:root:not([data-theme="dark"]) .post-tag {
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+  color: var(--primary);
+}
+
+.post-tag:hover {
+  background: color-mix(in srgb, var(--accent-dark) 15%, transparent);
+  color: var(--accent-dark);
+  border-color: color-mix(in srgb, var(--accent-dark) 25%, transparent);
+}
+
+:root:not([data-theme="dark"]) .post-tag:hover {
+  background: color-mix(in srgb, var(--primary) 15%, transparent);
+  color: var(--primary);
+  border-color: color-mix(in srgb, var(--primary) 25%, transparent);
 }
