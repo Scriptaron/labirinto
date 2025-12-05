@@ -5,10 +5,12 @@
   --shiki-light-bg: #ffffff;
   --shiki-dark-bg: #24292e;
   --color-card-bg: var(--color-surface);
+  --color-input-bg: rgba(0, 0, 0, 0.04);
 }
 
 [data-theme="dark"] {
   --color-card-bg: var(--shiki-dark-bg);
+  --color-input-bg: rgba(255, 255, 255, 0.03);
 }
 
 /* Critical CSS - carregado primeiro */

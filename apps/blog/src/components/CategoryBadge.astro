@@ -31,7 +31,7 @@ const categoryColor = categoryData?.color || "var(--accent)";
 ---
 
 <a
-	href={`/${locale}/search?categories=${categoryData?.id || categoryKey}`}
+	href={`/${locale}/blog/search?categories=${categoryData?.id || categoryKey}`}
 	class="inline-flex items-center gap-1 px-0 py-1 text-text text-xs font-medium no-underline transition-colors duration-300 category-badge"
 	style={`--category-color: ${categoryColor}`}
 >

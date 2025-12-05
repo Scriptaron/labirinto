@@ -59,7 +59,7 @@ const t = useTranslations(locale);
 		</div>
 		<div class="hidden lg:flex items-center gap-3 lg:gap-4">
 			<form
-				action={`/${locale}/search`}
+				action={`/${locale}/blog/search`}
 				method="get"
 				class="relative group"
 			>
@@ -67,7 +67,7 @@ const t = useTranslations(locale);
 					type="text"
 					name="q"
 					placeholder={t("search.placeholder")}
-					class="pl-4 pr-10 py-1.5 text-sm bg-background border border-border-subtle rounded-lg w-48 focus:w-64 transition-all duration-300 outline-none focus:border-primary focus:ring-1 focus:ring-primary/50"
+					class="pl-4 pr-10 py-1.5 text-sm bg-black/4 dark:bg-[rgba(255,255,255,0.03)] border border-transparent hover:bg-black/5 hover:border-black/10 dark:hover:bg-[rgba(255,255,255,0.05)] dark:hover:border-[rgba(255,255,255,0.1)] focus:bg-primary/5 dark:focus:bg-accent-dark/10 focus:border-primary/30 dark:focus:border-accent-dark/30 text-text rounded-lg w-48 focus:w-64 transition-all duration-300 outline-none"
 					aria-label={t("search.placeholder")}
 				/>
 				<button

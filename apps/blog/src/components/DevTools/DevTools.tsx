@@ -1407,6 +1407,19 @@ const DevTools = () => {
                     onClick={() => {
                         if (!wasDragging) setIsMinimized(false);
                     }}
+                    onContextMenu={(e) => {
+                        e.preventDefault();
+                        const newTheme = theme === 'dark' ? 'light' : 'dark';
+                        setTheme(newTheme);
+                        document.documentElement.setAttribute('data-theme', newTheme);
+                        if (newTheme === 'dark') {
+                            document.documentElement.classList.add('dark');
+                        } else {
+                            document.documentElement.classList.remove('dark');
+                        }
+                        localStorage.setItem('theme', newTheme);
+                    }}
+
                     style={{
                         width: '40px',
                         height: '40px',
@@ -1426,7 +1439,7 @@ const DevTools = () => {
                 >
                     ⚡
                 </button>
-            </div>
+            </div >
         );
     }
 
@@ -1457,6 +1470,18 @@ const DevTools = () => {
             <div
                 ref={dragRef}
                 onMouseDown={handleMouseDown as any}
+                onContextMenu={(e) => {
+                    e.preventDefault();
+                    const newTheme = theme === 'dark' ? 'light' : 'dark';
+                    setTheme(newTheme);
+                    document.documentElement.setAttribute('data-theme', newTheme);
+                    if (newTheme === 'dark') {
+                        document.documentElement.classList.add('dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                    }
+                    localStorage.setItem('theme', newTheme);
+                }}
                 style={{
                     padding: '8px 12px',
                     backgroundColor: '#2d2d2d',
@@ -1502,6 +1527,19 @@ const DevTools = () => {
                             lineHeight: 1,
                         }}
                         title="Minimize"
+                        onContextMenu={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation(); // Stop propagation to header
+                            const newTheme = theme === 'dark' ? 'light' : 'dark';
+                            setTheme(newTheme);
+                            document.documentElement.setAttribute('data-theme', newTheme);
+                            if (newTheme === 'dark') {
+                                document.documentElement.classList.add('dark');
+                            } else {
+                                document.documentElement.classList.remove('dark');
+                            }
+                            localStorage.setItem('theme', newTheme);
+                        }}
                     >
                         _
                     </button>
